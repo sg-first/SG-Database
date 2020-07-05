@@ -41,6 +41,28 @@ public:
             return true;
         }
     }
+
+    static Basic* strToBasic(string val, string type) //val需要与Basic.toStr结果对应
+    {
+        if(type=="Null")
+            return new Basic();
+        if(type=="Placeholder")
+            return new Placeholder();
+        if(type=="Int")
+            return new Int(stoi(val));
+        if(type=="Float")
+            return new Float(stof(val));
+        if(type=="Str")
+            return new Str(val);
+        if(type=="Bool")
+        {
+            if(val=="true")
+                return new Bool(true);
+            else
+                return new Bool(false);
+        }
+        return nullptr;
+    }
 };
 
 class helper
