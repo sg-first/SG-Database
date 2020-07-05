@@ -43,7 +43,7 @@ public:
     string val;
     virtual string getType() override {return "Str";}
     Str(string val) : val(val) {}
-    virtual string toStr() override { return "\""+val+"\""; }
+    virtual string toStr() override { return val; }
 };
 
 class Bool : public Basic
