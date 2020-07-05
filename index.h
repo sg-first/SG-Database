@@ -1,6 +1,8 @@
 #pragma once
 #include <functional>
 #include <vector>
+#include "rule.h"
+#include "table.h"
 
 using namespace std;
 
@@ -9,8 +11,17 @@ using namespace std;
 //返回的下标组必须排序
 //如果操作的是视图，就把查询结果和视图的allSub取交集（返回的还是原表的sub而不是视图表的）
 
+typedef function<vector<int>(ruleExp rule)> index;
+
 class indexGenerator
 {
-    //functional<vector<int>()> //fix:查询怎么表示？
+public:
+    index traversal(col* c)
+    {
+        auto result=[c](ruleExp rule)
+        {
+            for()
+        };
+    }
 };
 
