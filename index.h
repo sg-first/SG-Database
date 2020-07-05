@@ -20,8 +20,17 @@ public:
     {
         auto result=[c](ruleExp rule)
         {
-            for()
+            vector<int> result;
+            auto data=c->getAllData();
+            for(int i=0;i<data.size();i++)
+            {
+                Basic* v=data[i];
+                if(rule.eval(v))
+                    result.push_back(i);
+            }
+            return result;
         };
+        return result;
     }
 };
 
