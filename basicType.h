@@ -2,12 +2,12 @@
 #include <string>
 using namespace std;
 
-//enum nodeType{Float,Int,String,Bool,Arr};
+enum TYPE{FLOAT,INT,STR,BOOL,_NULL,PLACEHOLDER};
 
 class Basic
 {
 public:
-    virtual string getType() { return "Null"; } //直接创建的basic对象视为null
+    virtual TYPE getType() { return _NULL; } //直接创建的basic对象视为null
     virtual ~Basic() {}
     virtual string toStr() { return "Null"; }
 };
@@ -15,7 +15,7 @@ public:
 class Placeholder : public Basic
 {
 public:
-    virtual string getType() override { return "Placeholder"; }
+    virtual TYPE getType() override { return PLACEHOLDER; }
     virtual string toStr() override { return "Placeholder"; }
 };
 
@@ -23,7 +23,7 @@ class Int : public Basic
 {
 public:
     int val;
-    virtual string getType() override {return "Int";}
+    virtual TYPE getType() override {return INT;}
     Int(int val) : val(val) {}
     virtual string toStr() override { return to_string(val); }
 };
@@ -32,7 +32,7 @@ class Float : public Basic
 {
 public:
     float val;
-    virtual string getType() override {return "Float";}
+    virtual TYPE getType() override {return FLOAT;}
     Float(float val) : val(val) {}
     virtual string toStr() override { return to_string(val); }
 };
@@ -41,7 +41,7 @@ class Str : public Basic
 {
 public:
     string val;
-    virtual string getType() override {return "Str";}
+    virtual TYPE getType() override {return STR;}
     Str(string val) : val(val) {}
     virtual string toStr() override { return val; }
 };
@@ -50,7 +50,7 @@ class Bool : public Basic
 {
 public:
     bool val;
-    virtual string getType() override {return "Bool";}
+    virtual TYPE getType() override {return BOOL;}
     Bool(bool val) : val(val) {}
     virtual string toStr() override
     {

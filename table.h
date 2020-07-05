@@ -7,11 +7,11 @@
 class col
 {
 private:
-    const string type;
+    const TYPE type;
     vector<Basic*> allData; //push进来直接视为持有所有权
 
 public:
-    col(string type,string ID) : type(type), ID(ID) {}
+    col(TYPE type,string ID) : type(type), ID(ID) {}
     col(const col &c) : type(c.type), ID(c.ID)
     {
         for(Basic* v : this->allData)
@@ -22,7 +22,7 @@ public:
 
     const vector<Basic*>& getAllData() { return this->allData; }
 
-    string getType() { return this->type; }
+    TYPE getType() { return this->type; }
 
     void pushDate(Basic* v) //应该使用这个函数push
     {
@@ -42,7 +42,7 @@ public:
 
     bool mod(int opSub,Basic* v) //会拷贝，返回对这个值的修改是否实际进行
     {
-        if(v->getType()!="Placeholder" && !typeHelper::isEqu(v,this->allData[opSub]))
+        if(v->getType()!=PLACEHOLDER && !typeHelper::isEqu(v,this->allData[opSub]))
         {
             delete this->allData[opSub];
             this->allData[opSub]=typeHelper::copy(v);

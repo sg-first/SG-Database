@@ -8,17 +8,17 @@ public:
     static Basic* copy(Basic* v)
     {
         //调用前应该对参数类型进行检查
-        if(v->getType()=="Int")
+        if(v->getType()==INT)
             return new Int(((Int*)v)->val);
-        if(v->getType()=="Float")
+        if(v->getType()==FLOAT)
             return new Float(((Float*)v)->val);
-        if(v->getType()=="Bool")
+        if(v->getType()==BOOL)
             return new Bool(((Bool*)v)->val);
-        if(v->getType()=="Str")
+        if(v->getType()==STR)
             return new Str(((Str*)v)->val);
-        if(v->getType()=="Null")
+        if(v->getType()==_NULL)
             return new Basic();
-        if(v->getType()=="Placeholder")
+        if(v->getType()==PLACEHOLDER)
             return new Placeholder();
         return nullptr; //如果进行参数检查了不会走到这一步
     }
@@ -34,27 +34,27 @@ public:
         if(v1->getType()!=v2->getType())
             return false;
         {
-            CONVCMP("Int",Int)
-            CONVCMP("Float",Float)
-            CONVCMP("Bool",Bool)
-            CONVCMP("Str",Str)
+            CONVCMP(INT,Int)
+            CONVCMP(FLOAT,Float)
+            CONVCMP(BOOL,Bool)
+            CONVCMP(STR,Str)
             return true;
         }
     }
 
-    static Basic* strToBasic(string val, string type) //val需要与Basic.toStr结果对应
+    static Basic* strToBasic(string val, TYPE type) //val需要与Basic.toStr结果对应
     {
-        if(type=="Null")
+        if(type==_NULL)
             return new Basic();
-        if(type=="Placeholder")
+        if(type==PLACEHOLDER)
             return new Placeholder();
-        if(type=="Int")
+        if(type==INT)
             return new Int(stoi(val));
-        if(type=="Float")
+        if(type==FLOAT)
             return new Float(stof(val));
-        if(type=="Str")
+        if(type==STR)
             return new Str(val);
-        if(type=="Bool")
+        if(type==BOOL)
         {
             if(val=="true")
                 return new Bool(true);
