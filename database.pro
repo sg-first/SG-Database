@@ -26,6 +26,7 @@ HEADERS += \
     basicType.h \
     index.h \
     record.h \
+    rule.h \
     table.h \
     typeHelper.h \
     view.h
