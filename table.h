@@ -48,6 +48,11 @@ public:
         return false;
     }
 
+    void del(int opSub)
+    {
+        this->allData.erase(this->allData.begin()+opSub);
+    }
+
     ~col()
     {
         for(Basic* v : allData)
@@ -131,6 +136,24 @@ public:
 
         //写入记录
         this->allRecord.push_back(record(opSub,recordTuple));
+    }
+
+    void del(int opSub)
+    {
+        for(int i=0;i<this->allCol.size();i++)
+            this->allCol[i]->del(opSub);
+        //写入记录
+        this->allRecord.push_back(record(opSub));
+    }
+
+    void del(vector<int> allOpSub) //对选择出来的一系列下标一起进行删除，要求有序
+    {
+        int opFinishedNum=0;
+        for(int i : allOpSub)
+        {
+            this->del(i-opFinishedNum); //前面的删掉了后面下标会向前串
+            opFinishedNum++;
+        }
     }
 
     ~table()
