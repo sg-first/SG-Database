@@ -2,21 +2,21 @@
 #include "basicType.h"
 #include "typeHelper.h"
 
-const int EQU=-1;
+enum ruleOp{EQU,GRAT,SMAL,AND,OR,NOT};
 
 class expBase
 {
 protected:
-    int op;
+    ruleOp op;
     Basic* operand2B=nullptr;
     expBase* operand2E=nullptr; //可以给两个布尔值比较
 
     bool operandIsBasic() { return operand2B==nullptr; }
 
 public:
-    expBase(int op, Basic* operand) : op(op)
+    expBase(ruleOp op, Basic* operand) : op(op)
     { this->operand2B=operand; }
-    expBase(int op, expBase* operand) : op(op)
+    expBase(ruleOp op, expBase* operand) : op(op)
     { this->operand2E=operand; }
 
     virtual bool eval(vector<Basic*> &allOperand1B, int nowSub=0)
@@ -47,8 +47,6 @@ public:
         delete operand2E;
     }
 };
-
-enum numOp{GRAT,SMAL};
 
 class numExp : public expBase
 {
@@ -92,8 +90,6 @@ public:
         throw string("error eval case");
     }
 };
-
-enum LogOp{AND,OR,NOT};
 
 class logExp : public expBase
 {
