@@ -19,6 +19,8 @@ public:
     expBase(ruleOp op, expBase* operand) : op(op)
     { this->operand2E=operand; }
 
+    ruleOp getOp() { return op; }
+
     virtual bool eval(vector<Basic*> &allOperand1B, int nowSub=0)
     {
         if(op==EQU)

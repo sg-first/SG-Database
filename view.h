@@ -7,6 +7,14 @@ private:
     table *t;
     vector<int> allSub;
 
+    int find(int i)
+    {
+        int result=helper::find(this->allSub,i);
+        if(result==-1)
+            throw string("operand elm is not in the view");
+        return result;
+    }
+
 public:
     string ID;
     view(table* t, vector<int> allSub) : t(t), allSub(allSub) {} //allSub必须排序
@@ -45,22 +53,21 @@ public:
 
     void delDir(int opSub)
     {
-        t->del(opSub);
-        //找到原先的删掉
-        int viewSub=helper::find(this->allSub,opSub);
-        this->allSub.erase(this->allSub.begin()+viewSub);
+        int viewSub=find(opSub); //找到视图中对应的下标
+        t->del(opSub); //确认都能找到，把原表的删了
+        this->allSub.erase(this->allSub.begin()+viewSub); //把视图中对应的删掉
     }
 
     void delDir(vector<int> allOpSub) //warn:所有vector<int>sub全都要求排序
     {
-        t->del(allOpSub);
         //按顺序找到视图的下标
         vector<int>viewSub;
         for(int i : allOpSub)
         {
-            int sub=helper::find(this->allSub,i);
+            int sub=find(i);
             viewSub.push_back(sub);
         }
+        t->del(allOpSub); //确认都能找到，把原表的删了
         //删视图里的
         int opFinishedNum=0;
         for(int i : viewSub)
