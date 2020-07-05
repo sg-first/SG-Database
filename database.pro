@@ -24,7 +24,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     basicType.h \
-    helper.h \
     index.h \
     record.h \
-    table.h
+    table.h \
+    typeHelper.h \
+    view.h

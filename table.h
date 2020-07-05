@@ -8,17 +8,20 @@ class col
 {
 private:
     const string type;
+    vector<Basic*> allData; //push进来直接视为持有所有权
 
 public:
     col(string type,string ID) : type(type), ID(ID) {}
     col(const col &c) : type(c.type), ID(c.ID)
     {
         for(Basic* v : this->allData)
-            this->allData.push_back(helper::copy(v));
+            this->allData.push_back(typeHelper::copy(v));
     }
     string ID;
     //fix:还要有触发器和约束
-    vector<Basic*> allData; //push进来直接视为持有所有权
+
+    const vector<Basic*>& getAllData() { return this->allData; }
+
     string getType() { return this->type; }
 
     void pushDate(Basic* v) //应该使用这个函数push
@@ -29,20 +32,20 @@ public:
             this->allData.push_back(v);
     }
 
-    col* genView(vector<int> subList)
+    col* genNewCol(vector<int> subList)
     {
         col* result=new col(type,ID);
         for(int i : subList)
-            result->allData.push_back(helper::copy(this->allData[i]));
+            result->allData.push_back(typeHelper::copy(this->allData[i]));
         return result;
     }
 
     bool mod(int opSub,Basic* v) //会拷贝，返回对这个值的修改是否实际进行
     {
-        if(v->getType()!="Placeholder" && !helper::isEqu(v,this->allData[opSub]))
+        if(v->getType()!="Placeholder" && !typeHelper::isEqu(v,this->allData[opSub]))
         {
             delete this->allData[opSub];
-            this->allData[opSub]=helper::copy(v);
+            this->allData[opSub]=typeHelper::copy(v);
             return true;
         }
         return false;
@@ -63,6 +66,10 @@ public:
 
 class table
 {
+private:
+    vector<col*> allCol; //push进来直接视为持有所有权
+    list<record> allRecord;
+
 public:
     string ID;
     table(string ID) : ID(ID) {}
@@ -72,8 +79,7 @@ public:
             this->allCol.push_back(new col(*c));
     }
 
-    vector<col*> allCol; //push进来直接视为持有所有权
-    list<record> allRecord;
+    const vector<col*>& getAllCol() { return this->allCol; } //对col数据的修改必须经过table对象完成，否则无法
 
     static table* loadFile(string path) //按约定格式从文件中读取表
     {
@@ -93,12 +99,12 @@ public:
         this->allRecord.clear();
     }
 
-    table* genView(vector<int> subList) //注意这个视图是个新表，和原表没有对应关系
+    table* genNewTable(vector<int> subList) //注意这个视图是个新表，和原表没有对应关系
     {
         table* result=new table(this->ID);
         for(col* c : allCol)
         {
-            col* selectCol=c->genView(subList);
+            col* selectCol=c->genNewCol(subList);
             result->allCol.push_back(selectCol);
         }
         return result;
@@ -129,7 +135,7 @@ public:
             col* c=this->allCol[i];
             bool modResult=c->mod(opSub,tuple[i]);
             if(modResult)
-                recordTuple.push_back(helper::copy(tuple[i]));
+                recordTuple.push_back(typeHelper::copy(tuple[i]));
             else
                 recordTuple.push_back(new Placeholder()); //如果是不起实际作用的修改，就用Placeholder占位以免多占record空间
         }

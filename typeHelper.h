@@ -1,7 +1,8 @@
 #pragma once
 #include "basicType.h"
+#include <vector>
 
-class helper
+class typeHelper
 {
 public:
     static Basic* copy(Basic* v)
@@ -39,5 +40,26 @@ public:
             CONVCMP("Str",Str)
             return true;
         }
+    }
+};
+
+class helper
+{
+public:
+    static int find(vector<int> &invec, int value)
+    {
+      int low = 0, high = invec.size()-1;
+      //assert(!invec.empty() && pos>=0);
+      while(low <=high)
+      {
+          int mid = (low+high)/2;
+          if(invec[mid] == value)
+            return mid;
+          else if(invec[mid] < value)
+            low = mid+1;
+          else
+            high = mid-1;
+      }
+      return -1;
     }
 };
