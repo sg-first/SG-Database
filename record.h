@@ -5,7 +5,7 @@
 #include <vector>
 using namespace std;
 
-enum recType{add,del,mod};
+enum recType{ADD,DEL,MOD};
 
 class record
 {
@@ -20,14 +20,14 @@ public:
     int opSub=-1;
     recType type;
 
-    record(vector<Basic*> addTarget) : type(add) //“增”的构造函数
+    record(vector<Basic*> addTarget) : type(ADD) //“增”的构造函数
     {
         this->setAddTarget(addTarget);
     }
 
-    record(int opSub) : opSub(opSub), type(del) {} //“删”的构造函数
+    record(int opSub) : opSub(opSub), type(DEL) {} //“删”的构造函数
 
-    record(int opSub, vector<Basic*> modTarget) : opSub(opSub), type(mod) //“改”的构造函数
+    record(int opSub, vector<Basic*> modTarget) : opSub(opSub), type(MOD) //“改”的构造函数
     {
         this->setAddTarget(modTarget);
     }
