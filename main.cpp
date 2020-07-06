@@ -1,5 +1,6 @@
 #include <QCoreApplication>
 #include "table.h"
+#include "BPlusTree.h"
 
 int main(int argc, char *argv[])
 {

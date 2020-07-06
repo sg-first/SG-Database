@@ -3,6 +3,7 @@
 #include <vector>
 #include "rule.h"
 #include "table.h"
+#include "BPlusTree.h"
 
 using namespace std;
 
@@ -46,5 +47,20 @@ public:
         }
         return result;
     }
+};
+
+class BPlusTreeIndex : public index
+{
+private:
+    BPlusTree* pTree;
+
+public:
+    BPlusTreeIndex(col* _c) : index(_c)
+    {
+        supportMod=true;
+        pTree = new BPlusTree;
+    }
+
+    virtual ~BPlusTreeIndex() { delete pTree; }
 };
 
