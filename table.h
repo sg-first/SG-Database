@@ -101,12 +101,13 @@ public:
 
     table* genNewTable(vector<int> subList) //注意这个视图是个新表，和原表没有对应关系
     {
-        table* result=new table(this->ID);
+        vector<col*> newAllCol;
         for(col* c : allCol)
         {
             col* selectCol=c->genNewCol(subList);
-            result->allCol.push_back(selectCol);
+            newAllCol.push_back(selectCol);
         }
+        table* result=new table(this->ID, newAllCol);
         return result;
     }
 

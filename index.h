@@ -11,25 +11,39 @@ using namespace std;
 //返回的下标组必须排序
 //如果操作的是视图，就把查询结果和视图的allSub取交集（返回的还是原表的sub而不是视图表的）
 
-typedef function<vector<int>(ruleExp rule)> index;
+typedef function<vector<int>(ruleExp rule)> findFun;
 
-class indexGenerator
+class index
+{
+protected:
+    bool supportMod=false;
+
+public:
+    virtual vector<int> find(ruleExp rule)=0;
+    col* c; //会直接跟着列变
+    index(col* c) : c(c) {}
+
+    bool isSupportMod() { return this->supportMod; }
+    virtual void add(vector<Basic*> tuple) { throw string("This index does not support updating"); }
+    virtual void mod(int opSub, vector<Basic*> tuple) { throw string("This index does not support updating"); }
+    virtual void del(int opSub) { throw string("This index does not support updating"); }
+
+    virtual ~index() {}
+};
+
+class traversalIndex : public index
 {
 public:
-    index traversal(col* c)
+    virtual vector<int> find(ruleExp rule)
     {
-        auto result=[c](ruleExp rule)
+        vector<int> result;
+        auto data=c->getAllData();
+        for(int i=0;i<data.size();i++)
         {
-            vector<int> result;
-            auto data=c->getAllData();
-            for(int i=0;i<data.size();i++)
-            {
-                Basic* v=data[i];
-                if(rule.eval(v))
-                    result.push_back(i);
-            }
-            return result;
-        };
+            Basic* v=data[i];
+            if(rule.eval(v))
+                result.push_back(i);
+        }
         return result;
     }
 };
