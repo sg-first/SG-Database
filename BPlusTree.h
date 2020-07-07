@@ -1,4 +1,6 @@
 #pragma once
+#include <utility>
+using namespace std;
 
 #define ORDER_V 2    /* 为简单起见，把v固定为2，实际的B+树v值应该是可配的。这里的v是内部节点中键的最小值 */
 
@@ -6,9 +8,10 @@
 #define MAXNUM_POINTER (MAXNUM_KEY + 1)    /* 内部结点中最多指向子树的指针个数，为2v */
 #define MAXNUM_DATA (ORDER_V * 2)    /* 叶子结点中最多数据个数，为2v */
 
-/* 键值的类型*/
-typedef int KEY_TYPE;    /* 为简单起见，定义为int类型，实际的B+树键值类型应该是可配的 */
-/*备注： 为简单起见，叶子结点的数据也只存储键值*/
+/* 存键值(basic.val)和数据段(下标)的结构 */
+typedef pair<float,int> DATA_TYPE;
+typedef float KEY_TYPE;
+typedef int VAL_TYPE;
 
 /* 结点类型 */
 enum NODE_TYPE
@@ -18,8 +21,7 @@ NODE_TYPE_INTERNAL = 2,    // 内部结点
 NODE_TYPE_LEAF     = 3,    // 叶子结点
 };
 
-#define nullptr 0
-#define INVALID 0
+const DATA_TYPE INVALID=DATA_TYPE(-1,-1);
 
 #define FLAG_LEFT 1
 #define FLAG_RIGHT 2
@@ -40,8 +42,8 @@ public:
     void SetCount(int i) { m_Count = i; }
 
     // 获取和设置某个元素，对中间结点指键值，对叶子结点指数据
-    virtual KEY_TYPE GetElement(int i) {return 0;}
-    virtual void SetElement(int i, KEY_TYPE value) { }
+    virtual DATA_TYPE GetElement(int i) {return INVALID;}
+    virtual void SetElement(int i, DATA_TYPE value) { }
 
     // 获取和设置某个指针，对中间结点指指针，对叶子结点无意义
     virtual CNode* GetPointer(int i) {return nullptr;}
@@ -58,7 +60,7 @@ public:
     void DeleteChildren();
 
 protected:
-    NODE_TYPE m_Type;    // 结点类型，取值为NODE_TYPE类型
+    NODE_TYPE m_Type;    // 结点类型，取值为NODE_TPE类型
     int m_Count;    // 有效数据个数，对中间结点指键个数，对叶子结点指数据个数
     CNode* m_pFather;     // 指向父结点的指针，标准B+树中并没有该指针，加上是为了更快地实现结点分裂和旋转等操作
 };
@@ -71,7 +73,7 @@ public:
     virtual ~CInternalNode();
 
     // 获取和设置键值，对用户来说，数字从1开始，实际在结点中是从0开始的
-    KEY_TYPE GetElement(int i)
+    DATA_TYPE GetElement(int i)
     {
         if ((i > 0 ) && (i <= MAXNUM_KEY))
         {
@@ -83,7 +85,7 @@ public:
         }
     }
 
-    void SetElement(int i, KEY_TYPE key)
+    void SetElement(int i, DATA_TYPE key)
     {
         if ((i > 0 ) && (i <= MAXNUM_KEY))
         {
@@ -113,19 +115,19 @@ public:
     }
 
     // 在结点pNode上插入键value
-    bool Insert(KEY_TYPE value, CNode* pNode);
+    bool Insert(DATA_TYPE value, CNode* pNode);
     // 删除键value
-    bool Delete(KEY_TYPE value);
+    bool Delete(DATA_TYPE value);
 
     // 分裂结点
-    KEY_TYPE Split(CInternalNode* pNode, KEY_TYPE key);
+    DATA_TYPE Split(CInternalNode* pNode, DATA_TYPE key);
     // 结合结点(合并结点)
     bool Combine(CNode* pNode);
     // 从另一结点移一个元素到本结点
     bool MoveOneElement(CNode* pNode);
 
 protected:
-    KEY_TYPE m_Keys[MAXNUM_KEY];           // 键数组
+    DATA_TYPE m_Keys[MAXNUM_KEY];           // 键数组
     CNode* m_Pointers[MAXNUM_POINTER];     // 指针数组
 
 };
@@ -138,7 +140,7 @@ public:
     virtual ~CLeafNode();
 
     // 获取和设置数据
-    KEY_TYPE GetElement(int i)
+    DATA_TYPE GetElement(int i)
     {
         if ((i > 0 ) && (i <= MAXNUM_DATA))
         {
@@ -150,7 +152,7 @@ public:
         }
     }
 
-    void SetElement(int i, KEY_TYPE data)
+    void SetElement(int i, DATA_TYPE data)
     {
         if ((i > 0 ) && (i <= MAXNUM_DATA))
         {
@@ -165,12 +167,12 @@ public:
     }
 
     // 插入数据
-    bool Insert(KEY_TYPE value);
+    bool Insert(DATA_TYPE value);
     // 删除数据
     bool Delete(KEY_TYPE value);
 
     // 分裂结点
-    KEY_TYPE Split(CNode* pNode);
+    DATA_TYPE Split(CNode* pNode);
     // 结合结点
     bool Combine(CNode* pNode);
 
@@ -179,7 +181,7 @@ public:
     CLeafNode* m_pNextNode;                 // 后一个结点
 
 protected:
-    KEY_TYPE m_Datas[MAXNUM_DATA];    // 数据数组
+    DATA_TYPE m_Datas[MAXNUM_DATA];    // 数据数组
 
 };
 
@@ -191,9 +193,9 @@ public:
     virtual ~BPlusTree();
 
     // 查找指定的数据
-    bool Search(KEY_TYPE data, char* sPath);
+    VAL_TYPE Search(KEY_TYPE key);
     // 插入指定的数据
-    bool Insert(KEY_TYPE data);
+    bool Insert(DATA_TYPE data);
     // 删除指定的数据
     bool Delete(KEY_TYPE data);
 
@@ -254,9 +256,9 @@ protected:
     // 为插入而查找叶子结点
     CLeafNode* SearchLeafNode(KEY_TYPE data);
     //插入键到中间结点
-    bool InsertInternalNode(CInternalNode* pNode, KEY_TYPE key, CNode* pRightSon);
+    bool InsertInternalNode(CInternalNode* pNode, DATA_TYPE key, CNode* pRightSon);
     // 在中间结点中删除键
-    bool DeleteInternalNode(CInternalNode* pNode, KEY_TYPE key);
+    bool DeleteInternalNode(CInternalNode* pNode, DATA_TYPE key);
 
     CNode* m_Root;    // 根结点
     int m_Depth;      // 树的深度
