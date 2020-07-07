@@ -1,6 +1,6 @@
 #pragma once
 #include "basicType.h"
-#include "typeHelper.h"
+#include "typeHelper.hpp"
 
 enum ruleOp{EQU,GRAT,SMAL,AND,OR,NOT};
 
@@ -28,6 +28,8 @@ public:
 
     ruleOp getOp() { return op; }
     int getNestingLevel() { return nestingLevel; }
+    Basic* getOperand2B() { return this->operand2B; }
+    ruleExp* getOperand2E() { return this->operand2E; }
 
     virtual bool eval(Basic* operand1B)
     {

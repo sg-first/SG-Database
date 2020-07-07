@@ -1,7 +1,7 @@
 #pragma once
 #include "basicType.h"
-#include "typeHelper.h"
-#include "typeHelper.h"
+#include "typeHelper.hpp"
+#include "typeHelper.hpp"
 #include <vector>
 using namespace std;
 

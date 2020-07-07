@@ -1,5 +1,5 @@
 #pragma once
-#include "table.h"
+#include "table.hpp"
 
 class view //视图主要是为了方便删除修改，因此不支持添加。如果原表被删除修改，视图即失效，因此注意生命周期
 {
