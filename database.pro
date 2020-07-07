@@ -16,7 +16,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         BPlusTree.cpp \
-        main.cpp
+        main.cpp \
+        tableIO.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
