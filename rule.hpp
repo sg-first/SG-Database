@@ -2,7 +2,7 @@
 #include "basicType.h"
 #include "typeHelper.hpp"
 
-enum ruleOp{EQU,GRAT,SMAL,AND,OR,NOT};
+enum ruleOp{EQU,GRAT,SMAL,AND,OR,NOT,UNRUAL};
 
 class ruleExp
 {
@@ -60,6 +60,7 @@ public:
     }
 };
 
+
 class numExp : public ruleExp
 {
 private:
@@ -102,6 +103,7 @@ public:
         throw string("error eval case");
     }
 };
+
 
 class logExp : public ruleExp
 {

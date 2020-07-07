@@ -2,6 +2,7 @@
 #include "col.hpp"
 #include "index.hpp"
 #include "IO.hpp"
+#include <algorithm>
 
 class table
 {
@@ -28,6 +29,12 @@ public:
             this->allCol.push_back(rc);
             this->allIndex.push_back(new traversalIndex(rc)); //索引不拷贝，重建
         }
+    }
+
+    void changeIndex(int sub, index* ind)
+    {
+        delete this->allIndex[sub];
+        this->allIndex[sub]=ind;
     }
 
     const vector<col*>& getAllCol() { return this->allCol; } //对col数据的修改必须经过table对象完成，否则无法
@@ -126,6 +133,34 @@ public:
             this->del(i-opFinishedNum); //前面的删掉了后面下标会向前串
             opFinishedNum++;
         }
+    }
+
+    vector<int> find(vector<ruleExp> allExp)
+    {
+        //先生成一个完整的范围，用于作为UNRUAL（无条件）的结果
+        vector<int> completeResult;
+        for(int i=0;i<this->allCol[0]->getAllData().size();i++)
+            completeResult.push_back(i);
+        //正式逐个进行WHERE
+        vector< vector<int> > allResult;
+        for(int i=0;i<this->allIndex.size();i++)
+        {
+            if(allExp[i].getOp()!=UNRUAL)
+            {
+                auto aresult=this->allIndex[i]->find(allExp[i]);
+                allResult.push_back(aresult);
+            }
+            else
+                allResult.push_back(completeResult);
+        }
+        //求result中每个元素交集
+        vector<int> result=allResult[0];
+        for(int i=1;i<allResult.size();i++)
+        {
+            vector<int>& v2=allResult[i];
+            set_intersection(result.begin(),result.end(),v2.begin(),v2.end(),back_inserter(result));
+        }
+        return result;
     }
 
     ~table()
