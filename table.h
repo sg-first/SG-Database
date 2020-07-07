@@ -3,6 +3,7 @@
 #include <list>
 #include "basicType.h"
 #include "record.h"
+#include "config.h"
 
 class col
 {
@@ -130,7 +131,6 @@ public:
             throw string("Col Size mismatch");
 
         vector<Basic*> recordTuple;
-
         for(int i=0;i<this->allCol.size();i++)
         {
             col* c=this->allCol[i];
@@ -138,7 +138,13 @@ public:
             if(modResult)
                 recordTuple.push_back(typeHelper::copy(tuple[i]));
             else
+            {
+                #ifdef logStrategy
                 recordTuple.push_back(new Placeholder()); //如果是不起实际作用的修改，就用Placeholder占位以免多占record空间
+                #else
+                recordTuple.push_back(c->getAllData()[opSub]);
+                #endif
+            }
         }
 
         //写入记录
