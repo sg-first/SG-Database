@@ -25,6 +25,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     BPlusTree.h \
+    IO.hpp \
     basicType.h \
     col.hpp \
     config.h \
