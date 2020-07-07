@@ -34,6 +34,8 @@ public:
 class traversalIndex : public index
 {
 public:
+    traversalIndex(col* _c) : index(_c) {}
+
     virtual vector<int> find(ruleExp rule)
     {
         vector<int> result;

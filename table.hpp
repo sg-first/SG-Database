@@ -7,17 +7,27 @@ class table
 {
 private:
     vector<col*> allCol; //push进来直接视为持有所有权
+    vector<index*> allIndex;
     list<record> allRecord;
 
     string table_to_str(vector<vector<int>>& len_data);
 
 public:
     string ID;
-    table(string ID, vector<col*>allCol) : allCol(allCol), ID(ID) {} //allCol中元素转移所有权
+    table(string ID, vector<col*>allCol) : allCol(allCol), ID(ID) //allCol中元素转移所有权
+    {
+        for(col* c : allCol)
+            this->allIndex.push_back(new traversalIndex(c)); //默认都是遍历索引
+    }
+
     table(const table& t) : ID(t.ID)
     {
         for(col* c : t.allCol)
-            this->allCol.push_back(new col(*c));
+        {
+            col* rc=new col(*c);
+            this->allCol.push_back(rc);
+            this->allIndex.push_back(new traversalIndex(rc)); //索引不拷贝，重建
+        }
     }
 
     const vector<col*>& getAllCol() { return this->allCol; } //对col数据的修改必须经过table对象完成，否则无法
@@ -53,6 +63,11 @@ public:
         for(int i=0;i<this->allCol.size();i++)
         {
             col* c=this->allCol[i];
+
+            index* ind=this->allIndex[i];
+            if(ind->isSupportMod())
+                ind->add(tuple[i]);
+
             c->pushDate(tuple[i]);
         }
         //写入记录
@@ -68,6 +83,11 @@ public:
         for(int i=0;i<this->allCol.size();i++)
         {
             col* c=this->allCol[i];
+
+            index* ind=this->allIndex[i];
+            if(ind->isSupportMod())
+                ind->mod(opSub,tuple[i]);
+
             bool modResult=c->mod(opSub,tuple[i]);
             if(modResult)
                 recordTuple.push_back(typeHelper::copy(tuple[i]));
@@ -88,7 +108,12 @@ public:
     void del(int opSub)
     {
         for(int i=0;i<this->allCol.size();i++)
+        {
+            index* ind=this->allIndex[i];
+            if(ind->isSupportMod())
+                ind->del(opSub);
             this->allCol[i]->del(opSub);
+        }
         //写入记录
         this->allRecord.push_back(record(opSub));
     }
@@ -107,5 +132,7 @@ public:
     {
         for(col* c : allCol)
             delete c;
+        for(index* i : allIndex)
+            delete i;
     }
 };
