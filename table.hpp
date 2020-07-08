@@ -15,6 +15,7 @@ private:
 
 public:
     string ID;
+    table(string ID) : ID(ID) {}
     table(string ID, vector<col*>allCol) : allCol(allCol), ID(ID) //allCol中元素转移所有权
     {
         for(col* c : allCol)

@@ -49,7 +49,7 @@ table* table::loadFile(string path) //按约定格式从文件中读取表
 {
         string to_do=IO::read_from_file(path);
         vector<vector<int>> len_data;
-        if(!if_file_exist(IO::path_to_lenpath(path))){
+        if(!IO::if_file_exist(IO::path_to_lenpath(path))){
             int beg_get_len=0;
             int row_get_len=0;
             for(int i=0;i<to_do.length();i++){
@@ -82,7 +82,7 @@ table* table::loadFile(string path) //按约定格式从文件中读取表
 				beg = i + 1;
 			}
 		}
-        if(if_file_exist(IO::path_to_lenpath(path))){
+        if(IO::if_file_exist(IO::path_to_lenpath(path))){
             len_data=IO::read_from_len_file(path);
         }
         for(int i=0;i<frame.size();i++){
@@ -112,7 +112,7 @@ table* table::loadFile(string path) //按约定格式从文件中读取表
 		}
 		return table_frame;
 		//fix:编写此函数
-
+}
 void table::updateFile(string path) //根据table.allRecord更新文件内容
 {
         vector<vector<int>> len_data=IO::read_from_len_file(path);
@@ -137,3 +137,4 @@ void table::updateFile(string path) //根据table.allRecord更新文件内容
         //全部写入后清除record记录
         this->allRecord.clear();
     }
+
