@@ -55,16 +55,15 @@ private:
 
     static float getVal(Basic* v)
     {
-        float val;
         if(v->getType()==INT)
         {
             Int* rv=(Int*)v;
-            val=rv->val;
+            return rv->val;
         }
         else if(v->getType()==FLOAT)
         {
             Float* rv=(Float*)v;
-            val=rv->val;
+            return rv->val;
         }
         else
             throw string("type mismatch");
