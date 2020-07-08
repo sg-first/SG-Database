@@ -17,7 +17,7 @@ private:
 
 public:
     string ID;
-    view(table* t, vector<int> allSub) : t(t), allSub(allSub) {} //allSub必须排序
+    view(string ID, table* t, vector<int> allSub) : t(t), allSub(allSub), ID(ID) {} //allSub必须排序
 
     bool delElmDir(int opSub) //删除了一个基本表下标，如果其影响视图映射到的基本表下标，进行对应修正操作
     {
