@@ -1,7 +1,7 @@
 #pragma once
 #include "table.hpp"
 
-class view //视图主要是为了方便删除修改，因此不支持添加。如果原表被删除修改，视图即失效，因此注意生命周期
+class view //视图主要是为了方便删除修改，因此不支持添加。如果基本表被删除修改，视图即失效，因此注意生命周期
 {
 private:
     table *t;
@@ -13,6 +13,14 @@ private:
         if(result==-1)
             throw string("operand elm is not in the view");
         return result;
+    }
+
+    void delElm(int opSub) //删除视图中的某个元素（不改变基本表，应当是在基本表删完了之后调用）
+    {
+        this->allSub.erase(this->allSub.begin()+opSub); //把视图里的元组也删了
+        //后面的值得前移，因为基本表往前串了
+        for(int i=opSub;i<this->allSub.size();i++) //原先的opSub删掉了，新的对应位置是后面串上来的
+            this->allSub[i]--;
     }
 
 public:
@@ -27,21 +35,15 @@ public:
     void del(int opSub)
     {
         t->del(this->allSub[opSub]);
-        this->allSub.erase(this->allSub.begin()+opSub); //把视图里的元组也删了
+        this->delElm(opSub);
     }
 
     void del(vector<int> allOpSub)
     {
-        //把视图的sub转成原表的sub
-        vector<int> realSub;
-        for(int i : allOpSub)
-            realSub.push_back(this->allSub[i]);
-        t->del(realSub);
-        //删视图里的
         int opFinishedNum=0;
         for(int i : allOpSub)
         {
-            this->allSub.erase(this->allSub.begin()+i-opFinishedNum); //前面的删掉了后面下标会向前串
+            this->del(i-opFinishedNum); //前面的删掉了后面下标会向前串
             opFinishedNum++;
         }
     }
@@ -54,25 +56,16 @@ public:
     void delDir(int opSub)
     {
         int viewSub=find(opSub); //找到视图中对应的下标
-        t->del(opSub); //确认都能找到，把原表的删了
-        this->allSub.erase(this->allSub.begin()+viewSub); //把视图中对应的删掉
+        t->del(opSub); //确认都能找到，把基本表的删了
+        this->delElm(viewSub);
     }
 
     void delDir(vector<int> allOpSub) //warn:所有vector<int>sub全都要求排序
     {
-        //按顺序找到视图的下标
-        vector<int>viewSub;
+        int opFinishedNum=0;
         for(int i : allOpSub)
         {
-            int sub=find(i);
-            viewSub.push_back(sub);
-        }
-        t->del(allOpSub); //确认都能找到，把原表的删了
-        //删视图里的
-        int opFinishedNum=0;
-        for(int i : viewSub)
-        {
-            this->allSub.erase(this->allSub.begin()+i-opFinishedNum); //前面的删掉了后面下标会向前串
+            this->delDir(i-opFinishedNum); //前面的删掉了后面下标会向前串
             opFinishedNum++;
         }
     }
