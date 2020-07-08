@@ -27,6 +27,36 @@ public:
     string ID;
     view(table* t, vector<int> allSub) : t(t), allSub(allSub) {} //allSub必须排序
 
+    bool delElmDir(int opSub) //删除了一个基本表下标，如果其影响视图映射到的基本表下标，进行对应修正操作
+    {
+        int result=helper::find(this->allSub,opSub);
+        if(result==-1)
+        {
+            //如果没找到，看删除的这个基本表是否在这个视图的区间内，如果是的话，其对应下标之后的都要前移
+            if(allSub[0]<opSub && opSub>allSub[allSub.size()-1])
+            {
+                int startPos=0;
+                for(int tupSub : allSub) //找到基本表中删除这个元素影响的第一个下标
+                {
+                    if(tupSub>opSub)
+                        break;
+                    else
+                        startPos++;
+                }
+                //startPos之后含startPos元素都前移
+                for(int i=startPos;i<this->allSub.size();i++)
+                    this->allSub[i]--;
+                return true;
+            }
+            return false;
+        }
+        else
+        {
+            this->delElm(result);
+            return true;
+        }
+    }
+
     void mod(int opSub, vector<Basic*> tuple)
     {
         t->mod(this->allSub[opSub],tuple);
@@ -48,7 +78,7 @@ public:
         }
     }
 
-    void modDir(int opSub, vector<Basic*> tuple)
+    /*void modDir(int opSub, vector<Basic*> tuple)
     {
         t->mod(opSub,tuple);
     }
@@ -68,5 +98,5 @@ public:
             this->delDir(i-opFinishedNum); //前面的删掉了后面下标会向前串
             opFinishedNum++;
         }
-    }
+    }*/
 };
