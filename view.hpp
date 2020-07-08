@@ -7,14 +7,6 @@ private:
     table *t;
     vector<int> allSub;
 
-    int find(int i)
-    {
-        int result=helper::find(this->allSub,i);
-        if(result==-1)
-            throw string("operand elm is not in the view");
-        return result;
-    }
-
     void delElm(int opSub) //删除视图中的某个元素（不改变基本表，应当是在基本表删完了之后调用）
     {
         this->allSub.erase(this->allSub.begin()+opSub); //把视图里的元组也删了
