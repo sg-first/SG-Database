@@ -12,11 +12,12 @@ protected:
     ruleExp* operand2E=nullptr; //可以给两个布尔值比较
     int nestingLevel=0;
 
-    bool operandIsBasic() { return operand2B==nullptr; }
+    bool operandIsBasic() { return operand2B!=nullptr; }
 
 public:
     ruleExp(ruleOp op, Basic* operand) : op(op), operand2B(operand) {}
     ruleExp(ruleOp op, ruleExp* operand) : op(op), operand2E(operand), nestingLevel(operand->nestingLevel+1) {}
+    ruleExp() : op(UNRUAL) {}
 
     void resetOperand(Basic* operand)
     {
@@ -55,7 +56,7 @@ public:
 
     virtual ~ruleExp()
     {
-        //delete operand2B; //fix:先不持有所有权了
+        delete operand2B; //持有所有权
         delete operand2E;
     }
 };

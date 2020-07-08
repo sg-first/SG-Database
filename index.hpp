@@ -10,15 +10,13 @@ using namespace std;
 //返回的下标组必须排序
 //如果操作的是视图，就把查询结果和视图的allSub取交集（返回的还是原表的sub而不是视图表的）
 
-typedef function<vector<int>(ruleExp rule)> findFun;
-
 class index
 {
 protected:
     bool supportMod=false;
 
 public:
-    virtual vector<int> find(ruleExp rule)=0;
+    virtual vector<int> find(ruleExp* rule)=0;
     col* c; //会直接跟着列变
     index(col* c) : c(c) {}
 
@@ -36,14 +34,14 @@ class traversalIndex : public index
 public:
     traversalIndex(col* _c) : index(_c) {}
 
-    virtual vector<int> find(ruleExp rule)
+    virtual vector<int> find(ruleExp* rule)
     {
         vector<int> result;
         auto data=c->getAllData();
         for(int i=0;i<data.size();i++)
         {
             Basic* v=data[i];
-            if(rule.eval(v))
+            if(rule->eval(v))
                 result.push_back(i);
         }
         return result; //这个本来就是从前到后遍历的，就不用排序了
@@ -125,11 +123,11 @@ public:
         pTree->Insert(make_pair(val,opSub));
     }
 
-    virtual vector<int> find(ruleExp rule)
+    virtual vector<int> find(ruleExp* rule)
     {
-        if(rule.getOp()==EQU)
+        if(rule->getOp()==EQU)
         {
-            Basic* v=rule.getOperand2B();
+            Basic* v=rule->getOperand2B();
             int aresult=pTree->Search(getVal(v));
             vector<int> result;
             result.push_back(aresult);

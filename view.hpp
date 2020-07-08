@@ -19,7 +19,7 @@ public:
     string ID;
     view(string ID, table* t, vector<int> allSub) : t(t), allSub(allSub), ID(ID) {} //allSub必须排序
 
-    bool delElmDir(int opSub) //删除了一个基本表下标，如果其影响视图映射到的基本表下标，进行对应修正操作
+    bool delElmDir(int opSub) //删除了一个基本表元组，如果其影响视图映射到的基本表下标，进行对应修正操作
     {
         int result=helper::find(this->allSub,opSub);
         if(result==-1)

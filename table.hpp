@@ -135,7 +135,7 @@ public:
         }
     }
 
-    vector<int> find(vector<ruleExp> allExp)
+    vector<int> find(vector<ruleExp*> allExp)
     {
         //先生成一个完整的范围，用于作为UNRUAL（无条件）的结果
         vector<int> completeResult;
@@ -145,7 +145,7 @@ public:
         vector< vector<int> > allResult;
         for(int i=0;i<this->allIndex.size();i++)
         {
-            if(allExp[i].getOp()!=UNRUAL)
+            if(allExp[i]->getOp()!=UNRUAL)
             {
                 auto aresult=this->allIndex[i]->find(allExp[i]);
                 allResult.push_back(aresult);
