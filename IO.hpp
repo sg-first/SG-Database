@@ -9,6 +9,26 @@ using namespace std;
 class IO
 {
 public:
+    static bool if_file_exist(const string& path)
+    {
+        ifstream f(path);
+        return f.good();
+    }
+
+    static string path_to_name(const string& path)
+    {
+        int beg = path.find_last_of('\\');
+        int end = path.find_last_of('.');
+        return path.substr(beg + 1, end - (beg + 1));
+    }
+
+    static string path_to_lenpath(const string& path)
+    {
+        string len_path=path;
+        len_path.insert(len_path.find_last_of("."),"_len");
+        return len_path;
+    }
+
     static string read_from_file(const string& path)
     {
         fstream process(path, ios::in);
@@ -21,17 +41,14 @@ public:
         return to_do;
     }
 
-    static string path_to_lenpath(const string& path)
+    static void write_to_file(const string& path,const string& data)
     {
-        string len_path=path;
-        len_path.insert(len_path.find_last_of("."),"_len");
-        return len_path;
-    }
-
-    static bool if_file_exist(const string& path)
-    {
-        ifstream f(path);
-        return f.good();
+        fstream write(path,ios::out|ios::trunc);
+        /*if (!write.is_open())
+            throw string("fail to open the file(write)");*/
+        write.seekp(0, ios::beg);
+        write << data;
+        write.close();
     }
 
     static vector<vector<int>> read_from_len_file(const string& path)
@@ -117,22 +134,5 @@ public:
         for(int i=opSub+1;i<len_data.size();i++){
             len_data[i][1]=len_data[i][1]+1;
         }
-    }
-
-    static string path_to_name(const string& path)
-    {
-        int beg = path.find_last_of('\\');
-        int end = path.find_last_of('.');
-        return path.substr(beg + 1, end - (beg + 1));
-    }
-
-    static void write_to_file(const string& path,const string& data)
-    {
-        fstream write(path,ios::out|ios::trunc);
-        /*if (!write.is_open())
-            throw string("fail to open the file(write)");*/
-        write.seekp(0, ios::beg);
-        write << data;
-        write.close();
     }
 };

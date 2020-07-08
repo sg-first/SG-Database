@@ -93,7 +93,7 @@ table* table::loadFile(string path) //按约定格式从文件中读取表
         }
         IO::write_to_len_file(path,len_data);
         frame.pop_back();
-		table* table_frame = new table(IO::path_to_name(path));
+        vector<col*> cols;
 		for (int i = 0; i < frame[0].size(); i++) {
 			string ID;
 			TYPE type;
@@ -108,9 +108,9 @@ table* table::loadFile(string path) //按约定格式从文件中读取表
             for (int j = 1; j < frame.size(); j++) {
                 column->pushDate(typeHelper::strToBasic(frame[j][i],type));
 			}
-            table_frame->allCol.push_back(column);
+            cols.push_back(column);
 		}
-		return table_frame;
+        return new table(IO::path_to_name(path),cols);
 		//fix:编写此函数
 }
 void table::updateFile(string path) //根据table.allRecord更新文件内容
