@@ -38,7 +38,7 @@ public:
             CONVCMP(FLOAT,Float)
             CONVCMP(BOOL,Bool)
             CONVCMP(STR,Str)
-            return true;
+            return false;
         }
     }
 
