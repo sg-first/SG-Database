@@ -133,6 +133,7 @@ void table::updateFile(string path) //根据table.allRecord更新文件内容
             }
             }
         }
+        IO::write_to_len_file(path,len_data);
         //全部写入后清除record记录
         this->allRecord.clear();
     }
