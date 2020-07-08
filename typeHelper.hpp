@@ -1,6 +1,8 @@
 #pragma once
 #include "basicType.h"
 #include <vector>
+#include <set>
+#include<algorithm>
 
 class typeHelper
 {
@@ -83,5 +85,16 @@ public:
             high = mid-1;
       }
       return -1;
+    }
+
+    static void dupRemove(vector<int> &vec)
+    {
+        set<int>s(vec.begin(), vec.end());
+        vec.assign(s.begin(), s.end());
+    }
+
+    static void sortVec(vector<int> &vec)
+    {
+        sort(vec.begin(),vec.end());
     }
 };

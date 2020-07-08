@@ -159,7 +159,9 @@ public:
         {
             vector<int>& v2=allResult[i];
             set_intersection(result.begin(),result.end(),v2.begin(),v2.end(),back_inserter(result));
+            helper::dupRemove(result);
         }
+        helper::sortVec(result);
         return result;
     }
 

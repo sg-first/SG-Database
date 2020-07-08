@@ -44,7 +44,7 @@ public:
                 {
                     Bool* boolOp1B=(Bool*)operand1B;
                     bool result=operand2E->eval(operand1B);
-                    return boolOp1B->getType()==result;
+                    return boolOp1B->val==result;
                 }
                 else
                     throw string("type mismatch");
