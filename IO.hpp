@@ -99,6 +99,9 @@ public:
         item.push_back(new_data.length());
         item.push_back(len_data[len_data.size()-1][1]);
         len_data.push_back(item);
+        fstream write_len(path_to_lenpath(path),ios::app);
+        write_len<<(to_string(item[0])+","+to_string(item[1])+"\n");
+        write_len.close();
     }
 
     static void do_del(int opSub,const string& path,vector<vector<int>>& len_data)
