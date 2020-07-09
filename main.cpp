@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    //建表
+    //建表    
     col* ID=new col(INT,"ID");
     for(int i=0;i<10;i++)
         ID->pushDate(new Int(i));
@@ -34,21 +34,23 @@ int main(int argc, char *argv[])
     auto result=try_table->find({r,nullptr,nullptr});
     outputVec(result);
     ruleExp* r2=new numExp(GRAT,new Int(3));
-    result=try_table->find({r2,nullptr,nullptr});
+    ruleExp* r3=new numExp(GRAT,new Float(0.6));
+    result=try_table->find({r2,r3,nullptr});
     outputVec(result);
 
     //表抽取
-    auto t2=try_table->genNewTable(helper::getRange(0,2),result);
+    auto t2=try_table->genNewTable({0,2},result);
     cout<<t2->toStr()<<endl;
 
     //换索引
     index* ni=new BPlusTreeIndex(ID);
     try_table->changeIndex(0,ni);
     result=try_table->find({r,nullptr,nullptr});
-    cout<<result[0]<<endl;
+    outputVec(result);
 
     delete r;
     delete r2;
+    delete r3;
 
     return a.exec();
 }

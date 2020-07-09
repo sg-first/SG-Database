@@ -87,16 +87,22 @@ public:
       return -1;
     }
 
-    static void dupRemove(vector<int> &vec)
+    static set<int> toSet(const vector<int> &vec)
     {
-        set<int>s(vec.begin(), vec.end());
+        return set<int>(vec.begin(), vec.end());
+    }
+
+    /*static vector<int> toVec(const set<int> &s)
+    {
+        vector<int> vec;
         vec.assign(s.begin(), s.end());
+        return vec;
     }
 
     static void sortVec(vector<int> &vec)
     {
         sort(vec.begin(),vec.end());
-    }
+    }*/
 
     static vector<int> getRange(int start,int end)
     {
