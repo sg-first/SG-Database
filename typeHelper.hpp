@@ -70,7 +70,8 @@ public:
 class helper
 {
 public:
-    static int find(vector<int> &invec, int value)
+    template<class T>
+    static int find(const vector<T> &invec, int value)
     {
       int low = 0, high = invec.size()-1;
       //assert(!invec.empty() && pos>=0);
@@ -87,22 +88,22 @@ public:
       return -1;
     }
 
-    static set<int> toSet(const vector<int> &vec)
+    /*static set<int> toSet(const vector<int> &vec)
     {
         return set<int>(vec.begin(), vec.end());
     }
 
-    /*static vector<int> toVec(const set<int> &s)
+    static vector<int> toVec(const set<int> &s)
     {
         vector<int> vec;
         vec.assign(s.begin(), s.end());
         return vec;
-    }
+    }*/
 
     static void sortVec(vector<int> &vec)
     {
         sort(vec.begin(),vec.end());
-    }*/
+    }
 
     static vector<int> getRange(int start,int end)
     {

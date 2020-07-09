@@ -48,11 +48,24 @@ public:
     }
 };
 
-class BPlusTreeIndex : public index //使用该索引默认为unique约束列
+class binarySearchIndex : public index
 {
 private:
-    BPlusTree* pTree;
+    vector<float> sortVec;
 
+    void colToVec()
+    {
+        sortVec.clear();
+        for(Basic* v : this->c->getAllData())
+            sortVec.push_back(binarySearchIndex::getVal(v));
+    }
+
+    void resort()
+    {
+        sort(sortVec.begin(),sortVec.end());
+    }
+
+public:
     static float getVal(Basic* v)
     {
         if(v->getType()==INT)
@@ -68,6 +81,60 @@ private:
         else
             throw string("type mismatch");
     }
+
+    binarySearchIndex(col* _c) : index(_c)
+    {
+        this->colToVec();
+        this->resort();
+    }
+
+    virtual void add(Basic *v) override
+    {
+        this->sortVec.push_back(binarySearchIndex::getVal(v));
+        this->resort();
+    }
+    virtual void mod(int opSub, Basic *v) override
+    {
+        this->del(opSub);
+        this->add(v);
+    }
+    virtual void del(int opSub) override
+    {
+        this->sortVec.erase(this->sortVec.begin()+opSub);
+    }
+    virtual vector<int> find(ruleExp *rule) override
+    {
+        if(rule->operandIsBasic())
+        {
+            int value=binarySearchIndex::getVal(rule->getOperand2B());
+            int sub=helper::find(this->sortVec,value);
+            vector<int> result;
+            if(rule->getOp()==EQU)
+            {
+                result.push_back(sub);
+                return result;
+            }
+            else if(rule->getOp()==GRAT)
+            {
+                for(int i=sub+1;i<this->sortVec.size();i++)
+                    result.push_back(this->sortVec[i]);
+                return result;
+            }
+            else if(rule->getOp()==SMAL)
+            {
+                for(int i=0;i<sub;i++)
+                    result.push_back(this->sortVec[i]);
+                return result;
+            }
+        }
+        throw string("this index does not support this exp");
+    }
+};
+
+class BPlusTreeIndex : public index //使用该索引默认为unique约束列
+{
+private:
+    BPlusTree* pTree;
 
 public:
     BPlusTreeIndex(col* _c) : index(_c)
@@ -104,7 +171,7 @@ public:
 
     virtual void add(Basic* v)
     {
-        float val=getVal(v);
+        float val=binarySearchIndex::getVal(v);
         int sub=c->getAllData().size();
         pTree->Insert(make_pair(val,sub));
     }
@@ -112,13 +179,13 @@ public:
     virtual void del(int opSub)
     {
         Basic* v=c->getAllData()[opSub];
-        pTree->Delete(getVal(v));
+        pTree->Delete(binarySearchIndex::getVal(v));
     }
 
     virtual void mod(int opSub, Basic* v)
     {
         this->del(opSub);
-        float val=getVal(v);
+        float val=binarySearchIndex::getVal(v);
         pTree->Insert(make_pair(val,opSub));
     }
 
@@ -127,7 +194,7 @@ public:
         if(rule->getOp()==EQU)
         {
             Basic* v=rule->getOperand2B();
-            int aresult=pTree->Search(getVal(v));
+            int aresult=pTree->Search(binarySearchIndex::getVal(v));
             vector<int> result;
             result.push_back(aresult);
             return result;

@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
     cout<<try_table->toStr()<<endl;
 
     //构造查找条件
-    ruleExp* r=new ruleExp(EQU,new Int(3));
+    ruleExp* r=new ruleExp(EQU,new Int(7));
     auto result=try_table->find({r,nullptr,nullptr});
     outputVec(result);
     ruleExp* r2=new numExp(GRAT,new Int(3));
@@ -43,9 +43,9 @@ int main(int argc, char *argv[])
     cout<<t2->toStr()<<endl;
 
     //换索引
-    index* ni=new BPlusTreeIndex(ID);
+    index* ni=new binarySearchIndex(ID);
     try_table->changeIndex(0,ni);
-    result=try_table->find({r,nullptr,nullptr});
+    result=try_table->find({r2,r3,nullptr});
     outputVec(result);
 
     delete r;

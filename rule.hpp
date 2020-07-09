@@ -12,12 +12,11 @@ protected:
     ruleExp* operand2E=nullptr; //可以给两个布尔值比较
     int nestingLevel=0;
 
-    bool operandIsBasic() { return operand2B!=nullptr; }
-
 public:
     ruleExp(ruleOp op, Basic* operand) : op(op), operand2B(operand) {}
     ruleExp(ruleOp op, ruleExp* operand) : op(op), operand2E(operand), nestingLevel(operand->nestingLevel+1) {}
 
+    bool operandIsBasic() { return operand2B!=nullptr; }
     void resetOperand(Basic* operand)
     {
         this->operand2B=operand;
