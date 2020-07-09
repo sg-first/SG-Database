@@ -2,6 +2,13 @@
 #include <iostream>
 #include "table.hpp"
 
+void outputVec(const vector<int> &vec)
+{
+    for(int i : vec)
+        cout<<i<<" ";
+    cout<<endl;
+}
+
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
@@ -20,21 +27,28 @@ int main(int argc, char *argv[])
         score_2->pushDate(new Float(i));
 
     table* try_table = new table("student table",{ID,score,score_2});
+    cout<<try_table->toStr()<<endl;
 
     //构造查找条件
     ruleExp* r=new ruleExp(EQU,new Int(3));
-    ruleExp* unr=new ruleExp;
-    auto result=try_table->find({r,unr,unr});
-    cout<<result[0]<<endl;
+    auto result=try_table->find({r,nullptr,nullptr});
+    outputVec(result);
+    ruleExp* r2=new numExp(GRAT,new Int(3));
+    result=try_table->find({r2,nullptr,nullptr});
+    outputVec(result);
+
+    //表抽取
+    auto t2=try_table->genNewTable(helper::getRange(0,2),result);
+    cout<<t2->toStr()<<endl;
 
     //换索引
     index* ni=new BPlusTreeIndex(ID);
     try_table->changeIndex(0,ni);
-    result=try_table->find({r,unr,unr});
+    result=try_table->find({r,nullptr,nullptr});
     cout<<result[0]<<endl;
 
     delete r;
-    delete unr;
+    delete r2;
 
     return a.exec();
 }

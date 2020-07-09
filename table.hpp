@@ -11,7 +11,7 @@ private:
     vector<index*> allIndex;
     list<record> allRecord;
 
-    string table_to_str(vector<vector<int>>& len_data);
+    string toStr(vector<vector<int>>&);
 
 public:
     string ID;
@@ -31,6 +31,12 @@ public:
         }
     }
 
+    string toStr()
+    {
+        vector<vector<int>> vec;
+        return this->toStr(vec);
+    }
+
     void changeIndex(int sub, index* ind)
     {
         delete this->allIndex[sub];
@@ -44,19 +50,19 @@ public:
     void saveFile(string path) //将整个表的内容按约定格式写入空文件
     {
         vector<vector<int>> len_data;
-        string data=this->table_to_str(len_data);
+        string data=this->toStr();
         IO::write_to_file(path,data);
         IO::write_to_len_file(path,len_data);
     }
 
     void updateFile(string path);
 
-    table* genNewTable(vector<int> subList) //注意这个视图是个新表，和原表没有对应关系
+    table* genNewTable(vector<int> colSubList, vector<int> tupSubList)
     {
         vector<col*> newAllCol;
-        for(col* c : allCol)
+        for(int i : colSubList)
         {
-            col* selectCol=c->genNewCol(subList);
+            col* selectCol=allCol[i]->genNewCol(tupSubList);
             newAllCol.push_back(selectCol);
         }
         table* result=new table(this->ID, newAllCol);
@@ -137,7 +143,7 @@ public:
 
     vector<int> find(vector<ruleExp*> allExp)
     {
-        //先生成一个完整的范围，用于作为UNRUAL（无条件）的结果
+        //先生成一个完整的范围，用于作为nullptr（无条件）的结果
         vector<int> completeResult;
         for(int i=0;i<this->allCol[0]->getAllData().size();i++)
             completeResult.push_back(i);
@@ -145,7 +151,7 @@ public:
         vector< vector<int> > allResult;
         for(int i=0;i<this->allIndex.size();i++)
         {
-            if(allExp[i]->getOp()!=UNRUAL)
+            if(allExp[i]!=nullptr)
             {
                 auto aresult=this->allIndex[i]->find(allExp[i]);
                 allResult.push_back(aresult);

@@ -1,6 +1,6 @@
 #include "table.hpp"
 
-string table::table_to_str(vector<vector<int>>& len_data)
+string table::toStr(vector<vector<int>>& len_data)
 {
     int m=(this->allCol[0]->getAllData()).size()+1;
     int n=this->allCol.size();

@@ -2,7 +2,7 @@
 #include "basicType.h"
 #include "typeHelper.hpp"
 
-enum ruleOp{EQU,GRAT,SMAL,AND,OR,NOT,UNRUAL};
+enum ruleOp{EQU,GRAT,SMAL,AND,OR,NOT};
 
 class ruleExp
 {
@@ -17,7 +17,6 @@ protected:
 public:
     ruleExp(ruleOp op, Basic* operand) : op(op), operand2B(operand) {}
     ruleExp(ruleOp op, ruleExp* operand) : op(op), operand2E(operand), nestingLevel(operand->nestingLevel+1) {}
-    ruleExp() : op(UNRUAL) {}
 
     void resetOperand(Basic* operand)
     {
@@ -81,6 +80,9 @@ private:
     }
 
 public:
+    numExp(ruleOp _op, Basic* _operand) : ruleExp(_op,_operand) {}
+    numExp(ruleOp _op, ruleExp* _operand) : ruleExp(_op,_operand) {}
+
     virtual bool eval(Basic* operand1B)
     {
         if(op==GRAT || op==SMAL)
