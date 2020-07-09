@@ -89,6 +89,7 @@ table* table::loadFile(string path) //按约定格式从文件中读取表
            if('#'==frame[i][0][0]){
                frame.erase(frame.begin()+i);
                len_data.erase(len_data.begin()+i);
+               i--;
            }
         }
         IO::write_to_len_file(path,len_data);
