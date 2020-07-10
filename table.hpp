@@ -170,6 +170,20 @@ public:
         return result;
     }
 
+    vector<int> findCol(vector<string> colID)
+    {
+        vector<int> result;
+        for(int i=0;i<this->allCol.size();i++)
+        {
+            col* c=this->allCol[i];
+            vector<string>::iterator it;
+            it=std::find(colID.begin(),colID.end(),c->ID);
+            if (it!=colID.end())
+                result.push_back(i);
+        }
+        return result;
+    }
+
     ~table()
     {
         for(col* c : allCol)

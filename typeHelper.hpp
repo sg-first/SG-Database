@@ -100,9 +100,9 @@ public:
         return vec;
     }*/
 
-    static void sortVec(vector<int> &vec)
+    static void sort(vector<int> &vec)
     {
-        sort(vec.begin(),vec.end());
+        std::sort(vec.begin(),vec.end());
     }
 
     static vector<int> getRange(int start,int end)
