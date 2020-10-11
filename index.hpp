@@ -83,7 +83,11 @@ private:
 
     void resort()
     {
-        //fix:复制个快排来改改，以sortVec[i].first为基准
+        sort(sortVec.begin(),sortVec.end(),
+             [](pair<int,int> i1,pair<int,int> i2) {
+                return i1.first<i2.first;
+             }
+        );
     }
 
 public:
