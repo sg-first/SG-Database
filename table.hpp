@@ -80,7 +80,7 @@ public:
             if(ind->isSupportMod())
                 ind->add(tuple[i]);
 
-            c->pushDate(tuple[i]);
+            c->pushData(tuple[i]);
         }
         //写入记录
         this->allRecord.push_back(record(tuple));

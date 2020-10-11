@@ -51,18 +51,39 @@ public:
 class binarySearchIndex : public index
 {
 private:
-    vector<float> sortVec;
+    vector<pair<float,int>> sortVec;
 
     void colToVec()
     {
         sortVec.clear();
-        for(Basic* v : this->c->getAllData())
-            sortVec.push_back(binarySearchIndex::getVal(v));
+        auto allData=this->c->getAllData();
+        for(int i=0;i<allData.size();i++)
+        {
+            Basic* v=allData[i];
+            sortVec.push_back(make_pair(binarySearchIndex::getVal(v),i));
+        }
+    }
+
+    static pair<int,int> binFind(const vector<pair<float,int>> &invec, float value) //返回的是sub和opSub（表中的）
+    {
+      int low = 0, high = invec.size()-1;
+      //assert(!invec.empty() && pos>=0);
+      while(low <=high)
+      {
+          int mid = (low+high)/2;
+          if(invec[mid].first == value)
+            return make_pair(mid,invec[mid].second);
+          else if(invec[mid].first < value)
+            low = mid+1;
+          else
+            high = mid-1;
+      }
+      return make_pair(-1,-1);
     }
 
     void resort()
     {
-        sort(sortVec.begin(),sortVec.end());
+        //fix:复制个快排来改改，以sortVec[i].first为基准
     }
 
 public:
@@ -90,12 +111,19 @@ public:
 
     virtual void add(Basic *v) override
     {
-        this->sortVec.push_back(binarySearchIndex::getVal(v));
+        int sub=sortVec.size();
+        this->sortVec.push_back(make_pair(binarySearchIndex::getVal(v),sub));
         this->resort();
     }
     virtual void mod(int opSub, Basic *v) override
     {
-        this->del(opSub);
+        int sub=-1;
+        for(auto i : this->sortVec)
+        {
+            if(i.second==opSub)
+                sub=i.second;
+        }
+        this->del(sub);
         this->add(v);
     }
     virtual void del(int opSub) override
@@ -107,23 +135,23 @@ public:
         if(rule->operandIsBasic())
         {
             int value=binarySearchIndex::getVal(rule->getOperand2B());
-            int sub=helper::find(this->sortVec,value);
+            auto sub=binFind(this->sortVec,value); //返回的是sub和opSub
             vector<int> result;
             if(rule->getOp()==EQU)
             {
-                result.push_back(sub);
+                result.push_back(sub.second);
                 return result;
             }
             else if(rule->getOp()==GRAT)
             {
-                for(int i=sub+1;i<this->sortVec.size();i++)
-                    result.push_back(this->sortVec[i]);
+                for(int i=sub.first+1;i<this->sortVec.size();i++)
+                    result.push_back(this->sortVec[i].second);
                 return result;
             }
             else if(rule->getOp()==SMAL)
             {
-                for(int i=0;i<sub;i++)
-                    result.push_back(this->sortVec[i]);
+                for(int i=0;i<sub.first;i++)
+                    result.push_back(this->sortVec[i].second);
                 return result;
             }
         }

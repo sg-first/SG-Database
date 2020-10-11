@@ -107,7 +107,7 @@ table* table::loadFile(string path) //按约定格式从文件中读取表
 			}
 			col* column = new col(type, ID);
             for (int j = 1; j < frame.size(); j++) {
-                column->pushDate(typeHelper::strToBasic(frame[j][i],type));
+                column->pushData(typeHelper::strToBasic(frame[j][i],type));
 			}
             cols.push_back(column);
 		}

@@ -25,7 +25,7 @@ public:
 
     TYPE getType() { return this->type; }
 
-    void pushDate(Basic* v) //应该使用这个函数push
+    void pushData(Basic* v) //应该使用这个函数push
     {
         if(v->getType()!=this->getType())
             throw string("type mismatch");
