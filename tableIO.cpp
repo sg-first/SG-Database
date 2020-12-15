@@ -1,6 +1,6 @@
 #include "table.hpp"
 
-string table::toStr(vector<vector<int>>& len_data)
+string table::toStr()
 {
     int m=(this->allCol[0]->getAllData()).size()+1;
     int n=this->allCol.size();
@@ -30,6 +30,10 @@ string table::toStr(vector<vector<int>>& len_data)
             }
         }
     }
+    return data;
+}
+
+void table::update_len(vector<vector<int> > & len_data,const string& data){
     int beg=0;
     int row=0;
     for(int i=0;i<data.length();i++){
@@ -41,9 +45,16 @@ string table::toStr(vector<vector<int>>& len_data)
              row++;
         }
     }
-    return data;
 }
 
+void table:: saveFile(string path) //将整个表的内容按约定格式写入空文件
+{
+    string data=this->toStr();
+    vector<vector<int>> len_data;
+    this->update_len(len_data,data);
+    IO::write_to_file(path,data);
+    IO::write_to_len_file(path,len_data);
+}
 
 table* table::loadFile(string path) //按约定格式从文件中读取表
 {

@@ -10,10 +10,20 @@ private:
     vector<index*> allIndex;
     list<record> allRecord;
 
-    string toStr(vector<vector<int>>&);
+    void update_len(vector<vector<int> > & len_data,const string& data);
+
 
 public:
     string ID;
+
+    static table* loadFile(string path);
+
+    string toStr();
+
+    void saveFile(string path);
+
+    void updateFile(string path);
+
     table(string ID, vector<col*>allCol) : allCol(allCol), ID(ID) //allCol中元素转移所有权
     {
         for(col* c : allCol)
@@ -30,11 +40,6 @@ public:
         }
     }
 
-    string toStr()
-    {
-        vector<vector<int>> vec;
-        return this->toStr(vec);
-    }
 
     void changeIndex(int sub, index* ind)
     {
@@ -43,18 +48,6 @@ public:
     }
 
     const vector<col*>& getAllCol() { return this->allCol; } //对col数据的修改必须经过table对象完成，否则无法
-
-    static table* loadFile(string path);
-
-    void saveFile(string path) //将整个表的内容按约定格式写入空文件
-    {
-        vector<vector<int>> len_data;
-        string data=this->toStr();
-        IO::write_to_file(path,data);
-        IO::write_to_len_file(path,len_data);
-    }
-
-    void updateFile(string path);
 
     table* genNewTable(vector<int> colSubList, vector<int> tupSubList)
     {
