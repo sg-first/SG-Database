@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include "basicType.h"
+#include "aggregFunction.h"
 using namespace std;
 string operatTable::default_path;
 void outputVec(const vector<int> &vec)
@@ -52,9 +53,15 @@ int main(int argc, char *argv[])
 
     try_table->open_trasaction();
     try_table->add({typeHelper::strToBasic("789",INT),typeHelper::strToBasic("99.9",FLOAT),typeHelper::strToBasic("88.8",FLOAT)});
+    try_table->add({typeHelper::strToBasic("789",INT),typeHelper::strToBasic("99.9",FLOAT),typeHelper::strToBasic("88.8",FLOAT)});
     result=try_table->find({new ruleExp(EQU,new Int(789)),nullptr,nullptr});
     cout<<try_table->genNewTable({0,1,2},result)->toStr();
-    try_table->rollback_trasaction();
+    try_table->submit_trasaction();
+
+    result=try_table->find({nullptr,nullptr,nullptr});
+    vector<Basic*> s_result=try_table->getCol("ID")->getDate(result);
+
+    Basic* test=sum(s_result);
 
     try_table->saveFile();
     try_table->del(0);

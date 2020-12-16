@@ -25,6 +25,14 @@ public:
 
     TYPE getType() { return this->type; }
 
+    vector<Basic*> getDate(vector<int> filtered_index){
+        vector<Basic*> result;
+        for(int index:filtered_index){
+            result.push_back(typeHelper::copy(allData[index]));
+        }
+        return result;
+    }
+
     void pushData(Basic* v) //应该使用这个函数push
     {
         if(v->getType()!=this->getType())

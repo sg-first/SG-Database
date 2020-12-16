@@ -48,6 +48,14 @@ public:
 
     const vector<col*>& getAllCol() { return this->allCol; } //对col数据的修改必须经过table对象完成，否则无法
 
+    col* getCol(int i){
+        return this->allCol[i];
+    }
+
+    col* getCol(string colName){
+        return getCol(this->findCol({colName})[0]);
+    }
+
     table* genNewTable(const vector<int>& colSubList,const vector<int>& tupSubList)
     {
         vector<col*> newAllCol;
