@@ -54,6 +54,7 @@ void table:: saveFile(string path) //将整个表的内容按约定格式写入�
     this->update_len(len_data,data);
     IO::write_to_file(path,data);
     IO::write_to_len_file(path,len_data);
+    this->allRecord.clear();
 }
 
 table* table::loadFile(string path) //按约定格式从文件中读取表
@@ -121,7 +122,7 @@ table* table::loadFile(string path) //按约定格式从文件中读取表
                 column->pushData(typeHelper::strToBasic(frame[j][i],type));
 			}
             cols.push_back(column);
-		}
+        }
         return new table(IO::path_to_name(path),cols);
 		//fix:编写此函数
 }

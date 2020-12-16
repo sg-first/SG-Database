@@ -31,6 +31,7 @@ HEADERS += \
     col.hpp \
     config.h \
     index.hpp \
+    operat_lang_anls.h \
     record.h \
     rule.hpp \
     table.hpp \

@@ -33,9 +33,9 @@ public:
             this->allData.push_back(v);
     }
 
-    col* genNewCol(vector<int> subList)
+    col* genNewCol(const vector<int>& subList)
     {
-        col* result=new col(type,ID);
+        col* result=new col(this->type,this->ID);
         for(int i : subList)
             result->allData.push_back(typeHelper::copy(this->allData[i]));
         return result;

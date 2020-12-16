@@ -5,13 +5,13 @@
 
 class table
 {
-private:
+protected:
     vector<col*> allCol; //push进来直接视为持有所有权
     vector<index*> allIndex;
     list<record> allRecord;
+    bool hasOwnership=true;
 
     void update_len(vector<vector<int> > & len_data,const string& data);
-
 
 public:
     string ID;
@@ -40,7 +40,6 @@ public:
         }
     }
 
-
     void changeIndex(int sub, index* ind)
     {
         delete this->allIndex[sub];
@@ -49,7 +48,7 @@ public:
 
     const vector<col*>& getAllCol() { return this->allCol; } //对col数据的修改必须经过table对象完成，否则无法
 
-    table* genNewTable(vector<int> colSubList, vector<int> tupSubList)
+    table* genNewTable(const vector<int>& colSubList,const vector<int>& tupSubList)
     {
         vector<col*> newAllCol;
         for(int i : colSubList)
@@ -177,11 +176,68 @@ public:
         return result;
     }
 
-    ~table()
+    void clear()
     {
         for(col* c : allCol)
             delete c;
         for(index* i : allIndex)
             delete i;
+    }
+
+    ~table()
+    {
+        if(this->hasOwnership)
+            this->clear();
+    }
+};
+
+
+class operatTable : public table
+{
+private:
+    bool isTrasaction=false;
+
+public:
+    static string default_path;
+    operatTable(string _ID, vector<col*> _allCol) : table(_ID, _allCol) {}
+
+    bool get_isTrasaction(){return isTrasaction;}
+
+    void saveFile(){
+        this->table::saveFile(default_path+"\\"+ID+".csv");
+    }
+
+    void updateFile(){
+        this->table::updateFile(default_path+"\\"+ID+".csv");
+    }
+
+    static operatTable* loadFile(string _ID){
+        return new operatTable(_ID,table::loadFile(default_path+"/"+_ID+".csv")->getAllCol());
+    }
+
+    void open_trasaction(){
+        this->updateFile();
+        isTrasaction=true;
+    }
+
+    void submit_trasaction(){
+        if(isTrasaction==false){
+            throw string("Trasacation not open");
+        }
+        this->updateFile();
+        isTrasaction=false;
+    }
+
+    void rollback_trasaction() {
+        if(isTrasaction==false){
+            throw string("Trasacation not open");
+        }
+        this->clear();
+        operatTable* newTable=operatTable::loadFile(this->ID);
+        newTable->hasOwnership=false;
+        this->allCol=newTable->allCol;
+        this->allRecord=newTable->allRecord;
+        this->allIndex=newTable->allIndex;
+        isTrasaction=false;
     }
 };
