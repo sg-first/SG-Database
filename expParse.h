@@ -7,11 +7,13 @@ public:
     string val;
     int left_index;
     int right_index;
+    bool isNot;
     ruleExp* bracket_rule=nullptr;
-    bracket(string val,int l_i,int r_i){
+    bracket(string val,int l_i,int r_i,bool isNot){
         this->val=val;
         this->left_index=l_i;
         this->right_index=r_i;
+        this->isNot=isNot;
     }
     void clear(){
         val="";
@@ -19,6 +21,20 @@ public:
         right_index=-1;
     }
 };
+
+
+
+class left_bracket{
+public:
+    int index;
+    bool isNot;
+    left_bracket(int index,bool isNot=false){
+        this->index=index;
+        this->isNot=isNot;
+    }
+};
+
+
 
 class expParse {
 public:
@@ -32,7 +48,7 @@ public:
         }
         for(int i=0;i<bracket_vec.size();++i){
             if(insert_rule(bracket_vec,bracket_vec[i],strrule)==false){
-                bracket_vec[i].bracket_rule=part_strrule_parse(bracket_vec[i].val);
+                inter_call(bracket_vec[i]);
             }
         }
         return bracket_vec[bracket_vec.size()-1].bracket_rule;
@@ -49,6 +65,9 @@ public:
             return false;
         }
         do_insert_rule(bracket_vec[insert_vec[0]],bracket_vec[insert_vec[1]],tmp,strrule);
+        if(tmp.isNot==true){
+            tmp.bracket_rule=new logExp (NOT,nullptr,tmp.bracket_rule);
+        }
         for(int i=0;i<insert_vec.size();++i){
             bracket_vec[insert_vec[i]].clear();
         }
@@ -69,32 +88,46 @@ public:
     }
 
     static bool bracketCheck(const string& strrule,vector<bracket>& bracket_val){
-        stack<int> left_bracket;
+        stack<left_bracket> left_brackets;
         for(int i=0;i<strrule.size();++i){
             char c=strrule[i];
             if(c=='('){
-                left_bracket.push(i);
+                if(i-1>=0&&strrule[i-1]=='!'){
+                    left_brackets.push(left_bracket(i,true));
+                }
+                else{
+                    left_brackets.push(left_bracket(i,false));
+                }
             }
             else if(c==')'){
-                if(left_bracket.empty()){
+                if(left_brackets.empty()){
                     return false;
                 }
-                int left_index=left_bracket.top();
-                left_bracket.pop();
-                bracket_val.push_back(bracket(strrule.substr(left_index+1,i-(left_index+1)),left_index,i));
+                left_bracket tmp_lb=left_brackets.top();
+                left_brackets.pop();
+                bracket_val.push_back(bracket(strrule.substr(tmp_lb.index+1,i-(tmp_lb.index+1)),tmp_lb.index,i,tmp_lb.isNot));
             }
         }
-        if(left_bracket.empty()==false){
+        if(left_brackets.empty()==false){
             return false;
         }
         return true;
+    }
+
+    static void inter_call(bracket& bk){
+        if(bk.isNot==true){
+            bk.bracket_rule=new logExp(NOT,nullptr,part_strrule_parse(bk.val));
+        }
+        else{
+            bk.bracket_rule=part_strrule_parse(bk.val);
+        }
     }
 
     static ruleExp* part_strrule_parse(const string& strrule){
         string temp="";
         for(int i=0;i<strrule.size();++i){
             char c=strrule[i];
-            if(c=='='||c=='>'||c=='<'){
+            if(c=='='||c=='>'||c=='<'||c=='!'){
                 temp=strrule.substr(i);
                 break;
             }
@@ -131,6 +164,9 @@ public:
             return new logExp(OR,new ruleExp(EQU,typeHelper::strToBasic(val)),new numExp(GRAT,typeHelper::strToBasic(val)));
         else if (strrule[0]=='<') {
             return new logExp(OR,new ruleExp(EQU,typeHelper::strToBasic(val)),new numExp(SMAL,typeHelper::strToBasic(val)));
+        }
+        else if(strrule[0]=='!'){
+            return new logExp(NOT,nullptr,new ruleExp(EQU,typeHelper::strToBasic(val)));
         }
         else{
             throw string("Wrong expression");

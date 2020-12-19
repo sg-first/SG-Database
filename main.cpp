@@ -40,10 +40,14 @@ int main(int argc, char *argv[])
     ruleExp* r2=new logExp(OR,new ruleExp(EQU,new Int(3)),new ruleExp(EQU,new Int(4)));
     ruleExp* r3=new logExp(OR,r2,new ruleExp (EQU,new Int(5)));
 
-    result=try_table->find({r3,nullptr,nullptr});
 
-    result=try_table->find({"(((x==3)||(x==4))||(x>=7))","",""});
-    //result=try_table->find({"","",""});
+
+    result=try_table->find({r3,nullptr,nullptr});
+    result=try_table->find({"((((x<=3)||(x==4))||(x>=7))||(x==5))","",""});
+    outputVec(result);
+    result=try_table->find({new logExp(NOT,nullptr ,new ruleExp(EQU,new Int(7))),nullptr,nullptr});
+    result=try_table->find({"(x!=7)","",""});
+    result=try_table->find({"!((((x<=3)||(x==4))||(x>=7))||(x==5))","",""});
     outputVec(result);
 
     //表抽取
