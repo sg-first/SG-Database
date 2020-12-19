@@ -15,6 +15,8 @@ public:
         return helper;
     }
 
+
+
     vector<Basic*> distinct(vector<Basic*> data_vec){
         vector<int> del_vec;
         vector<Basic*> result;

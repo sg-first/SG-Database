@@ -5,6 +5,7 @@ class view //视图主要是为了方便删除修改，因此不支持添加。�
 {
 private:
     table *t;
+
     vector<int> allSub;
 
     void delElm(int opSub) //删除视图中的某个元素（不改变基本表，应当是在基本表删完了之后调用）
@@ -92,3 +93,7 @@ public:
         }
     }*/
 };
+
+
+
+

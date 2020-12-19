@@ -57,8 +57,17 @@ public:
         return this->allCol[i];
     }
 
-    col* getCol(string colName){
+    col* getCol(const string& colName){
         return getCol(this->findCol({colName})[0]);
+    }
+
+    int getColIndex(const string& colName){
+        for(int i;i<allCol.size();++i){
+            if(allCol[i]->ID==colName){
+                return i;
+            }
+        }
+        throw string("Wrong column name");
     }
 
     table* genNewTable(const vector<int>& colSubList,const vector<int>& tupSubList)
@@ -143,6 +152,37 @@ public:
             this->del(i-opFinishedNum); //前面的删掉了后面下标会向前串
             opFinishedNum++;
         }
+    }
+
+    vector<int> find_in(const string& colName,vector<Basic*> target_vec){
+        vector<int> result_index_vec;
+        int index=getColIndex(colName);
+        for(int i=0;i<target_vec.size();++i){
+            vector<ruleExp*> rule_vec(this->allCol.size(),nullptr);
+            rule_vec[index]=new ruleExp (EQU,typeHelper::copy(target_vec[i]));
+            vector<int> temp_result=this->find(rule_vec);
+            result_index_vec.insert(result_index_vec.end(),temp_result.begin(),temp_result.end());
+        }
+        set<int>s(result_index_vec.begin(), result_index_vec.end());
+        result_index_vec.assign(s.begin(), s.end());
+        sort(result_index_vec.begin(),result_index_vec.end());
+        typeHelper::del_vec_data(target_vec);
+        return result_index_vec;
+    }
+
+    vector<int> find_not_in(const string& colName,vector<Basic*> target_vec){
+        vector<int> notResult;
+        vector<int> inResult=find_in(colName,target_vec);
+        int col_size=this->allCol[0]->getAllData().size();
+        int tmp=0;
+        for(int i=0;i<col_size;++i){
+            if(i==inResult[tmp]){
+                ++tmp;
+                continue;
+            }
+            notResult.push_back(i);
+        }
+        return notResult;
     }
 
     vector<int> find(vector<ruleExp*> allExp)

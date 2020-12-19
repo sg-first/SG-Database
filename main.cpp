@@ -34,6 +34,8 @@ int main(int argc, char *argv[])
     operatTable* try_table = new operatTable("student table",{ID,score,score_2});
     //try_table=table::loadFile("F:\\predict_2.1_1.csv");
 
+
+
     ruleExp* r=new ruleExp(EQU,new Int(7));
     auto result=try_table->find({r,nullptr,nullptr});
     outputVec(result);
@@ -48,6 +50,12 @@ int main(int argc, char *argv[])
     result=try_table->find({new logExp(NOT,nullptr ,new ruleExp(EQU,new Int(7))),nullptr,nullptr});
     result=try_table->find({"(x!=7)","",""});
     result=try_table->find({"!((((x<=3)||(x==4))||(x>=7))||(x==5))","",""});
+    outputVec(result);
+
+    result=try_table->find_in("ID",{new Int(7),new Int(1),new Int(3),new Int(5),new Int(4)});
+    outputVec(result);
+
+    result=try_table->find_not_in("ID",{new Int(7),new Int(1),new Int(3),new Int(5),new Int(4)});
     outputVec(result);
 
     //表抽取

@@ -51,7 +51,10 @@ public:
     }
 
     static TYPE judgeType(const string& val){
-        if(val=="true"||val=="false"){
+        if(val=="placeholder"){
+            return PLACEHOLDER;
+        }
+        else if(val=="true"||val=="false"){
             return BOOL;
         }
         else if(val[0]=='"'){
