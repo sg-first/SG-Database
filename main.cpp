@@ -1,11 +1,13 @@
 #include <QCoreApplication>
-#include "table.hpp"
 #include <iostream>
 #include <string>
+#include "table.hpp"
 #include "basicType.h"
-#include "aggregFunction.h"
+#include "aggHelper.h"
+//#include "expParse.h"
 using namespace std;
 string operatTable::default_path;
+aggHelper* aggHelper::helper;
 void outputVec(const vector<int> &vec)
 {
     for(int i : vec)
@@ -14,6 +16,7 @@ void outputVec(const vector<int> &vec)
 }
 int main(int argc, char *argv[])
 {
+    long start_time=time(0);
     QCoreApplication a(argc, argv);
     operatTable::default_path="D:\\personal_file\\download_files\\test_";
     col* ID=new col(TYPE(1),"ID");
@@ -35,8 +38,11 @@ int main(int argc, char *argv[])
     auto result=try_table->find({r,nullptr,nullptr});
     outputVec(result);
     ruleExp* r2=new logExp(OR,new ruleExp(EQU,new Int(3)),new numExp(GRAT,new Int(3)));
-    ruleExp* r3=new numExp(GRAT,new Float(0.6));
-    result=try_table->find({r2,r3,nullptr});
+    ruleExp* r3=new logExp(OR,r2,new numExp (GRAT,new Int(1)));
+
+    //result=try_table->find({r3,nullptr,nullptr});
+
+    result=try_table->find({"((x>=3)||(x>0))","(x>0.4)","((x==1.8)||(x>1.8))"});
     outputVec(result);
 
     //表抽取
@@ -58,10 +64,14 @@ int main(int argc, char *argv[])
     cout<<try_table->genNewTable({0,1,2},result)->toStr();
     try_table->submit_trasaction();
 
-    result=try_table->find({nullptr,nullptr,nullptr});
+    try_table->mod(0,{typeHelper::strToBasic("789",INT),typeHelper::strToBasic("99.9",FLOAT),typeHelper::strToBasic("88.8",FLOAT)});
+
+    //result=try_table->find({nullptr,nullptr,nullptr});
     vector<Basic*> s_result=try_table->getCol("ID")->getDate(result);
 
-    Basic* test=sum(s_result);
+
+    aggHelper* helper=aggHelper::getHelper();
+    Basic* test=helper->sum(s_result);
 
     try_table->saveFile();
     try_table->del(0);
@@ -71,8 +81,17 @@ int main(int argc, char *argv[])
     try_table->del(5);
     try_table->updateFile();
 
+    result=try_table->find({new ruleExp(EQU,new Int(789)),nullptr,nullptr});
+    cout<<try_table->genNewTable({0,1,2},result)->toStr();
+
+    try_table=operatTable::loadFile("student table");
+
+    result=try_table->find({new ruleExp(EQU,new Int(789)),nullptr,nullptr});
+    cout<<try_table->genNewTable({0,1,2},result)->toStr();
+    try_table->saveFile();
     delete r;
     delete r2;
     delete r3;
+    cout<<"Total running time:"<<time(0)-start_time;
     return a.exec();
 }

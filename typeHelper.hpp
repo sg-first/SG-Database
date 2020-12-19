@@ -44,6 +44,31 @@ public:
         }
     }
 
+    static void del_vec_data(vector<Basic*> data_vec){
+        for(Basic* b:data_vec){
+            delete b;
+        }
+    }
+
+    static TYPE judgeType(const string& val){
+        if(val=="true"||val=="false"){
+            return BOOL;
+        }
+        else if(val[0]=='"'){
+            return STR;
+        }
+        for(const char& c:val){
+            if(c=='.'){
+                return FLOAT;
+            }
+        }
+        return INT;
+    }
+
+    static Basic* strToBasic(string val){
+        return strToBasic(val,judgeType(val));
+    }
+
     static Basic* strToBasic(string val, TYPE type) //val需要与Basic.toStr结果对应
     {
         if(type==_NULL)

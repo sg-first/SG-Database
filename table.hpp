@@ -2,7 +2,7 @@
 #include "col.hpp"
 #include "index.hpp"
 #include "IO.hpp"
-
+#include "expParse.h"
 class table
 {
 protected:
@@ -26,6 +26,11 @@ public:
 
     table(string ID, vector<col*>allCol) : allCol(allCol), ID(ID) //allCol中元素转移所有权
     {
+        for(col* c:allCol){
+            if(c->getAllData().size()!=allCol[0]->getAllData().size()){
+                throw string("The number of columns is different");
+            }
+        }
         for(col* c : allCol)
             this->allIndex.push_back(new traversalIndex(c)); //默认都是遍历索引
     }
@@ -168,6 +173,14 @@ public:
             result=intersection;
         }
         return result;
+    }
+
+    vector<int> find(vector<string> allExp){
+        vector<ruleExp*> allRule;
+        for(const string& str:allExp){
+            allRule.push_back(expParse::total_strrule_parse(str));
+        }
+       return find(allRule);
     }
 
     vector<int> findCol(vector<string> colID)

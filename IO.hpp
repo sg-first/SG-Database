@@ -32,8 +32,8 @@ public:
     static string read_from_file(const string& path)
     {
         fstream process(path, ios::in);
-        /*if (!process.is_open())
-            throw string("fail to open the file(read)");*/
+        if (!process.is_open())
+            throw string("fail to open the file(read)");
         stringstream buffer;
         buffer << process.rdbuf();
         string to_do = buffer.str();
@@ -44,8 +44,8 @@ public:
     static void write_to_file(const string& path,const string& data)
     {
         fstream write(path,ios::out|ios::trunc);
-        /*if (!write.is_open())
-            throw string("fail to open the file(write)");*/
+        if (!write.is_open())
+            throw string("fail to open the file(write)");
         write.seekp(0, ios::beg);
         write << data;
         write.close();
@@ -54,8 +54,8 @@ public:
     static vector<vector<int>> read_from_len_file(const string& path)
     {
         fstream process(path_to_lenpath(path), ios::in);
-        /*if (!process.is_open())
-            throw string("fail to open the file(read)");*/
+        if (!process.is_open())
+            throw string("fail to open the file(read)");
         stringstream buffer;
         buffer << process.rdbuf();
         string len_data = buffer.str();
@@ -89,8 +89,8 @@ public:
             len_string=len_string+to_string(len_data[i][0])+","+to_string(len_data[i][1])+"\n";
         }
         fstream write(path_to_lenpath(path),ios::out|ios::trunc);
-        /*if (!write.is_open())
-            throw string("fail to open the file(write)");*/
+        if (!write.is_open())
+            throw string("fail to open the file(write)");
         write.seekp(0, ios::beg);
         write << len_string;
         write.close();
@@ -108,8 +108,8 @@ public:
             }
         }
         fstream write(path,ios::app);
-        /*if (!write.is_open())
-            throw string("fail to open the file(write)");*/
+        if (!write.is_open())
+            throw string("fail to open the file(write)");
         write << new_data;
         write.close();
         vector<int> item;
@@ -126,8 +126,8 @@ public:
             loc+=len_data[i][0];
         }
         fstream write(path);
-        /*if (!write.is_open())
-            throw string("fail to open the file(write)");*/
+        if (!write.is_open())
+            throw string("fail to open the file(write)");
         write.seekp(loc+opRow+1,ios::beg);
         write << "#";
         write.close();

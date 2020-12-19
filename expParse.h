@@ -1,0 +1,138 @@
+#pragma once
+#include "rule.hpp"
+#include <stack>
+class bracket {
+public:
+    string val;
+    int left_index;
+    int right_index;
+    ruleExp* bracket_rule=nullptr;
+    bracket(string val,int l_i,int r_i){
+        this->val=val;
+        this->left_index=l_i;
+        this->right_index=r_i;
+    }
+};
+
+class expParse {
+public:
+    static ruleExp* total_strrule_parse(const string& strrule){
+        if(strrule==""){
+            return nullptr;
+        }
+        vector<bracket> bracket_vec;
+        if(bracketCheck(strrule,bracket_vec)==false){
+            throw string("Wrong expression");
+        }
+        for(int i=0;i<bracket_vec.size();++i){
+            if(insert_rule(bracket_vec,bracket_vec[i],strrule)==false){
+                bracket_vec[i].bracket_rule=part_strrule_parse(bracket_vec[i].val);
+            }
+        }
+        return bracket_vec[bracket_vec.size()-1].bracket_rule;
+    }
+
+    static bool insert_rule(vector<bracket>& bracket_vec,bracket& tmp,const string& strrule){
+        vector<bracket> insert_vec;
+        for(int i=0;i<bracket_vec.size();++i){
+            if(tmp.left_index<bracket_vec[i].left_index&&bracket_vec[i].right_index<tmp.right_index){
+                insert_vec.push_back(bracket_vec[i]);
+            }
+        }
+        if(insert_vec.empty()){
+            return false;
+        }
+        do_insert_rule(insert_vec[0],insert_vec[1],tmp,strrule);
+        for(int i=0;i<insert_vec.size();++i){
+            for(auto iter=bracket_vec.begin();iter!=bracket_vec.end();iter++){
+                if(iter->left_index==insert_vec[i].left_index&&iter->right_index==insert_vec[i].right_index){
+                    bracket_vec.erase(iter);
+                    break;
+                }
+            }
+        }
+        return true;
+    }
+
+    static void do_insert_rule(const bracket& left_bk,const bracket& right_bk,bracket& tmp,const string& strrule){
+        string symbol=strrule.substr(left_bk.right_index+1,2);
+        if(symbol=="||"){
+            tmp.bracket_rule=new logExp(OR,left_bk.bracket_rule,right_bk.bracket_rule);
+        }
+        else if(symbol=="&&"){
+            tmp.bracket_rule=new logExp(AND,left_bk.bracket_rule,right_bk.bracket_rule);
+        }
+        else{
+            throw string("Wrong expression");
+        }
+    }
+
+    static bool bracketCheck(const string& strrule,vector<bracket>& bracket_val){
+        stack<int> left_bracket;
+        for(int i=0;i<strrule.size();++i){
+            char c=strrule[i];
+            if(c=='('){
+                left_bracket.push(i);
+            }
+            else if(c==')'){
+                if(left_bracket.empty()){
+                    return false;
+                }
+                int left_index=left_bracket.top();
+                left_bracket.pop();
+                bracket_val.push_back(bracket(strrule.substr(left_index+1,i-(left_index+1)),left_index,i));
+            }
+        }
+        if(left_bracket.empty()==false){
+            return false;
+        }
+        return true;
+    }
+
+    static ruleExp* part_strrule_parse(const string& strrule){
+        string temp="";
+        for(int i=0;i<strrule.size();++i){
+            char c=strrule[i];
+            if(c=='='||c=='>'||c=='<'){
+                temp=strrule.substr(i);
+                break;
+            }
+        }
+        if(temp==""){
+            throw string("Wrong expression");
+        }
+        char c=temp[1];
+        if(c=='='){
+            return binary_strrule_parse(temp);
+        }
+        return single_strrule_parse(temp);
+    }
+
+    static ruleExp* single_strrule_parse(const string& strrule){
+        string val=strrule.substr(1);
+        if(strrule[0]=='<'){
+            return new numExp(SMAL,typeHelper::strToBasic(val));
+        }
+        else if(strrule[0]=='>'){
+            return new numExp(GRAT,typeHelper::strToBasic(val));
+        }
+        else{
+            throw string("Wrong expression");
+        }
+    }
+
+    static ruleExp* binary_strrule_parse(const string& strrule){
+        string val=strrule.substr(2);
+        if(strrule[0]=='='){
+            return new ruleExp(EQU,typeHelper::strToBasic(val));
+        }
+        else if(strrule[0]=='>')
+            return new logExp(OR,new ruleExp(EQU,typeHelper::strToBasic(val)),new numExp(GRAT,typeHelper::strToBasic(val)));
+        else if (strrule[0]=='<') {
+            return new logExp(OR,new ruleExp(EQU,typeHelper::strToBasic(val)),new numExp(SMAL,typeHelper::strToBasic(val)));
+        }
+        else{
+            throw string("Wrong expression");
+        }
+    }
+};

@@ -27,10 +27,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     BPlusTree.h \
     IO.hpp \
-    aggregFunction.h \
+    aggHelper.h \
     basicType.h \
     col.hpp \
     config.h \
+    expParse.h \
     index.hpp \
     record.h \
     rule.hpp \
