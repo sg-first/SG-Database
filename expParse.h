@@ -1,5 +1,6 @@
 #pragma once
 #include "rule.hpp"
+#include <iostream>
 #include <stack>
 class bracket {
 public:
@@ -11,6 +12,11 @@ public:
         this->val=val;
         this->left_index=l_i;
         this->right_index=r_i;
+    }
+    void clear(){
+        val="";
+        left_index=-1;
+        right_index=-1;
     }
 };
 
@@ -33,23 +39,18 @@ public:
     }
 
     static bool insert_rule(vector<bracket>& bracket_vec,bracket& tmp,const string& strrule){
-        vector<bracket> insert_vec;
+        vector<int> insert_vec;
         for(int i=0;i<bracket_vec.size();++i){
             if(tmp.left_index<bracket_vec[i].left_index&&bracket_vec[i].right_index<tmp.right_index){
-                insert_vec.push_back(bracket_vec[i]);
+                insert_vec.push_back(i);
             }
         }
         if(insert_vec.empty()){
             return false;
         }
-        do_insert_rule(insert_vec[0],insert_vec[1],tmp,strrule);
+        do_insert_rule(bracket_vec[insert_vec[0]],bracket_vec[insert_vec[1]],tmp,strrule);
         for(int i=0;i<insert_vec.size();++i){
-            for(auto iter=bracket_vec.begin();iter!=bracket_vec.end();iter++){
-                if(iter->left_index==insert_vec[i].left_index&&iter->right_index==insert_vec[i].right_index){
-                    bracket_vec.erase(iter);
-                    break;
-                }
-            }
+            bracket_vec[insert_vec[i]].clear();
         }
         return true;
     }

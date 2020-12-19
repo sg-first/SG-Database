@@ -37,12 +37,13 @@ int main(int argc, char *argv[])
     ruleExp* r=new ruleExp(EQU,new Int(7));
     auto result=try_table->find({r,nullptr,nullptr});
     outputVec(result);
-    ruleExp* r2=new logExp(OR,new ruleExp(EQU,new Int(3)),new numExp(GRAT,new Int(3)));
-    ruleExp* r3=new logExp(OR,r2,new numExp (GRAT,new Int(1)));
+    ruleExp* r2=new logExp(OR,new ruleExp(EQU,new Int(3)),new ruleExp(EQU,new Int(4)));
+    ruleExp* r3=new logExp(OR,r2,new ruleExp (EQU,new Int(5)));
 
-    //result=try_table->find({r3,nullptr,nullptr});
+    result=try_table->find({r3,nullptr,nullptr});
 
-    result=try_table->find({"((x>=3)||(x>0))","(x>0.4)","((x==1.8)||(x>1.8))"});
+    result=try_table->find({"(((x==3)||(x==4))||(x>=7))","",""});
+    //result=try_table->find({"","",""});
     outputVec(result);
 
     //表抽取
