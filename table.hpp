@@ -3,10 +3,11 @@
 #include "index.hpp"
 #include "IO.hpp"
 #include "expParse.h"
+
 class table
 {
 protected:
-    vector<col*> allCol; //push进来直接视为持有所有权
+    vector<col*> allCol; //如果hasOwnership=true，push进来的由table对象持有所有权
     vector<index*> allIndex;
     list<record> allRecord;
     bool hasOwnership=true;
@@ -157,7 +158,8 @@ public:
     vector<int> find_in(const string& colName,vector<Basic*> target_vec){
         vector<int> result_index_vec;
         int index=getColIndex(colName);
-        for(int i=0;i<target_vec.size();++i){
+        for(int i=0;i<target_vec.size();++i)
+        {
             vector<ruleExp*> rule_vec(this->allCol.size(),nullptr);
             rule_vec[index]=new ruleExp (EQU,typeHelper::copy(target_vec[i]));
             vector<int> temp_result=this->find(rule_vec);
@@ -175,8 +177,10 @@ public:
         vector<int> inResult=find_in(colName,target_vec);
         int col_size=this->allCol[0]->getAllData().size();
         int tmp=0;
-        for(int i=0;i<col_size;++i){
-            if(i==inResult[tmp]){
+        for(int i=0;i<col_size;++i)
+        {
+            if(i==inResult[tmp])
+            {
                 ++tmp;
                 continue;
             }
@@ -215,12 +219,17 @@ public:
         return result;
     }
 
-    vector<int> find(vector<string> allExp){
+    vector<int> find(vector<string> allExp)
+    {
         vector<ruleExp*> allRule;
-        for(const string& str:allExp){
+        for(const string& str:allExp)
             allRule.push_back(expParse::total_strrule_parse(str));
-        }
-       return find(allRule);
+
+        auto result=find(allRule);
+
+        for(ruleExp* i : allRule)
+            delete i;
+        return result;
     }
 
     vector<int> findCol(vector<string> colID)
