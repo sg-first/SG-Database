@@ -33,6 +33,15 @@ public:
         return result;
     }
 
+    string toStr(){
+        string result="";
+        result+=(this->ID+":"+to_string(int(this->type)))+"\n";
+        for(int i=0;i<this->allData.size();++i){
+            result+=allData[i]->toStr()+"\n";
+        }
+        return result;
+    }
+
     void pushData(Basic* v) //应该使用这个函数push
     {
         if(v->getType()!=this->getType())

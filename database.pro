@@ -36,5 +36,6 @@ HEADERS += \
     record.h \
     rule.hpp \
     table.hpp \
+    tableManager.h \
     typeHelper.hpp \
     view.hpp

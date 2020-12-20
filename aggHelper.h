@@ -15,8 +15,6 @@ public:
         return helper;
     }
 
-
-
     vector<Basic*> distinct(vector<Basic*> data_vec){
         vector<int> del_vec;
         vector<Basic*> result;
@@ -147,5 +145,7 @@ public:
         typeHelper::del_vec_data(data_vec);
         return new Float (result);
     }
+
+
 };
 

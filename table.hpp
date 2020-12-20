@@ -256,13 +256,13 @@ public:
 class operatTable : public table
 {
 private:
-    bool isTrasaction=false;
+    //bool isTrasaction=false;
 
 public:
     static string default_path;
     operatTable(string _ID, vector<col*> _allCol) : table(_ID, _allCol) {}
 
-    bool get_isTrasaction(){return isTrasaction;}
+    //bool get_isTrasaction(){return isTrasaction;}
 
     void saveFile(){
         this->table::saveFile(default_path+"\\"+ID+".csv");
@@ -276,29 +276,17 @@ public:
         return new operatTable(_ID,table::loadFile(default_path+"/"+_ID+".csv")->getAllCol());
     }
 
-    void open_trasaction(){
+    /*void open_trasaction(){
         this->updateFile();
         isTrasaction=true;
-    }
+    }*/
 
-    void submit_trasaction(){
-        if(isTrasaction==false){
-            throw string("Trasacation not open");
-        }
-        this->updateFile();
-        isTrasaction=false;
-    }
-
-    void rollback_trasaction() {
-        if(isTrasaction==false){
-            throw string("Trasacation not open");
-        }
+    void rollback() {
         this->clear();
         operatTable* newTable=operatTable::loadFile(this->ID);
         newTable->hasOwnership=false;
         this->allCol=newTable->allCol;
         this->allRecord=newTable->allRecord;
         this->allIndex=newTable->allIndex;
-        isTrasaction=false;
     }
 };

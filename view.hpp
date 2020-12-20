@@ -93,6 +93,11 @@ public:
         }
     }*/
 };
+class userView{
+    string userName;
+    string viewName;
+    string geneCode;
+};
 
 
 

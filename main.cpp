@@ -18,6 +18,11 @@ int main(int argc, char *argv[])
 {
     long start_time=time(0);
     QCoreApplication a(argc, argv);
+    vector<int> vec={1,1,1,1,1,1,1};
+    while(vec.size()>3){
+        vec.pop_back();
+    }
+    cout<<vec.size();
     operatTable::default_path="D:\\personal_file\\download_files\\test_";
     col* ID=new col(TYPE(1),"ID");
     for(int i=0;i<10;i++){
@@ -61,6 +66,7 @@ int main(int argc, char *argv[])
     //表抽取
     auto t2=try_table->genNewTable({0,2},result);
     cout<<t2->toStr()<<endl;
+    cout<<t2->getCol("ID")->toStr()<<endl;
 
     try_table->saveFile();
 
@@ -70,12 +76,12 @@ int main(int argc, char *argv[])
     //index* ni=new binarySearchIndex(ID);
     //try_table->changeIndex(0,ni);
 
-    try_table->open_trasaction();
+    try_table->updateFile();
     try_table->add({typeHelper::strToBasic("789",INT),typeHelper::strToBasic("99.9",FLOAT),typeHelper::strToBasic("88.8",FLOAT)});
     try_table->add({typeHelper::strToBasic("789",INT),typeHelper::strToBasic("99.9",FLOAT),typeHelper::strToBasic("88.8",FLOAT)});
     result=try_table->find({new ruleExp(EQU,new Int(789)),nullptr,nullptr});
     cout<<try_table->genNewTable({0,1,2},result)->toStr();
-    try_table->submit_trasaction();
+    try_table->updateFile();
 
     try_table->mod(0,{typeHelper::strToBasic("789",INT),typeHelper::strToBasic("99.9",FLOAT),typeHelper::strToBasic("88.8",FLOAT)});
 
@@ -98,6 +104,7 @@ int main(int argc, char *argv[])
     cout<<try_table->genNewTable({0,1,2},result)->toStr();
 
     try_table=operatTable::loadFile("student table");
+
 
     result=try_table->find({new ruleExp(EQU,new Int(789)),nullptr,nullptr});
     cout<<try_table->genNewTable({0,1,2},result)->toStr();
