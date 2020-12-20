@@ -18,11 +18,6 @@ int main(int argc, char *argv[])
 {
     long start_time=time(0);
     QCoreApplication a(argc, argv);
-    vector<int> vec={1,1,1,1,1,1,1};
-    while(vec.size()>3){
-        vec.pop_back();
-    }
-    cout<<vec.size();
     operatTable::default_path="D:\\personal_file\\download_files\\test_";
     col* ID=new col(TYPE(1),"ID");
     for(int i=0;i<10;i++){

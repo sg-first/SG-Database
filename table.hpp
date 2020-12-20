@@ -245,7 +245,7 @@ public:
             delete i;
     }
 
-    ~table()
+    virtual ~table()
     {
         if(this->hasOwnership)
             this->clear();
