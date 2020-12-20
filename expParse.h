@@ -2,6 +2,7 @@
 #include "rule.hpp"
 #include <iostream>
 #include <stack>
+
 class bracket {
 public:
     string val;
