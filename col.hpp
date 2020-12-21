@@ -25,7 +25,8 @@ public:
 
     TYPE getType() { return this->type; }
 
-    vector<Basic*> getDate(vector<int> filtered_index){
+    vector<Basic*> getData(vector<int> filtered_index)
+    {
         vector<Basic*> result;
         for(int index:filtered_index){
             result.push_back(typeHelper::copy(allData[index]));
@@ -33,7 +34,8 @@ public:
         return result;
     }
 
-    string toStr(){
+    string toStr()
+    {
         string result="";
         result+=(this->ID+":"+to_string(int(this->type)))+"\n";
         for(int i=0;i<this->allData.size();++i){
@@ -42,7 +44,7 @@ public:
         return result;
     }
 
-    void pushData(Basic* v) //应该使用这个函数push
+    void pushData(Basic* v) //必须使用这个函数添加数据
     {
         if(v->getType()!=this->getType())
             throw string("type mismatch");

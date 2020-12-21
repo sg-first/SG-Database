@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
     try_table->mod(0,{typeHelper::strToBasic("789",INT),typeHelper::strToBasic("99.9",FLOAT),typeHelper::strToBasic("88.8",FLOAT)});
 
     //result=try_table->find({nullptr,nullptr,nullptr});
-    vector<Basic*> s_result=try_table->getCol("ID")->getDate(result);
+    vector<Basic*> s_result=try_table->getCol("ID")->getData(result);
 
 
     aggHelper* helper=aggHelper::getHelper();
