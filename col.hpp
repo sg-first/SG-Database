@@ -56,7 +56,7 @@ public:
     {
         col* result=new col(this->type,this->ID);
         for(int i : subList)
-            result->allData.push_back(typeHelper::copy(this->allData[i]));
+            result->allData.push_back(typeHelper::copy(this->allData[i])); //会拷贝
         return result;
     }
 
