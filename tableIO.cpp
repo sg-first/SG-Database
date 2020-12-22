@@ -10,9 +10,9 @@ string table::toStr()
         tableframe[0][i]=(this->allCol[i]->ID)+":"+to_string(sort);
     }
     int i=0;
-    for (col* c : this->allCol)
+    for (shared_ptr<col> c : this->allCol)
     {   int j=1;
-        for (Basic* b : c->getAllData())
+        for (shared_ptr<Basic> b : c->getAllData())
         {
             tableframe[j][i]=b->toStr();
             j++;
@@ -57,7 +57,7 @@ void table:: saveFile(string path) //将整个表的内容按约定格式写入�
     this->allRecord.clear();
 }
 
-table* table::loadFile(string path) //按约定格式从文件中读取表
+shared_ptr<table> table::loadFile(string path) //按约定格式从文件中读取表
 {
     string to_do=IO::read_from_file(path);
     vector<vector<int>> len_data;
@@ -106,7 +106,7 @@ table* table::loadFile(string path) //按约定格式从文件中读取表
     }
     IO::write_to_len_file(path,len_data);
     frame.pop_back();
-    vector<col*> cols;
+    vector<shared_ptr<col>> cols;
     for (int i = 0; i < frame[0].size(); i++) {
         string ID;
         TYPE type;
@@ -117,13 +117,13 @@ table* table::loadFile(string path) //按约定格式从文件中读取表
                 type = TYPE(stoi(head.substr(cur+1)));
             }
         }
-        col* column = new col(type, ID);
+        shared_ptr<col> column = shared_ptr<col>(new col(type, ID));
         for (int j = 1; j < frame.size(); j++) {
             column->pushData(typeHelper::strToBasic(frame[j][i],type));
         }
         cols.push_back(column);
     }
-    return new table(IO::path_to_name(path),cols);
+    return shared_ptr<table>(new table(IO::path_to_name(path),cols));
     //fix:编写此函数
 }
 

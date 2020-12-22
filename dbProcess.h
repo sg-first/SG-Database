@@ -45,13 +45,21 @@ class dbProcess{
 
     static queue<processObject> correspondQueue;
 
-    static operatTable* countTable;
+    static shared_ptr<operatTable> countTable;
 
-    static operatTable* jurisdictionTable;
+    static shared_ptr<operatTable> jurisdictionTable;
 
 public:
     static vector<string> getUsedTable(string JS){
 
+    }
+
+    static void setCount(shared_ptr<operatTable> table){
+        countTable=table;
+    }
+
+    static void setJurisdiction(shared_ptr<operatTable> table){
+        jurisdictionTable=table;
     }
 
     static bool checkCount(const processObject& obj){

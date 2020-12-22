@@ -15,9 +15,9 @@ public:
         return helper;
     }
 
-    vector<Basic*> distinct(vector<Basic*> data_vec){
+    vector<shared_ptr<Basic>> distinct(vector<shared_ptr<Basic>> data_vec){
         vector<int> del_vec;
-        vector<Basic*> result;
+        vector<shared_ptr<Basic>> result;
         for(int i=0;i<data_vec.size();++i){
             for(int j=i+1;j<data_vec.size();j++){
                 if(typeHelper::isEqu(data_vec[i],data_vec[j])){
@@ -31,47 +31,54 @@ public:
                 result.push_back(typeHelper::copy(data_vec[i]));
             }
         }
-        typeHelper::del_vec_data(data_vec);
         return result;
     }
 
-    Basic* avg(vector<Basic*> data_vec){
+    shared_ptr<Basic> avg(vector<shared_ptr<Basic>> data_vec){
+        if(data_vec.empty()){
+            return shared_ptr<Basic>(nullptr);
+        }
         if(data_vec[0]->getType()!=INT&&data_vec[0]->getType()!=FLOAT){
             throw string("type mismatch");
         }
         float result=0;
-        for(Basic* b:data_vec){
+        for(shared_ptr<Basic> b:data_vec){
             if(data_vec[0]->getType()==INT){
-                result+=((Int*)b)->val;
+                result+=(dynamic_pointer_cast<Int>(b))->val;
             }
             else{
-                result+=((Float*)b)->val;
+                result+=(dynamic_pointer_cast<Float>(b))->val;
             }
         }
         int num=data_vec.size();
-        typeHelper::del_vec_data(data_vec);
-        return new Float (result/num);
+        return shared_ptr<Basic>(new Float (result/num));
     }
 
-    Basic* count(vector<Basic*> data_vec){
+    shared_ptr<Basic> count(vector<shared_ptr<Basic>> data_vec){
         int num=data_vec.size();
-        typeHelper::del_vec_data(data_vec);
-        return new Int (num);
+        return shared_ptr<Basic>(new Int (num));
     }
 
-    Basic* first(vector<Basic*> data_vec){
-        Basic* temp=typeHelper::copy(data_vec[0]);
-        typeHelper::del_vec_data(data_vec);
+    shared_ptr<Basic> first(vector<shared_ptr<Basic>> data_vec){
+        if(data_vec.empty()){
+            return shared_ptr<Basic>(nullptr);
+        }
+        shared_ptr<Basic> temp=typeHelper::copy(data_vec[0]);
         return temp;
     }
 
-    Basic* last(vector<Basic*> data_vec){
-        Basic* temp=typeHelper::copy(data_vec[data_vec.size()-1]);
-        typeHelper::del_vec_data(data_vec);
+    shared_ptr<Basic> last(vector<shared_ptr<Basic>> data_vec){
+        if(data_vec.empty()){
+            return shared_ptr<Basic>(nullptr);
+        }
+        shared_ptr<Basic> temp=typeHelper::copy(data_vec[data_vec.size()-1]);
         return temp;
     }
 
-    Basic* max(vector<Basic*> data_vec){
+    shared_ptr<Basic> max(vector<shared_ptr<Basic>> data_vec){
+        if(data_vec.empty()){
+            return shared_ptr<Basic>(nullptr);
+        }
         TYPE tp=data_vec[0]->getType();
         if(tp!=INT&&tp!=FLOAT){
             throw string("type mismatch");
@@ -80,10 +87,10 @@ public:
         for(int i=0;i<data_vec.size();++i){
             float temp;
             if(tp==INT){
-                temp=((Int*)data_vec[i])->val;
+                temp=(dynamic_pointer_cast<Int>(data_vec[i]))->val;
             }
             else{
-                temp=((Float*)data_vec[i])->val;
+                temp=(dynamic_pointer_cast<Float>(data_vec[i]))->val;
             }
             if(i==0){
                 result=temp;
@@ -93,14 +100,16 @@ public:
                 result=temp;
             }
         }
-        typeHelper::del_vec_data(data_vec);
         if(tp==INT){
-            return new Int ((int)result);
+            return shared_ptr<Basic>(new Int((int)result));
         }
-        return new Float (result);
+        return shared_ptr<Basic>(new Float(result));
     }
 
-    Basic* min(vector<Basic*> data_vec){
+    shared_ptr<Basic> min(vector<shared_ptr<Basic>> data_vec){
+        if(data_vec.empty()){
+            return shared_ptr<Basic>(nullptr);
+        }
         TYPE tp=data_vec[0]->getType();
         if(tp!=INT&&tp!=FLOAT){
             throw string("type mismatch");
@@ -109,10 +118,10 @@ public:
         for(int i=0;i<data_vec.size();++i){
             float temp;
             if(tp==INT){
-                temp=((Int*)data_vec[i])->val;
+                temp=(dynamic_pointer_cast<Int>(data_vec[i]))->val;
             }
             else{
-                temp=((Float*)data_vec[i])->val;
+                temp=(dynamic_pointer_cast<Float>(data_vec[i]))->val;
             }
             if(i==0){
                 result=temp;
@@ -122,28 +131,29 @@ public:
                 result=temp;
             }
         }
-        typeHelper::del_vec_data(data_vec);
         if(tp==INT){
-            return new Int ((int)result);
+            return shared_ptr<Basic>(new Int((int)result));
         }
-        return new Float (result);
+        return shared_ptr<Basic>(new Float(result));
     }
 
-    Basic* sum(vector<Basic*> data_vec){
+    shared_ptr<Basic> sum(vector<shared_ptr<Basic>> data_vec){
+        if(data_vec.empty()){
+            return shared_ptr<Basic>(nullptr);
+        }
         if(data_vec[0]->getType()!=INT&&data_vec[0]->getType()!=FLOAT){
             throw string("type mismatch");
         }
         float result=0;
-        for(Basic* b:data_vec){
+        for(shared_ptr<Basic> b:data_vec){
             if(data_vec[0]->getType()==INT){
-                result+=((Int*)b)->val;
+                result+=(dynamic_pointer_cast<Int>(b))->val;
             }
             else{
-                result+=((Float*)b)->val;
+                result+=(dynamic_pointer_cast<Float>(b))->val;
             }
         }
-        typeHelper::del_vec_data(data_vec);
-        return new Float (result);
+        return shared_ptr<Basic>(new Float (result));
     }
 
 

@@ -9,12 +9,12 @@ class tableManager
 private:
     const int maxManaged;
     vector<string> managedTableName;
-    map<string,operatTable*> managedTable;
+    map<string,shared_ptr<operatTable>> managedTable;
 
 public:
     tableManager(int maxNum=10):maxManaged(maxNum) {}
 
-    operatTable* loadTable(const string& tableName)
+    shared_ptr<operatTable> loadTable(const string& tableName)
     {
         if(managedTable.find(tableName)==managedTable.end()){
             managedTable[tableName] = operatTable::loadFile(tableName);
@@ -35,9 +35,7 @@ public:
         while(managedTableName.size()>this->maxManaged){
             string delTableName=managedTableName.back();
             managedTableName.pop_back();
-            operatTable* delTable=managedTable[delTableName];
             managedTable.erase(delTableName);
-            delete delTable;
         }
     }
 };

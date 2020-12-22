@@ -7,31 +7,31 @@
 class typeHelper
 {
 public:
-    static Basic* copy(Basic* v)
+    static shared_ptr<Basic> copy(shared_ptr<Basic> v)
     {
         //调用前应该对参数类型进行检查
         if(v->getType()==INT)
-            return new Int(((Int*)v)->val);
+            return shared_ptr<Basic>(new Int(dynamic_pointer_cast<Int>(v)->val));
         if(v->getType()==FLOAT)
-            return new Float(((Float*)v)->val);
+            return shared_ptr<Basic>(new Float(dynamic_pointer_cast<Float>(v)->val));
         if(v->getType()==BOOL)
-            return new Bool(((Bool*)v)->val);
+            return shared_ptr<Basic>(new Bool(dynamic_pointer_cast<Bool>(v)->val));
         if(v->getType()==STR)
-            return new Str(((Str*)v)->val);
+            return shared_ptr<Basic>(new Str(dynamic_pointer_cast<Str>(v)->val));
         if(v->getType()==_NULL)
-            return new Basic();
+            return shared_ptr<Basic>(new Basic());
         if(v->getType()==PLACEHOLDER)
-            return new Placeholder();
+            return shared_ptr<Basic>(new Placeholder());
         return nullptr; //如果进行参数检查了不会走到这一步
     }
 
     #define CONVCMP(strType,type) if(v1->getType()==strType) { \
-        auto nv1=(type*)v1;\
-        auto nv2=(type*)v2;\
+        auto nv1=dynamic_pointer_cast<type>(v1);\
+        auto nv2=dynamic_pointer_cast<type>(v2);\
         return nv1->val==nv2->val;\
     }
 
-    static bool isEqu(Basic* v1, Basic *v2)
+    static bool isEqu(shared_ptr<Basic> v1, shared_ptr<Basic> v2)
     {
         if(v1->getType()!=v2->getType())
             return false;
@@ -41,12 +41,6 @@ public:
             CONVCMP(BOOL,Bool)
             CONVCMP(STR,Str)
             return false;
-        }
-    }
-
-    static void del_vec_data(vector<Basic*> data_vec){
-        for(Basic* b:data_vec){
-            delete b;
         }
     }
 
@@ -68,28 +62,28 @@ public:
         return INT;
     }
 
-    static Basic* strToBasic(string val){
+    static shared_ptr<Basic> strToBasic(string val){
         return strToBasic(val,judgeType(val));
     }
 
-    static Basic* strToBasic(string val, TYPE type) //val需要与Basic.toStr结果对应
+    static shared_ptr<Basic> strToBasic(string val, TYPE type) //val需要与Basic.toStr结果对应
     {
         if(type==_NULL)
-            return new Basic();
+            return shared_ptr<Basic>(new Basic());
         if(type==PLACEHOLDER)
-            return new Placeholder();
+            return shared_ptr<Basic>(new Placeholder());
         if(type==INT)
-            return new Int(stoi(val));
+            return shared_ptr<Basic>(new Int(stoi(val)));
         if(type==FLOAT)
-            return new Float(stof(val));
+            return shared_ptr<Basic>(new Float(stof(val)));
         if(type==STR)
-            return new Str(val);
+            return shared_ptr<Basic>(new Str(val));
         if(type==BOOL)
         {
             if(val=="true")
-                return new Bool(true);
+                return shared_ptr<Basic>(new Bool(true));
             else
-                return new Bool(false);
+                return shared_ptr<Basic>(new Bool(false));
         }
         return nullptr;
     }

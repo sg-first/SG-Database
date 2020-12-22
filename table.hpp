@@ -7,7 +7,7 @@
 class table
 {
 protected:
-    vector<col*> allCol; //如果hasOwnership=true，push进来的由table对象持有所有权
+    vector<shared_ptr<col>> allCol; //如果hasOwnership=true，push进来的由table对象持有所有权
     vector<index*> allIndex;
     list<record> allRecord;
     bool hasOwnership=true;
@@ -17,7 +17,7 @@ protected:
 public:
     string ID;
 
-    static table* loadFile(string path);
+    static shared_ptr<table> loadFile(string path);
 
     string toStr();
 
@@ -25,22 +25,22 @@ public:
 
     void updateFile(string path);
 
-    table(string ID, vector<col*>allCol) : allCol(allCol), ID(ID) //allCol中元素转移所有权
+    table(string ID, vector<shared_ptr<col>>allCol) : allCol(allCol), ID(ID) //allCol中元素转移所有权
     {
-        for(col* c:allCol){
+        for(shared_ptr<col> c:allCol){
             if(c->getAllData().size()!=allCol[0]->getAllData().size()){
                 throw string("The number of columns is different");
             }
         }
-        for(col* c : allCol)
+        for(shared_ptr<col> c : allCol)
             this->allIndex.push_back(new traversalIndex(c)); //默认都是遍历索引
     }
 
     table(const table& t) : ID(t.ID)
     {
-        for(col* c : t.allCol)
+        for(shared_ptr<col> c : t.allCol)
         {
-            col* rc=new col(*c);
+            shared_ptr<col> rc(new col(*c));
             this->allCol.push_back(rc);
             this->allIndex.push_back(new traversalIndex(rc)); //索引不拷贝，重建
         }
@@ -52,11 +52,11 @@ public:
         this->allIndex[sub]=ind;
     }
 
-    const vector<col*>& getAllCol() { return this->allCol; } //对col数据的修改必须经过table对象完成，否则无法
+    const vector<shared_ptr<col>>& getAllCol() { return this->allCol; } //对col数据的修改必须经过table对象完成，否则无法
 
-    col* getCol(int i) { return this->allCol[i]; }
+    shared_ptr<col> getCol(int i) { return this->allCol[i]; }
 
-    col* getCol(const string& colName) { return getCol(this->findCol({colName})[0]); }
+    shared_ptr<col> getCol(const string& colName) { return getCol(this->findCol({colName})[0]); }
 
     int getColIndex(const string& colName)
     {
@@ -68,25 +68,25 @@ public:
         throw string("Wrong column name");
     }
 
-    table* genNewTable(const vector<int>& colSubList,const vector<int>& tupSubList) //会拷贝
+    shared_ptr<table> genNewTable(const vector<int>& colSubList,const vector<int>& tupSubList) //会拷贝
     {
-        vector<col*> newAllCol;
+        vector<shared_ptr<col>> newAllCol;
         for(int i : colSubList)
         {
-            col* selectCol=allCol[i]->genNewCol(tupSubList);
+            shared_ptr<col> selectCol=allCol[i]->genNewCol(tupSubList);
             newAllCol.push_back(selectCol);
         }
-        table* result=new table(this->ID, newAllCol);
+        shared_ptr<table> result(new table(this->ID, newAllCol));
         return result;
     }
 
-    void add(vector<Basic*> tuple)
+    void add(vector<shared_ptr<Basic>> tuple)
     {
         if(tuple.size()!=this->allCol.size())
             throw string("Col Size mismatch");
         for(int i=0;i<this->allCol.size();i++)
         {
-            col* c=this->allCol[i];
+            shared_ptr<col> c=this->allCol[i];
 
             index* ind=this->allIndex[i];
             if(ind->isSupportMod())
@@ -98,15 +98,15 @@ public:
         this->allRecord.push_back(record(tuple));
     }
 
-    void mod(int opSub, vector<Basic*> tuple)
+    void mod(int opSub, vector<shared_ptr<Basic>> tuple)
     {
         if(tuple.size()!=this->allCol.size())
             throw string("Col Size mismatch");
 
-        vector<Basic*> recordTuple;
+        vector<shared_ptr<Basic>> recordTuple;
         for(int i=0;i<this->allCol.size();i++)
         {
-            col* c=this->allCol[i];
+            shared_ptr<col> c=this->allCol[i];
 
             index* ind=this->allIndex[i];
             if(ind->isSupportMod())
@@ -152,7 +152,7 @@ public:
         }
     }
 
-    vector<int> find_in(const string& colName,vector<Basic*> target_vec)
+    vector<int> find_in(const string& colName,vector<shared_ptr<Basic>> target_vec)
     {
         vector<int> result_index_vec;
         int index=getColIndex(colName);
@@ -166,11 +166,10 @@ public:
         set<int>s(result_index_vec.begin(), result_index_vec.end());
         result_index_vec.assign(s.begin(), s.end());
         sort(result_index_vec.begin(),result_index_vec.end());
-        typeHelper::del_vec_data(target_vec);
         return result_index_vec;
     }
 
-    vector<int> find_not_in(const string& colName,vector<Basic*> target_vec)
+    vector<int> find_not_in(const string& colName,vector<shared_ptr<Basic>> target_vec)
     {
         vector<int> notResult;
         vector<int> inResult=find_in(colName,target_vec);
@@ -236,7 +235,7 @@ public:
         vector<int> result;
         for(int i=0;i<this->allCol.size();i++)
         {
-            col* c=this->allCol[i];
+            shared_ptr<col> c=this->allCol[i];
             vector<string>::iterator it;
             it=std::find(colID.begin(),colID.end(),c->ID);
             if (it!=colID.end())
@@ -247,8 +246,6 @@ public:
 
     void clear()
     {
-        for(col* c : allCol)
-            delete c;
         for(index* i : allIndex)
             delete i;
     }
@@ -268,7 +265,7 @@ private:
 
 public:
     static string default_path;
-    operatTable(string _ID, vector<col*> _allCol) : table(_ID, _allCol) {}
+    operatTable(string _ID, vector<shared_ptr<col>> _allCol) : table(_ID, _allCol) {}
 
     //bool get_isTrasaction(){return isTrasaction;}
 
@@ -280,8 +277,8 @@ public:
         this->table::updateFile(default_path+"\\"+ID+".csv");
     }
 
-    static operatTable* loadFile(string _ID){
-        return new operatTable(_ID,table::loadFile(default_path+"/"+_ID+".csv")->getAllCol());
+    static shared_ptr<operatTable> loadFile(string _ID){
+        return shared_ptr<operatTable>(new operatTable(_ID,table::loadFile(default_path+"/"+_ID+".csv")->getAllCol()));
     }
 
     /*void open_trasaction(){
@@ -291,7 +288,7 @@ public:
 
     void rollback() {
         this->clear();
-        operatTable* newTable=operatTable::loadFile(this->ID);
+        shared_ptr<operatTable> newTable=operatTable::loadFile(this->ID);
         newTable->hasOwnership=false;
         this->allCol=newTable->allCol;
         this->allRecord=newTable->allRecord;

@@ -4,7 +4,7 @@
 class view //视图主要是为了方便删除修改，因此不支持添加。如果基本表被删除修改，视图即失效，因此注意生命周期
 {
 private:
-    table *t;
+    shared_ptr<table> t;
 
     vector<int> allSub;
 
@@ -18,7 +18,7 @@ private:
 
 public:
     string ID;
-    view(string ID, table* t, vector<int> allSub) : t(t), allSub(allSub), ID(ID) {} //allSub必须排序
+    view(string ID, shared_ptr<table> t, vector<int> allSub) : t(t), allSub(allSub), ID(ID) {} //allSub必须排序
 
     bool delElmDir(int opSub) //删除了一个基本表元组，如果其影响视图映射到的基本表下标，进行对应修正操作
     {
@@ -50,7 +50,7 @@ public:
         }
     }
 
-    void mod(int opSub, vector<Basic*> tuple)
+    void mod(int opSub, vector<shared_ptr<Basic>> tuple)
     {
         t->mod(this->allSub[opSub],tuple);
     }
@@ -71,7 +71,7 @@ public:
         }
     }
 
-    /*void modDir(int opSub, vector<Basic*> tuple)
+    /*void modDir(int opSub, vector<shared_ptr<Basic>> tuple)
     {
         t->mod(opSub,tuple);
     }

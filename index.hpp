@@ -17,13 +17,13 @@ protected:
 
 public:
     virtual vector<int> find(ruleExp* rule)=0;
-    col* c; //会直接跟着列变
-    index(col* c) : c(c) {}
+    shared_ptr<col> c; //会直接跟着列变
+    index(shared_ptr<col> c) : c(c) {}
 
     bool isSupportMod() { return this->supportMod; }
     //都是在操作col前调用
-    virtual void add(Basic* v) { throw string("This index does not support updating"); }
-    virtual void mod(int opSub, Basic* v) { throw string("This index does not support updating"); }
+    virtual void add(shared_ptr<Basic> v) { throw string("This index does not support updating"); }
+    virtual void mod(int opSub, shared_ptr<Basic> v) { throw string("This index does not support updating"); }
     virtual void del(int opSub) { throw string("This index does not support updating"); }
 
     virtual ~index() {}
@@ -32,7 +32,7 @@ public:
 class traversalIndex : public index
 {
 public:
-    traversalIndex(col* _c) : index(_c) {}
+    traversalIndex(shared_ptr<col> _c) : index(_c) {}
 
     virtual vector<int> find(ruleExp* rule)
     {
@@ -40,7 +40,7 @@ public:
         auto data=c->getAllData();
         for(int i=0;i<data.size();i++)
         {
-            Basic* v=data[i];
+            shared_ptr<Basic> v=data[i];
             if(rule->eval(v))
                 result.push_back(i);
         }
@@ -59,7 +59,7 @@ private:
         auto allData=this->c->getAllData();
         for(int i=0;i<allData.size();i++)
         {
-            Basic* v=allData[i];
+            shared_ptr<Basic> v=allData[i];
             sortVec.push_back(make_pair(binarySearchIndex::getVal(v),i));
         }
     }
@@ -91,35 +91,35 @@ private:
     }
 
 public:
-    static float getVal(Basic* v)
+    static float getVal(shared_ptr<Basic> v)
     {
         if(v->getType()==INT)
         {
-            Int* rv=(Int*)v;
+            shared_ptr<Int> rv=dynamic_pointer_cast<Int>(v);
             return rv->val;
         }
         else if(v->getType()==FLOAT)
         {
-            Float* rv=(Float*)v;
+            shared_ptr<Float> rv=dynamic_pointer_cast<Float>(v);
             return rv->val;
         }
         else
             throw string("type mismatch");
     }
 
-    binarySearchIndex(col* _c) : index(_c)
+    binarySearchIndex(shared_ptr<col> _c) : index(_c)
     {
         this->colToVec();
         this->resort();
     }
 
-    virtual void add(Basic *v) override
+    virtual void add(shared_ptr<Basic> v) override
     {
         int sub=sortVec.size();
         this->sortVec.push_back(make_pair(binarySearchIndex::getVal(v),sub));
         this->resort();
     }
-    virtual void mod(int opSub, Basic *v) override
+    virtual void mod(int opSub, shared_ptr<Basic> v) override
     {
         int sub=-1;
         for(auto i : this->sortVec)
@@ -169,7 +169,7 @@ private:
     BPlusTree* pTree;
 
 public:
-    BPlusTreeIndex(col* _c) : index(_c)
+    BPlusTreeIndex(shared_ptr<col> _c) : index(_c)
     {
         supportMod=true;
         pTree = new BPlusTree;
@@ -183,17 +183,17 @@ public:
             throw string("type mismatch");
 
         int sub=0;
-        for(Basic* v : c->getAllData())
+        for(shared_ptr<Basic> v : c->getAllData())
         {
             float val;
             if(isInt)
             {
-                Int* rv=(Int*)v;
+                shared_ptr<Int> rv=dynamic_pointer_cast<Int>(v);
                 val=rv->val;
             }
             else
             {
-                Float* rv=(Float*)v;
+                shared_ptr<Float> rv=dynamic_pointer_cast<Float>(v);
                 val=rv->val;
             }
             pTree->Insert(make_pair(val,sub));
@@ -201,7 +201,7 @@ public:
         }
     }
 
-    virtual void add(Basic* v)
+    virtual void add(shared_ptr<Basic> v)
     {
         float val=binarySearchIndex::getVal(v);
         int sub=c->getAllData().size();
@@ -210,11 +210,11 @@ public:
 
     virtual void del(int opSub)
     {
-        Basic* v=c->getAllData()[opSub];
+        shared_ptr<Basic> v=c->getAllData()[opSub];
         pTree->Delete(binarySearchIndex::getVal(v));
     }
 
-    virtual void mod(int opSub, Basic* v)
+    virtual void mod(int opSub, shared_ptr<Basic> v)
     {
         this->del(opSub);
         float val=binarySearchIndex::getVal(v);
@@ -225,7 +225,7 @@ public:
     {
         if(rule->getOp()==EQU)
         {
-            Basic* v=rule->getOperand2B();
+            shared_ptr<Basic> v=rule->getOperand2B();
             int aresult=pTree->Search(binarySearchIndex::getVal(v));
             vector<int> result;
             result.push_back(aresult);

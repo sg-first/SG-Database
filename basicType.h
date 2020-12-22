@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <memory>
 using namespace std;
 
 enum TYPE{FLOAT,INT,STR,BOOL,_NULL,PLACEHOLDER};
