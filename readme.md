@@ -237,7 +237,7 @@ TYPE getType()
 ```
 获取列中数据的数据类型
 ``` cpp
-void pushDate(Basic* v)
+void pushData(Basic* v)
 ```
 向列中添加数据，会自动进行类型检查
 ``` cpp

@@ -54,15 +54,12 @@ public:
 
     const vector<col*>& getAllCol() { return this->allCol; } //对col数据的修改必须经过table对象完成，否则无法
 
-    col* getCol(int i){
-        return this->allCol[i];
-    }
+    col* getCol(int i) { return this->allCol[i]; }
 
-    col* getCol(const string& colName){
-        return getCol(this->findCol({colName})[0]);
-    }
+    col* getCol(const string& colName) { return getCol(this->findCol({colName})[0]); }
 
-    int getColIndex(const string& colName){
+    int getColIndex(const string& colName)
+    {
         for(int i;i<allCol.size();++i){
             if(allCol[i]->ID==colName){
                 return i;
@@ -71,7 +68,7 @@ public:
         throw string("Wrong column name");
     }
 
-    table* genNewTable(const vector<int>& colSubList,const vector<int>& tupSubList)
+    table* genNewTable(const vector<int>& colSubList,const vector<int>& tupSubList) //会拷贝
     {
         vector<col*> newAllCol;
         for(int i : colSubList)
@@ -155,7 +152,8 @@ public:
         }
     }
 
-    vector<int> find_in(const string& colName,vector<Basic*> target_vec){
+    vector<int> find_in(const string& colName,vector<Basic*> target_vec)
+    {
         vector<int> result_index_vec;
         int index=getColIndex(colName);
         for(int i=0;i<target_vec.size();++i)
@@ -172,7 +170,8 @@ public:
         return result_index_vec;
     }
 
-    vector<int> find_not_in(const string& colName,vector<Basic*> target_vec){
+    vector<int> find_not_in(const string& colName,vector<Basic*> target_vec)
+    {
         vector<int> notResult;
         vector<int> inResult=find_in(colName,target_vec);
         int col_size=this->allCol[0]->getAllData().size();
