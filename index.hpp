@@ -64,7 +64,7 @@ private:
         }
     }
 
-    static pair<int,int> binFind(const vector<pair<float,int>> &invec, float value) //返回的是sub和opSub（表中的）
+    static int binFind(const vector<pair<float,int>> &invec, float value) //返回的是sub和opSub（表中的）
     {
       int low = 0, high = invec.size()-1;
       //assert(!invec.empty() && pos>=0);
@@ -72,13 +72,13 @@ private:
       {
           int mid = (low+high)/2;
           if(invec[mid].first == value)
-            return make_pair(mid,invec[mid].second);
+              return mid;
           else if(invec[mid].first < value)
             low = mid+1;
           else
             high = mid-1;
       }
-      return make_pair(-1,-1);
+      return -1;
     }
 
     void resort()
@@ -139,22 +139,44 @@ public:
         if(rule->operandIsBasic())
         {
             int value=binarySearchIndex::getVal(rule->getOperand2B());
-            auto sub=binFind(this->sortVec,value); //返回的是sub和opSub
+            int sub=binFind(this->sortVec,value); //返回的是sub和opSub
+            int leftSub,rightSub;
+            const float& target=sortVec[sub].first;
+            for(int i=sub-1;i>=0;--i){
+                if(sortVec[i].first!=target){
+                    leftSub=i+1;
+                    break;
+                }
+                if(i==0){
+                    leftSub=0;
+                }
+            }
+            for(int i=sub+1;i<sortVec.size();++i){
+                if(sortVec[i].first!=target){
+                    rightSub=i-1;
+                    break;
+                }
+                if(i==sortVec.size()-1){
+                    rightSub=sortVec.size()-1;
+                }
+            }
+            //fix:找到以sub为中心，最左和最右等于value的，把它们赋值给leftSub和rightSub
             vector<int> result;
             if(rule->getOp()==EQU)
             {
-                result.push_back(sub.second);
+                for(int i=leftSub;i<=rightSub;i++)
+                    result.push_back(this->sortVec[i].second);
                 return result;
             }
             else if(rule->getOp()==GRAT)
             {
-                for(int i=sub.first+1;i<this->sortVec.size();i++)
+                for(int i=rightSub+1;i<this->sortVec.size();i++)
                     result.push_back(this->sortVec[i].second);
                 return result;
             }
             else if(rule->getOp()==SMAL)
             {
-                for(int i=0;i<sub.first;i++)
+                for(int i=0;i<leftSub;i++)
                     result.push_back(this->sortVec[i].second);
                 return result;
             }

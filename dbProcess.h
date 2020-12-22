@@ -41,15 +41,14 @@ public:
 
 class dbProcess{
 
-    static queue<processObject> processQueue;
-
-    static queue<processObject> correspondQueue;
-
     static shared_ptr<operatTable> countTable;
 
     static shared_ptr<operatTable> jurisdictionTable;
 
 public:
+     static queue<processObject> processQueue;
+
+     static queue<processObject> correspondQueue;
 
      static string GetString(string JS, int tag)
     {

@@ -26,11 +26,14 @@ void dbRunFunc(){
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    vector<string>hh=dbProcess::getUsedTable("loadTable('ljasdlkjsa');sajidsiajihasdijsaji\nsadjijisadjiloadTable('ljasdlgkjsa')");
     operatTable::default_path="D:\\personal_file\\download_files\\test_";
     tableManager manager=tableManager();
     dbProcess::setCount(operatTable::loadFile("Count"));
     dbProcess::setJurisdiction(operatTable::loadFile("jurisdiction"));
+    shared_ptr<operatTable> st= manager.loadTable("student table");
+    index* ni=new binarySearchIndex(st->getCol("ID"));
+    st->changeIndex(0,ni);
+    vector<int>res_vec=st->find({"(x<789)","",""});
     thread serverThread(testTcpSocketServer);
     serverThread.join();
     thread dbThread(dbRunFunc);

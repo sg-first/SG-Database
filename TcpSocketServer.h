@@ -7,6 +7,7 @@
 #include <QMap>
 #include <queue>
 #include "data.h"
+#include "dbProcess.h"
 using namespace std;
 QString get_userid(QString S)
 {
@@ -86,6 +87,7 @@ void testTcpSocketServer()
     {
         qDebug() << "m_pTcpServer->listen() error";
     }
+    ;
 }
 
 
