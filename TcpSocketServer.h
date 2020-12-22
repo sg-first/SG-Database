@@ -7,6 +7,7 @@
 #include <QMap>
 #include <queue>
 #include "data.h"
+#include "dbProcess.h"
 using namespace std;
 QString get_userid(QString S)
 {
@@ -17,7 +18,18 @@ QString get_content(QString S)
 {
     return S.mid(8);
 }
+processObject string_to_processObject(QString S)
+{
 
+    QString user;
+    QString passWord;
+    QString JS;
+    QString result;
+    user=S.mid(0,8);
+    passWord=S.mid(8,18);
+    JS=S.mid(18);
+    return processObject(user.toStdString(),passWord.toStdString(),JS.toStdString());
+}
 
 class TcpSocketServer:public QTcpServer
 {
@@ -65,9 +77,12 @@ void TcpSocketServer::incomingConnection(qintptr handle)
 
     QString sReadData = oTcpSocket->readAll();//读取到的string
     qDebug()<<"接收检测："<<sReadData;//试试能不能读入数据
-    QString userid=get_userid(sReadData);
-    QString content=get_content(sReadData);
-    Request_Queue.push(sReadData);//收到的String加入到请求队列
+
+    processObject sReadData_Object=string_to_processObject(sReadData);
+    QString userid=QString::fromStdString(sReadData_Object.user);
+    //QString content=QString::fromStdString(sReadData_Object.JS);
+    //Request_Queue.push(sReadData);//收到的String加入到请求队列
+    dbProcess::processQueue.push(sReadData_Object);//把封装的Object加入队列
 
     //添加该socket到map
     tcp->insert(userid,oTcpSocket);
@@ -98,16 +113,16 @@ void ServerResponseThread::run()
     while(1)
     {
         //qDebug()<<"ServerResponseThread在执行";
-        QString response;
+        processObject response=processObject();
         QString userid;
         QString content;
         //如果响应队列不为空
-        if(Response_Queue.size()!=0)
+        if(dbProcess::correspondQueue.size()!=0)
         {
-            response=Response_Queue.front();
+            response=dbProcess::correspondQueue.front();
             Response_Queue.pop();
-            userid=get_userid(response);
-            content=get_content(response);
+            userid=QString::fromStdString(response.getUser());
+            content=QString::fromStdString(response.getResult());
             //在map中查找对应的socket
             if(tcp->contains(userid))
             {
