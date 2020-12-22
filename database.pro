@@ -17,7 +17,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         BPlusTree.cpp \
-        TcpSocketServer.cpp \
         main.cpp \
         tableIO.cpp
 
@@ -34,6 +33,7 @@ HEADERS += \
     basicType.h \
     col.hpp \
     config.h \
+    data.h \
     dbProcess.h \
     expParse.h \
     index.hpp \
@@ -43,4 +43,5 @@ HEADERS += \
     table.hpp \
     tableManager.h \
     typeHelper.hpp \
+    update_Response_Queue.h \
     view.hpp

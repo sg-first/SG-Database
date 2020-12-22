@@ -50,7 +50,61 @@ class dbProcess{
     static shared_ptr<operatTable> jurisdictionTable;
 
 public:
+
+     static string GetString(string JS, int tag)
+    {
+        int index = tag;
+        int tag2;
+        string str = "";
+        for (;; index++)
+        {
+            if (JS[index] == ')')
+            {
+                tag2 = index;
+                break;
+            }
+        }
+        str.append(JS, tag + 2, tag2-3-tag );
+        return str;
+    }
+
+     static bool Judge(string s, int index)
+    {
+        string tmp = "";
+        string comp = "loadTable";
+        tmp.append(s, index - 9, 9);
+
+        if (tmp.compare(comp) == 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     static vector<string> getUsedTable(string JS){
+        set<string> waitput;
+        vector<string> sv;
+        int tag=0;
+        for (int i=0;i<JS.length();i++)
+        {
+            if (JS[i] == '(')
+            {
+                tag = i;
+                if (Judge(JS, tag))
+                {
+                    string data=GetString(JS, tag);
+                    waitput.insert(data);
+                }
+            }
+        }
+        for (string s : waitput)
+        {
+            sv.push_back(s);
+        }
+        return sv;
 
     }
 
