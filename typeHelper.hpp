@@ -57,7 +57,7 @@ public:
         else if(val=="true"||val=="false"){
             return BOOL;
         }
-        else if(val[0]=='"'){
+        else if(val[0]=='\''){
             return STR;
         }
         for(const char& c:val){

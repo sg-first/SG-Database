@@ -8,7 +8,7 @@ class tableManager{
     vector<string> managedTableName;
     map<string,operatTable*> managedTable;
 public:
-    tableManager(int maxNum):maxManaged(maxNum) {}
+    tableManager(int maxNum=10):maxManaged(maxNum) {}
 
     operatTable* loadTable(const string& tableName){
         if(managedTable.find(tableName)==managedTable.end()){

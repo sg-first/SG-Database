@@ -1,5 +1,6 @@
 QT -= gui
-
+QT+=network
+QT+=script
 CONFIG += c++11 console
 CONFIG -= app_bundle
 
@@ -16,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         BPlusTree.cpp \
+        TcpSocketServer.cpp \
         main.cpp \
         tableIO.cpp
 
@@ -27,12 +29,15 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     BPlusTree.h \
     IO.hpp \
+    TcpSocketServer.h \
     aggHelper.h \
     basicType.h \
     col.hpp \
     config.h \
+    dbProcess.h \
     expParse.h \
     index.hpp \
+    js.h \
     record.h \
     rule.hpp \
     table.hpp \
