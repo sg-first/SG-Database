@@ -2,21 +2,29 @@
 #include <iostream>
 #include <string>
 #include <queue>
-#include <QtScript>
+//#include <QtScript>
 #include <QVariant>
 #include <table.hpp>
 #include "js.h"
 using namespace std;
 class processObject{
+
+public:
     string user;
     string passWord;
     string JS;
     string result;
-public:
     processObject(const string& user,const string& JS){
         this->user=user;
         this->JS=JS;
     }
+    processObject(string user,string passWord,string JS){
+        this->user=user;
+        this->JS=JS;
+        this->passWord=passWord;
+    }
+
+    processObject(){}
 
     string getUser()const{
         return user;
@@ -41,6 +49,7 @@ public:
 
 class dbProcess{
 
+<<<<<<< HEAD
     static shared_ptr<operatTable> countTable;
 
     static shared_ptr<operatTable> jurisdictionTable;
@@ -50,6 +59,18 @@ public:
 
      static queue<processObject> correspondQueue;
 
+=======
+
+
+public:
+    static queue<processObject> processQueue;
+
+    static queue<processObject> correspondQueue;
+
+    static shared_ptr<operatTable> countTable;
+
+    static shared_ptr<operatTable> jurisdictionTable;
+>>>>>>> f05067a6bdc282a0e67b3ffe05dd0824243d50ac
      static string GetString(string JS, int tag)
     {
         int index = tag;
