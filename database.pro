@@ -33,7 +33,6 @@ HEADERS += \
     basicType.h \
     col.hpp \
     config.h \
-    data.h \
     dbProcess.h \
     expParse.h \
     index.hpp \
@@ -43,5 +42,4 @@ HEADERS += \
     table.hpp \
     tableManager.h \
     typeHelper.hpp \
-    update_Response_Queue.h \
     view.h
