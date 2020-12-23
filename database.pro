@@ -44,4 +44,4 @@ HEADERS += \
     tableManager.h \
     typeHelper.hpp \
     update_Response_Queue.h \
-    view.hpp
+    view.h

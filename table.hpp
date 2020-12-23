@@ -295,5 +295,5 @@ public:
         this->allIndex=newTable->allIndex;
     }
 };
-Q_DECLARE_METATYPE(operatTable)
+//Q_DECLARE_METATYPE(operatTable)
 

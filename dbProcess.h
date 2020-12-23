@@ -8,8 +8,6 @@
 #include "js.h"
 using namespace std;
 class processObject{
-
-
     string user;
     string passWord;
     string JS;

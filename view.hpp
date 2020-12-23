@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 #include <map>
 #include "dbProcess.h"
 #include "table.hpp"
@@ -24,6 +24,7 @@ public:
         operatTable* opTable=varResult.value<operatTable*>();
         return shared_ptr<operatTable>(opTable);
     }
+
 };
 class viewManager{
     map<string,vector<userView>> allView;
@@ -56,7 +57,7 @@ public:
         throw(string("No such view"));
     }
 };
-
+*/
 
 
 

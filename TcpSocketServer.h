@@ -68,6 +68,7 @@ void TcpSocketServer::show_map()
 void TcpSocketServer::incomingConnection(qintptr handle)
 {
     //获取服务端数据
+    qDebug()<<"检测链接";
     QTcpSocket *oTcpSocket=new QTcpSocket();
     oTcpSocket->setSocketDescriptor(handle);
     qDebug() << handle << " " << oTcpSocket->socketDescriptor();
