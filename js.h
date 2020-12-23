@@ -9,7 +9,6 @@
 typedef QScriptEngine JSVM;
 typedef QString String;
 typedef QVariant Variant;
-
 #define NULL_String ""
 JSVM* AddJSVM()
 {

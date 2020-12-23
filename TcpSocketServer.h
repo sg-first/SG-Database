@@ -79,7 +79,7 @@ void TcpSocketServer::incomingConnection(qintptr handle)
     qDebug()<<"接收检测："<<sReadData;//试试能不能读入数据
 
     processObject sReadData_Object=string_to_processObject(sReadData);
-    QString userid=QString::fromStdString(sReadData_Object.user);
+    QString userid=QString::fromStdString(sReadData_Object.getUser());
     //QString content=QString::fromStdString(sReadData_Object.JS);
     //Request_Queue.push(sReadData);//收到的String加入到请求队列
     dbProcess::processQueue.push(sReadData_Object);//把封装的Object加入队列

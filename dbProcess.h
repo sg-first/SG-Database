@@ -9,15 +9,12 @@
 using namespace std;
 class processObject{
 
-public:
+
     string user;
     string passWord;
     string JS;
     string result;
-    processObject(const string& user,const string& JS){
-        this->user=user;
-        this->JS=JS;
-    }
+public:
     processObject(string user,string passWord,string JS){
         this->user=user;
         this->JS=JS;
@@ -26,12 +23,24 @@ public:
 
     processObject(){}
 
+    void setUser(const string& username){
+        this->user=username;
+    }
+
     string getUser()const{
         return user;
     }
 
+    void setPassword(const string& password){
+        this->passWord=passWord;
+    }
+
     string getPassWord()const{
         return passWord;
+    }
+
+    void setJS(const string& JS){
+        this->JS=JS;
     }
 
     string getJS()const{
@@ -48,29 +57,16 @@ public:
 };
 
 class dbProcess{
+     static shared_ptr<operatTable> countTable;
 
-<<<<<<< HEAD
-    static shared_ptr<operatTable> countTable;
-
-    static shared_ptr<operatTable> jurisdictionTable;
-
+     static shared_ptr<operatTable> jurisdictionTable;
 public:
      static queue<processObject> processQueue;
 
      static queue<processObject> correspondQueue;
 
-=======
-
-
-public:
-    static queue<processObject> processQueue;
-
-    static queue<processObject> correspondQueue;
-
-    static shared_ptr<operatTable> countTable;
-
-    static shared_ptr<operatTable> jurisdictionTable;
->>>>>>> f05067a6bdc282a0e67b3ffe05dd0824243d50ac
+     static string curOperatUser;
+    
      static string GetString(string JS, int tag)
     {
         int index = tag;
@@ -139,7 +135,7 @@ public:
     static bool checkCount(const processObject& obj){
         string userName=obj.getUser();
         string passWord=obj.getPassWord();
-        vector<int>countVec=countTable->find({"(x=="+userName+")","(x=="+passWord+")"});
+        vector<int> countVec=countTable->find({"(x=='"+userName+"')","(x=='"+passWord+"')"});
         if(countVec.empty()){
             return false;
         }
@@ -151,7 +147,7 @@ public:
         string JS=obj.getJS();
         vector<string> tableVec=getUsedTable(JS);
         for(const string& tbName:tableVec){
-            if(jurisdictionTable->find({"(x=="+userName+")","(x=="+tbName+")"}).empty()){
+            if(jurisdictionTable->find({"(x=='"+userName+"')","(x=='"+tbName+"')"}).empty()){
                 return false;
             }
         }
@@ -164,6 +160,7 @@ public:
         }
         processObject tmpProcess=processQueue.front();
         processQueue.pop();
+        curOperatUser=tmpProcess.getUser();
         if(checkCount(tmpProcess)==false){
             tmpProcess.setResult("Account password error");
         }

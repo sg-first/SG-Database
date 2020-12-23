@@ -1,9 +1,9 @@
 #pragma once
+#include <QVariant>
 #include "col.hpp"
 #include "index.hpp"
 #include "IO.hpp"
 #include "expParse.h"
-
 class table
 {
 protected:
@@ -160,7 +160,7 @@ public:
         {
             vector<ruleExp*> rule_vec(this->allCol.size(),nullptr);
             rule_vec[index]=new ruleExp (EQU,typeHelper::copy(target_vec[i]));
-            vector<int> temp_result=this->find(rule_vec);
+            vector<int> temp_result=this->find(rule_vec,true);
             result_index_vec.insert(result_index_vec.end(),temp_result.begin(),temp_result.end());
         }
         set<int>s(result_index_vec.begin(), result_index_vec.end());
@@ -187,7 +187,7 @@ public:
         return notResult;
     }
 
-    vector<int> find(vector<ruleExp*> allExp)
+    vector<int> find(vector<ruleExp*> allExp,bool flag)
     {
         //先生成一个完整的范围，用于作为nullptr（无条件）的结果
         vector<int> completeResult;
@@ -223,7 +223,7 @@ public:
         for(const string& str:allExp)
             allRule.push_back(expParse::total_strrule_parse(str));
 
-        auto result=find(allRule);
+        auto result=find(allRule,true);
 
         for(ruleExp* i : allRule)
             delete i;
@@ -295,4 +295,5 @@ public:
         this->allIndex=newTable->allIndex;
     }
 };
-Q_DECLARE_METATYPE(operatTable);
+Q_DECLARE_METATYPE(operatTable)
+

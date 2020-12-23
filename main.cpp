@@ -5,7 +5,9 @@
 #include "TcpSocketServer.h"
 #include "tableManager.h"
 #include "dbProcess.h"
+#include "view.hpp"
 string operatTable::default_path;
+string dbProcess::curOperatUser;
 queue<processObject> dbProcess::processQueue;
 queue<processObject> dbProcess::correspondQueue;
 shared_ptr<operatTable> dbProcess::countTable;
@@ -27,13 +29,10 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
     operatTable::default_path="D:\\personal_file\\download_files\\test_";
-    tableManager manager=tableManager();
+    tableManager tablemanager=tableManager();
+    viewManager viewmanager=viewManager();
     dbProcess::setCount(operatTable::loadFile("Count"));
-    dbProcess::setJurisdiction(operatTable::loadFile("jurisdiction"));
-    shared_ptr<operatTable> st= manager.loadTable("student table");
-    index* ni=new binarySearchIndex(st->getCol("ID"));
-    st->changeIndex(0,ni);
-    vector<int>res_vec=st->find({"(x<789)","",""});
+    dbProcess::setJurisdiction(operatTable::loadFile("Jurisdiction"));
     thread serverThread(testTcpSocketServer);
     serverThread.join();
     thread dbThread(dbRunFunc);
