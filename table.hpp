@@ -80,6 +80,10 @@ public:
         return result;
     }
 
+    shared_ptr<table> genNewTable(const vector<string>& colNames,const vector<int>& tupSubList){
+        return genNewTable(findCol(colNames),tupSubList);
+    }
+
     void add(vector<shared_ptr<Basic>> tuple)
     {
         if(tuple.size()!=this->allCol.size())

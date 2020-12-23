@@ -6,6 +6,9 @@
 #include <QTcpSocket>
 #include <QMap>
 #include <queue>
+#include <string>
+#include <vector>
+#include <iostream>
 #include "data.h"
 #include "dbProcess.h"
 using namespace std;
@@ -18,17 +21,82 @@ QString get_content(QString S)
 {
     return S.mid(8);
 }
-processObject string_to_processObject(QString S)
-{
+//processObject string_to_processObject(QString S)
+//{
 
-    QString user;
-    QString passWord;
-    QString JS;
-    QString result;
-    user=S.mid(0,8);
-    passWord=S.mid(8,18);
-    JS=S.mid(18);
-    return processObject(user.toStdString(),passWord.toStdString(),JS.toStdString());
+//    QString user;
+//    QString passWord;
+//    QString JS;
+//    QString result;
+//    user=S.mid(0,8);
+//    passWord=S.mid(8,18);
+//    JS=S.mid(18);
+//    return processObject(user.toStdString(),passWord.toStdString(),JS.toStdString());
+//}
+string getUserString(string s, int tag)
+{
+    int tag2 = tag;
+    int index = 0;
+    string userstr;
+    for (;; tag2--)
+    {
+        if (s[tag2] == ':')
+        {
+            index = tag2;
+            break;
+        }
+    }
+    userstr.append(s, index+1, tag - index - 1);
+    return userstr;
+}
+string getUserid(string s, int tag)
+{
+    int tag3 = tag;
+    int index1 = 0;
+    string userstr;
+    for (;; tag3--)
+    {
+        if (s[tag3] == ':')
+        {
+            index1 = tag3;
+            break;
+        }
+    }
+    userstr.append(s, index1+1, tag - index1 - 1);
+    return userstr;
+}
+processObject string_to_processObject(string s)
+{
+    int blankcount = 1;
+    int tag = 0;
+    string user = "";
+    string passWord = "";
+    string JS = "";
+    for (int i = 0;i < s.length(); i++)
+    {
+        if (s[i] == ' '&&blankcount==1)
+        {
+            ++blankcount;
+            tag = i;
+            user = getUserString(s, tag);
+            continue;
+        }
+        if (s[i] == ' ' && blankcount == 2)
+        {
+            ++blankcount;
+            tag = i;
+            passWord = getUserid(s, tag);
+            continue;
+        }
+        if (blankcount > 2)
+        {
+
+            JS.append(s, i,s.length()-i);
+            break;
+        }
+
+    }
+    return processObject(user, passWord, JS);
 }
 
 class TcpSocketServer:public QTcpServer
@@ -68,7 +136,6 @@ void TcpSocketServer::show_map()
 void TcpSocketServer::incomingConnection(qintptr handle)
 {
     //获取服务端数据
-    qDebug()<<"检测链接";
     QTcpSocket *oTcpSocket=new QTcpSocket();
     oTcpSocket->setSocketDescriptor(handle);
     qDebug() << handle << " " << oTcpSocket->socketDescriptor();
@@ -79,7 +146,8 @@ void TcpSocketServer::incomingConnection(qintptr handle)
     QString sReadData = oTcpSocket->readAll();//读取到的string
     qDebug()<<"接收检测："<<sReadData;//试试能不能读入数据
 
-    processObject sReadData_Object=string_to_processObject(sReadData);
+
+    processObject sReadData_Object=string_to_processObject(sReadData.toStdString());
     QString userid=QString::fromStdString(sReadData_Object.getUser());
     //QString content=QString::fromStdString(sReadData_Object.JS);
     //Request_Queue.push(sReadData);//收到的String加入到请求队列
@@ -102,7 +170,6 @@ void testTcpSocketServer()
     {
         qDebug() << "m_pTcpServer->listen() error";
     }
-    ;
 }
 
 
@@ -122,7 +189,7 @@ void ServerResponseThread::run()
         if(dbProcess::correspondQueue.size()!=0)
         {
             response=dbProcess::correspondQueue.front();
-            Response_Queue.pop();
+            dbProcess::correspondQueue.pop();
             userid=QString::fromStdString(response.getUser());
             content=QString::fromStdString(response.getResult());
             //在map中查找对应的socket

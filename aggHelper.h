@@ -1,16 +1,18 @@
 #pragma once
+#include <memory>
+#include <QObject>
 #include "col.hpp"
 using namespace std;
-class aggHelper {
+class aggHelper:public QObject {
 private:
     aggHelper(){}
 
-    static aggHelper* helper;
-
 public:
-    static aggHelper* getHelper(){
+    static shared_ptr<aggHelper> helper;
+
+    static shared_ptr<aggHelper> getHelper(){
         if(helper==nullptr){
-            helper=new aggHelper();
+            helper=shared_ptr<aggHelper>(new aggHelper());
         }
         return helper;
     }
