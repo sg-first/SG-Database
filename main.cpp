@@ -14,6 +14,7 @@ shared_ptr<tableManager> tableManager::tablemanager;
 shared_ptr<operatTable> dbProcess::countTable;
 shared_ptr<operatTable> tableManager::jurisdictionTable;
 shared_ptr<aggHelper> aggHelper::helper;
+#define RegisterJSType(TypeName,JSName) qRegisterMetaType<TypeName>(JSName)
 using namespace std;
 void outputVec(const vector<int> &vec)
 {
@@ -21,26 +22,36 @@ void outputVec(const vector<int> &vec)
         cout<<i<<" ";
     cout<<endl;
 }
+
 class dbRun :public QThread{
-virtual void run(){
-    while(true){
-        dbProcess::processRequst();
+    virtual void run(){
+        while(true){
+            dbProcess::processRequst();
+        }
     }
-}};
+};
+
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+
+    RegisterJSType(shared_ptr<operatTable>,"shared_ptr<operatTable>");
+    RegisterJSType(string,"string");
+
     operatTable::default_path="D:\\personal_file\\download_files\\test_";
+
     tableManager::tablemanager=tableManager::getTableManager();
     aggHelper::helper=aggHelper::getHelper();
+
     dbProcess::setCount(operatTable::loadFile("Count"));
     tableManager::setJurisdiction(operatTable::loadFile("Jurisdiction"));
+
     TcpSocketServer *m_pTcpServer=new TcpSocketServer();
-    //2. 启动服务端
     if (!m_pTcpServer->listen(QHostAddress::Any, 8888))
     {
         qDebug() << "m_pTcpServer->listen() error";
     }
+
     dbRun* dbrun=new dbRun();
     dbrun->start();
     return a.exec();

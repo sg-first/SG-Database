@@ -7,6 +7,8 @@ using namespace std;
 class tableManager: public QObject
 {
 private:
+    Q_OBJECT;
+
     const int maxManaged;
 
     vector<string> managedTableName;
@@ -38,7 +40,7 @@ public:
         jurisdictionTable=table;
     }
 
-    shared_ptr<operatTable> loadTable(const string& tableName)
+    Q_INVOKABLE shared_ptr<operatTable> loadTable(const string& tableName)
     {
         if(jurisdictionTable->find({"(x=='"+curOperatUser+"')","(x=='"+tableName+"')"}).empty()){
             return nullptr;

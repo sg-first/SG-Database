@@ -9,7 +9,6 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "data.h"
 #include "dbProcess.h"
 using namespace std;
 QString get_userid(QString S)

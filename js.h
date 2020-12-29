@@ -21,25 +21,23 @@ JSVM* AddJSVM()
     return VM;
 }
 
-Variant JSEval(String code,String functionname,String *mistake,JSVM *VM)
+Variant JSEval(String code,String functionname, String *mistake,JSVM *VM)
 {
-    QScriptValue ret;
-    if(code!=NULL_String)
-    {
-        VM->globalObject().setProperty("myNumber", "hh");
-        ret=VM->evaluate(code);
-    }
-    if(functionname!=NULL_String)
-    {
-        ret.call(QScriptValue());
-    }
-    if(ret.isError())
-    {
-        if(mistake!=nullptr)
-        {*mistake=String::number(ret.property("lineNumber").toInt32())+" line:"+ret.toString();}
-        return NULL;
-    }
-    return ret.toVariant();
+     QScriptValue ret;
+     if(code!=NULL_String)
+     {ret=VM->evaluate(code);}
+     if(functionname!=NULL_String)
+     {
+         ret=VM->globalObject().property(functionname);
+         ret=ret.call(QScriptValue());
+     }
+     if(ret.isError())
+     {
+         if(mistake!=nullptr)
+            *mistake=String::number(ret.property("lineNumber").toInt32())+" line:"+ret.toString();
+         return NULL;
+     }
+     return ret.toVariant();
 }
 /*
 void JSSendPar(ParametersStru *Parame,String ParameName,JSVM *VM) //注意，使用指针仅因迫不得已，实际创建请不要new

@@ -85,16 +85,20 @@ public:
         if(checkCount(tmpProcess)==false){
             tmpProcess.setResult("Account password error");
         }
-        else{
-            QString* mistake=nullptr;
-            QVariant varResult=JSEval(QString::fromStdString(tmpProcess.getJS()),"",mistake,AddJSVM());
-            if(mistake!=nullptr){
-                tmpProcess.setResult(mistake->toStdString());
+        else
+        {
+            QString mistake;
+            QVariant varResult=JSEval(QString::fromStdString(tmpProcess.getJS()),"eval",&mistake,AddJSVM());
+            if(varResult==NULL)
+            {
+                tmpProcess.setResult(mistake.toStdString());
             }
-            else{
+            else
+            {
                 tmpProcess.setResult(varResult.toString().toStdString());
             }
         }
         correspondQueue.push(tmpProcess);
+        tableManager::tablemanager->doManage();
     }
 };

@@ -19,7 +19,7 @@ public:
 
     static shared_ptr<table> loadFile(string path);
 
-    string toStr();
+    Q_INVOKABLE string toStr();
 
     void saveFile(string path);
 
@@ -282,7 +282,7 @@ public:
     }
 
     static shared_ptr<operatTable> loadFile(string _ID){
-        return shared_ptr<operatTable>(new operatTable(_ID,table::loadFile(default_path+"/"+_ID+".csv")->getAllCol()));
+        return shared_ptr<operatTable>(new operatTable(_ID,table::loadFile(default_path+"\\"+_ID+".csv")->getAllCol()));
     }
 
     /*void open_trasaction(){
