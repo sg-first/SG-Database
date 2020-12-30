@@ -52,8 +52,9 @@ int main(int argc, char *argv[])
         qDebug() << "m_pTcpServer->listen() error";
     }
 
-    dbRun* dbrun=new dbRun();
-    dbrun->start();
+    while(true){
+        dbProcess::processRequst();
+    }
     return a.exec();
 };
 
