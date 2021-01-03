@@ -9,25 +9,25 @@ class col
 {
 private:
     const TYPE type;
-    vector<shared_ptr<Basic>> allData; //push进来直接视为持有所有权
+    vector<Basic*> allData; //push进来直接视为持有所有权
 
 public:
     col(TYPE type,string ID) : type(type), ID(ID) {}
     col(const col &c) : type(c.type), ID(c.ID)
     {
-        for(shared_ptr<Basic> v : this->allData)
+        for(Basic* v : this->allData)
             this->allData.push_back(typeHelper::copy(v));
     }
     string ID;
     //fix:还要有触发器和约束
 
-    const vector<shared_ptr<Basic>>& getAllData() { return this->allData; }
+    const vector<Basic*>& getAllData() { return this->allData; }
 
     TYPE getType() { return this->type; }
 
-    vector<shared_ptr<Basic>> getData(vector<int> filtered_index)
+    vector<Basic*> getData(vector<int> filtered_index)
     {
-        vector<shared_ptr<Basic>> result;
+        vector<Basic*> result;
         for(int index:filtered_index){
             result.push_back(typeHelper::copy(allData[index]));
         }
@@ -44,7 +44,7 @@ public:
         return result;
     }
 
-    void pushData(shared_ptr<Basic> v) //必须使用这个函数添加数据
+    void pushData(Basic* v) //必须使用这个函数添加数据
     {
         if(v->getType()!=this->getType())
             throw string("type mismatch");
@@ -52,15 +52,15 @@ public:
             this->allData.push_back(v);
     }
 
-    shared_ptr<col> genNewCol(const vector<int>& subList)
+    col* genNewCol(const vector<int>& subList)
     {
-        shared_ptr<col> result=shared_ptr<col>(new col(this->type,this->ID));
+        col* result=new col(this->type,this->ID);
         for(int i : subList)
             result->allData.push_back(typeHelper::copy(this->allData[i])); //会拷贝
         return result;
     }
 
-    bool mod(int opSub,shared_ptr<Basic> v) //会拷贝，返回对这个值的修改是否实际进行
+    bool mod(int opSub,Basic* v) //会拷贝，返回对这个值的修改是否实际进行
     {
         if(v->getType()!=PLACEHOLDER && !typeHelper::isEqu(v,this->allData[opSub]))
         {
@@ -75,6 +75,10 @@ public:
         this->allData.erase(this->allData.begin()+opSub);
     }
 
-    ~col(){}
+    ~col()
+    {
+        for(Basic* v : allData)
+            delete v;
+    }
 };
 

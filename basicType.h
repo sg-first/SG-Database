@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <memory>
+#include <QSharedPointer>
 using namespace std;
 
 enum TYPE{FLOAT,INT,STR,BOOL,_NULL,PLACEHOLDER};

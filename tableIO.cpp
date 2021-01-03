@@ -1,6 +1,6 @@
 #include "table.hpp"
 
-string table::toStr()
+QString table::toStr()
 {
     int m=(this->allCol[0]->getAllData()).size()+1;
     int n=this->allCol.size();
@@ -10,9 +10,9 @@ string table::toStr()
         tableframe[0][i]=(this->allCol[i]->ID)+":"+to_string(sort);
     }
     int i=0;
-    for (shared_ptr<col> c : this->allCol)
+    for (col* c : this->allCol)
     {   int j=1;
-        for (shared_ptr<Basic> b : c->getAllData())
+        for (Basic* b : c->getAllData())
         {
             tableframe[j][i]=b->toStr();
             j++;
@@ -30,7 +30,7 @@ string table::toStr()
             }
         }
     }
-    return data;
+    return QString::fromStdString(data);
 }
 
 void table::update_len(vector<vector<int> > & len_data,const string& data){
@@ -49,7 +49,7 @@ void table::update_len(vector<vector<int> > & len_data,const string& data){
 
 void table:: saveFile(string path) //将整个表的内容按约定格式写入空文件
 {
-    string data=this->toStr();
+    string data=this->toStr().toStdString();
     vector<vector<int>> len_data;
     this->update_len(len_data,data);
     IO::write_to_file(path,data);
@@ -57,11 +57,13 @@ void table:: saveFile(string path) //将整个表的内容按约定格式写入�
     this->allRecord.clear();
 }
 
-shared_ptr<table> table::loadFile(string path) //按约定格式从文件中读取表
+table* table::loadFile(string path,int mark) //按约定格式从文件中读取表
 {
     string to_do=IO::read_from_file(path);
     vector<vector<int>> len_data;
+    bool rewriteFlag=false;
     if(!IO::if_file_exist(IO::path_to_lenpath(path))){
+        rewriteFlag=true;
         int beg_get_len=0;
         int row_get_len=0;
         for(int i=0;i<to_do.length();i++){
@@ -73,7 +75,10 @@ shared_ptr<table> table::loadFile(string path) //按约定格式从文件中读�
                  row_get_len++;
             }
         }
-     }
+    }
+    else{
+        len_data=IO::read_from_len_file(path);
+    }
     to_do = to_do + "\n";
     vector<vector<string>> frame;
     int beg = 0;
@@ -94,19 +99,19 @@ shared_ptr<table> table::loadFile(string path) //按约定格式从文件中读�
             beg = i + 1;
         }
     }
-    if(IO::if_file_exist(IO::path_to_lenpath(path))){
-        len_data=IO::read_from_len_file(path);
-    }
     for(int i=0;i<frame.size();i++){
        if('#'==frame[i][0][0]){
+           rewriteFlag=true;
            frame.erase(frame.begin()+i);
            len_data.erase(len_data.begin()+i);
            i--;
        }
     }
-    IO::write_to_len_file(path,len_data);
+    if(rewriteFlag==true){
+        IO::write_to_len_file(path,len_data);
+    }
     frame.pop_back();
-    vector<shared_ptr<col>> cols;
+    vector<col*> cols;
     for (int i = 0; i < frame[0].size(); i++) {
         string ID;
         TYPE type;
@@ -117,14 +122,13 @@ shared_ptr<table> table::loadFile(string path) //按约定格式从文件中读�
                 type = TYPE(stoi(head.substr(cur+1)));
             }
         }
-        shared_ptr<col> column = shared_ptr<col>(new col(type, ID));
+        col* column = new col(type, ID);
         for (int j = 1; j < frame.size(); j++) {
             column->pushData(typeHelper::strToBasic(frame[j][i],type));
         }
         cols.push_back(column);
     }
-    return shared_ptr<table>(new table(IO::path_to_name(path),cols));
-    //fix:编写此函数
+    return new table(IO::path_to_name(path),cols);
 }
 
 void table::updateFile(string path) //根据table.allRecord更新文件内容

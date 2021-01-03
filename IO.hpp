@@ -96,7 +96,7 @@ public:
         write.close();
     }
 
-    static void do_add(vector<shared_ptr<Basic>> turple,const string& path,vector<vector<int>>& len_data)
+    static void do_add(vector<Basic*> turple,const string& path,vector<vector<int>>& len_data)
     {
         string new_data="";
         for (int i=0;i<turple.size();i++){

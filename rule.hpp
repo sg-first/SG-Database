@@ -8,16 +8,16 @@ class ruleExp
 {
 protected:
     ruleOp op;
-    shared_ptr<Basic> operand2B=nullptr;
+    Basic* operand2B=nullptr;
     ruleExp* operand2E=nullptr; //可以给两个布尔值比较
     int nestingLevel=0;
 
 public:
-    ruleExp(ruleOp op, shared_ptr<Basic> operand) : op(op), operand2B(operand) {}
+    ruleExp(ruleOp op, Basic* operand) : op(op), operand2B(operand) {}
     ruleExp(ruleOp op, ruleExp* operand) : op(op), operand2E(operand), nestingLevel(operand->nestingLevel+1) {}
 
     bool operandIsBasic() { return operand2B!=nullptr; }
-    void resetOperand(shared_ptr<Basic> operand)
+    void resetOperand(Basic* operand)
     {
         this->operand2B=operand;
         delete this->operand2E;
@@ -27,10 +27,10 @@ public:
 
     ruleOp getOp() { return op; }
     int getNestingLevel() { return nestingLevel; }
-    shared_ptr<Basic> getOperand2B() { return this->operand2B; }
+    Basic* getOperand2B() { return this->operand2B; }
     ruleExp* getOperand2E() { return this->operand2E; }
 
-    virtual bool eval(shared_ptr<Basic> operand1B)
+    virtual bool eval(Basic* operand1B)
     {
         if(op==EQU)
         {
@@ -40,7 +40,7 @@ public:
             {
                 if(operand1B->getType()==BOOL)
                 {
-                    shared_ptr<Bool> boolOp1B=dynamic_pointer_cast<Bool>(operand1B);
+                    Bool* boolOp1B=((Bool*)(operand1B));
                     bool result=operand2E->eval(operand1B);
                     return boolOp1B->val==result;
                 }
@@ -53,7 +53,8 @@ public:
     }
 
     virtual ~ruleExp()
-    { //持有所有权
+    {
+        delete operand2B; //持有所有权
         delete operand2E;
     }
 };
@@ -62,26 +63,26 @@ public:
 class numExp : public ruleExp
 {
 private:
-    static bool isNumType(shared_ptr<Basic> v)
+    static bool isNumType(Basic* v)
     {
         return v->getType()==INT || v->getType()==FLOAT;
     }
 
-    static float getVal(shared_ptr<Basic> v)
+    static float getVal(Basic* v)
     {
         if(v->getType()==INT)
-            return dynamic_pointer_cast<Int>(v)->val;
+            return ((Int*)(v))->val;
         else if(v->getType()==FLOAT)
-            return dynamic_pointer_cast<Float>(v)->val;
+            return ((Float*)(v))->val;
         else
             throw string("type mismatch");
     }
 
 public:
-    numExp(ruleOp _op, shared_ptr<Basic> _operand) : ruleExp(_op,_operand) {}
+    numExp(ruleOp _op, Basic* _operand) : ruleExp(_op,_operand) {}
     numExp(ruleOp _op, ruleExp* _operand) : ruleExp(_op,_operand) {}
 
-    virtual bool eval(shared_ptr<Basic> operand1B)
+    virtual bool eval(Basic* operand1B)
     {
         if(op==GRAT || op==SMAL)
         {
@@ -113,10 +114,10 @@ protected:
     bool isDoubleExp() { return operand2E!=nullptr && operand1E!=nullptr; }
 
 public:
-    logExp(ruleOp _op, shared_ptr<Basic> _operand) : ruleExp(_op,_operand) {}
+    logExp(ruleOp _op, Basic* _operand) : ruleExp(_op,_operand) {}
     logExp(ruleOp _op, ruleExp* o1e, ruleExp* o2e) : ruleExp(_op,o2e), operand1E(o1e) {}
 
-    virtual bool eval(shared_ptr<Basic> operand1B)
+    virtual bool eval(Basic* operand1B)
     {
         if(op==NOT)
         {
@@ -124,7 +125,7 @@ public:
             {
                 if(operand2B->getType()==BOOL)
                 {
-                    return !dynamic_pointer_cast<Bool>(operand2B)->val;
+                    return !((Bool*)(operand2B))->val;
                 }
                 else
                     throw string("type mismatch");
@@ -141,8 +142,8 @@ public:
             {
                 if(operand2B->getType()==BOOL && operand1B->getType()==BOOL)
                 {
-                    shared_ptr<Bool> boolOp1B=dynamic_pointer_cast<Bool>(operand1B);
-                    shared_ptr<Bool> boolOp2B=dynamic_pointer_cast<Bool>(operand2B);
+                    Bool* boolOp1B=((Bool*)(operand1B));
+                    Bool* boolOp2B=((Bool*)(operand2B));
                     if(op==AND)
                         return boolOp1B->val && boolOp2B->val;
                     else
@@ -164,7 +165,7 @@ public:
             {
                 if(operand1B->getType()==BOOL)
                 {
-                    shared_ptr<Bool> boolOp1B=dynamic_pointer_cast<Bool>(operand1B);
+                    Bool* boolOp1B=((Bool*)(operand1B));
                     bool result=operand2E->eval(operand1B);
                     if(op==AND)
                         return boolOp1B->val && result;

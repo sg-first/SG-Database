@@ -6,14 +6,14 @@
 #include "tableManager.h"
 #include "dbProcess.h"
 #include "view.h"
-string operatTable::default_path;
+string table::default_path;
 string tableManager::curOperatUser;
 queue<processObject> dbProcess::processQueue;
 queue<processObject> dbProcess::correspondQueue;
-shared_ptr<tableManager> tableManager::tablemanager;
-shared_ptr<operatTable> dbProcess::countTable;
-shared_ptr<operatTable> tableManager::jurisdictionTable;
-shared_ptr<aggHelper> aggHelper::helper;
+tableManager* tableManager::tablemanager;
+table* dbProcess::countTable;
+table* tableManager::jurisdictionTable;
+aggHelper* aggHelper::helper;
 #define RegisterJSType(TypeName,JSName) qRegisterMetaType<TypeName>(JSName)
 using namespace std;
 void outputVec(const vector<int> &vec)
@@ -35,26 +35,29 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    RegisterJSType(shared_ptr<operatTable>,"shared_ptr<operatTable>");
+    //RegisterJSType(tablePtr*,"tablePtr*");
+    RegisterJSType(table*,"table*");
     RegisterJSType(string,"string");
 
-    operatTable::default_path="D:\\personal_file\\download_files\\test_";
+    table::default_path="D:\\personal_file\\download_files\\test_";
 
-    tableManager::tablemanager=tableManager::getTableManager();
+    tableManager::tablemanager=tableManager::getTableManager(1);
     aggHelper::helper=aggHelper::getHelper();
 
-    dbProcess::setCount(operatTable::loadFile("Count"));
-    tableManager::setJurisdiction(operatTable::loadFile("Jurisdiction"));
+    dbProcess::setCount(table::loadFile("Count"));
+    tableManager::setJurisdiction(table::loadFile("Jurisdiction"));
 
+    tableManager::tablemanager->loadTable("Count");
+    tableManager::tablemanager->loadTable("Jurisdiction");
+    tableManager::tablemanager->doManage();
+    tableManager* check=tableManager::tablemanager;
     TcpSocketServer *m_pTcpServer=new TcpSocketServer();
     if (!m_pTcpServer->listen(QHostAddress::Any, 8888))
     {
         qDebug() << "m_pTcpServer->listen() error";
     }
-
-    while(true){
-        dbProcess::processRequst();
-    }
+    dbRun* dbrun=new dbRun();
+    dbrun->start();
     return a.exec();
 };
 

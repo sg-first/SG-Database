@@ -14,9 +14,9 @@ typedef QVariant Variant;
 JSVM* AddJSVM()
 {
     JSVM *VM=new JSVM;
-    QScriptValue tablemanager=VM->newQObject(tableManager::tablemanager.get());
+    QScriptValue tablemanager=VM->newQObject(tableManager::tablemanager);
     VM->globalObject().setProperty("tablemanager",tablemanager);
-    QScriptValue helper=VM->newQObject(aggHelper::helper.get());
+    QScriptValue helper=VM->newQObject(aggHelper::helper);
     VM->globalObject().setProperty("helper",helper);
     return VM;
 }

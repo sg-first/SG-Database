@@ -7,27 +7,27 @@ using namespace std;
 class tableManager: public QObject
 {
 private:
-    Q_OBJECT;
+    Q_OBJECT
 
     const int maxManaged;
 
     vector<string> managedTableName;
 
-    map<string,shared_ptr<operatTable>> managedTable;
+    map<string,table*> managedTable;
 
-    tableManager(int maxNum=10):maxManaged(maxNum) {}
+    tableManager(int maxNum):maxManaged(maxNum) {}
 
     static string curOperatUser;
 
-    static shared_ptr<operatTable> jurisdictionTable;
+    static table* jurisdictionTable;
 
 public:
 
-    static shared_ptr<tableManager> tablemanager;
+    static tableManager* tablemanager;
 
-    static shared_ptr<tableManager> getTableManager(){
+    static tableManager* getTableManager(int maxNum=10){
         if(tablemanager==nullptr){
-            tablemanager=shared_ptr<tableManager>(new tableManager());
+            tablemanager=new tableManager(maxNum);
         }
         return tablemanager;
     }
@@ -36,17 +36,18 @@ public:
         curOperatUser=user;
     }
 
-    static void setJurisdiction(shared_ptr<operatTable> table){
+    static void setJurisdiction(table* table){
         jurisdictionTable=table;
     }
 
-    Q_INVOKABLE shared_ptr<operatTable> loadTable(const string& tableName)
+    Q_INVOKABLE table* loadTable(string tName)
     {
+        string tableName=tName;//.toStdString();
         if(jurisdictionTable->find({"(x=='"+curOperatUser+"')","(x=='"+tableName+"')"}).empty()){
             return nullptr;
         }
         if(managedTable.find(tableName)==managedTable.end()){
-            managedTable[tableName] = operatTable::loadFile(tableName);
+            managedTable[tableName] = table::loadFile(tableName);
         }
         else{
             auto iter=find(managedTableName.begin(),managedTableName.end(),tableName);
@@ -64,6 +65,7 @@ public:
         while(managedTableName.size()>this->maxManaged){
             string delTableName=managedTableName.back();
             managedTableName.pop_back();
+            delete managedTable[delTableName];
             managedTable.erase(delTableName);
         }
     }

@@ -15,8 +15,8 @@ class processObject{
 public:
     processObject(string user,string passWord,string JS){
         this->user=user;
-        this->JS=JS;
         this->passWord=passWord;
+        this->JS=JS;
     }
 
     processObject(){}
@@ -55,13 +55,13 @@ public:
 };
 
 class dbProcess{
-     static shared_ptr<operatTable> countTable;
+     static table* countTable;
 public:
      static queue<processObject> processQueue;
 
      static queue<processObject> correspondQueue;
 
-    static void setCount(shared_ptr<operatTable> table){
+    static void setCount(table* table){
         countTable=table;
     }
 
