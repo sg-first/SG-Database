@@ -1,24 +1,30 @@
 #pragma once
-#include <QVariant>
+#include <QObject>
 #include "col.hpp"
 #include "index.hpp"
 #include "IO.hpp"
 #include "expParse.h"
-class table:public QObject
+
+class table : public QObject, public manageable
 {
     Q_OBJECT
 protected:
     vector<col*> allCol; //如果hasOwnership=true，push进来的由table对象持有所有权
     vector<index*> allIndex;
     list<record> allRecord;
-    bool hasOwnership=true;
+    bool hasOwnership;
+
     void update_len(vector<vector<int> > & len_data,const string& data);
-
     static table* loadFile(string path,int mark);
-
     void saveFile(string path);
-
     void updateFile(string path);
+    void clear()
+    {
+        for(col* c : allCol)
+            delete c;
+        for(index* i : allIndex)
+            delete i;
+    }
 
 public:
     string ID;
@@ -29,22 +35,27 @@ public:
 
     Q_INVOKABLE table(){}
 
-    Q_INVOKABLE table(string ID, vector<col*>allCol) : allCol(allCol), ID(ID) //allCol中元素转移所有权
+    Q_INVOKABLE table(string ID, vector<col*>allCol, bool hasOwnership=true) : ID(ID), hasOwnership(hasOwnership)
     {
-        for(col* c:allCol){
-            if(c->getAllData().size()!=allCol[0]->getAllData().size()){
+        for(col* c : allCol)
+        {
+            if(c->getAllData().size()!=allCol[0]->getAllData().size()) { //以allCol第一个长度为准
                 throw string("The number of columns is different");
             }
-        }
-        for(col* c : allCol)
+            if(this->hasOwnership)
+                c->setSystemManage(); //默认hasOwnership=true，所以一定转移所有权
+            this->allCol.push_back(c);
             this->allIndex.push_back(new traversalIndex(c)); //默认都是遍历索引
+        }
     }
 
-    Q_INVOKABLE table(const table& t) : ID(t.ID)
+    Q_INVOKABLE table(const table& t, bool hasOwnership=true) : ID(t.ID), hasOwnership(hasOwnership)
     {
         for(col* c : t.allCol)
         {
             col* rc(new col(*c));
+            if(this->hasOwnership)
+                rc->setSystemManage();
             this->allCol.push_back(rc);
             this->allIndex.push_back(new traversalIndex(rc)); //索引不拷贝，重建
         }
@@ -64,8 +75,8 @@ public:
 
     Q_INVOKABLE int getColIndex(const string& colName)
     {
-        for(int i;i<allCol.size();++i){
-            if(allCol[i]->ID==colName){
+        for(int i;i<allCol.size();++i) {
+            if(allCol[i]->ID==colName) {
                 return i;
             }
         }
@@ -84,29 +95,31 @@ public:
         return result;
     }
 
-    Q_INVOKABLE table* genNewTable(const vector<string>& colNames,const vector<int>& tupSubList){
+    Q_INVOKABLE table* genNewTable(const vector<string>& colNames,const vector<int>& tupSubList)
+    {
         return genNewTable(findCol(colNames),tupSubList);
     }
 
     Q_INVOKABLE void saveFile(){
-        this->table::saveFile(default_path+"\\"+ID+".csv");
+        this->table::saveFile(default_path+"/"+ID+".csv");
     }
 
     Q_INVOKABLE void updateFile(){
-        this->table::updateFile(default_path+"\\"+ID+".csv");
+        this->table::updateFile(default_path+"/"+ID+".csv");
     }
 
     static table* loadFile(string _ID){
-        return loadFile(default_path+"\\"+_ID+".csv",0);
+        return loadFile(default_path+"/"+_ID+".csv",0);
     }
 
     Q_INVOKABLE void rollback() {
         this->clear();
         table* newTable=table::loadFile(this->ID);
-        newTable->hasOwnership=false;
+        newTable->hasOwnership=false; //放弃所有权，不delete里面东西了。之后必须接着转移数据，否则就内存泄漏了
         this->allCol=newTable->allCol;
         this->allRecord=newTable->allRecord;
         this->allIndex=newTable->allIndex;
+        delete newTable;
     }
 
     Q_INVOKABLE void add(vector<Basic*> tuple)
@@ -127,7 +140,7 @@ public:
         this->allRecord.push_back(record(tuple));
     }
 
-    Q_INVOKABLE void mod(int opSub, vector<Basic*> tuple)
+    Q_INVOKABLE void mod(int opSub, vector<Basic*> tuple) //tuple里的东西会拷贝
     {
         if(tuple.size()!=this->allCol.size())
             throw string("Col Size mismatch");
@@ -143,7 +156,11 @@ public:
 
             bool modResult=c->mod(opSub,tuple[i]);
             if(modResult)
-                recordTuple.push_back(typeHelper::copy(tuple[i]));
+            {
+                auto copyObj=typeHelper::copy(tuple[i]);
+                copyObj->setSystemManage();
+                recordTuple.push_back(copyObj);
+            }
             else
             {
                 #ifdef logStrategy
@@ -271,14 +288,6 @@ public:
                 result.push_back(i);
         }
         return result;
-    }
-
-    void clear()
-    {
-        for(col* c : allCol)
-            delete c;
-        for(index* i : allIndex)
-            delete i;
     }
 
     virtual ~table()

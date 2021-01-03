@@ -1,12 +1,12 @@
 #pragma once
 #include <string>
 #include <memory>
-#include <QSharedPointer>
+#include "manageable.h"
 using namespace std;
 
 enum TYPE{FLOAT,INT,STR,BOOL,_NULL,PLACEHOLDER};
 
-class Basic
+class Basic : public manageable
 {
 public:
     virtual TYPE getType() { return _NULL; } //直接创建的basic对象视为null

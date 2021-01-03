@@ -5,18 +5,22 @@
 #include "record.h"
 #include "config.h"
 
-class col
+class col : public manageable
 {
 private:
     const TYPE type;
-    vector<Basic*> allData; //push进来直接视为持有所有权
+    vector<Basic*> allData;
 
 public:
     col(TYPE type,string ID) : type(type), ID(ID) {}
     col(const col &c) : type(c.type), ID(c.ID)
     {
         for(Basic* v : this->allData)
-            this->allData.push_back(typeHelper::copy(v));
+        {
+            auto copyObj=typeHelper::copy(v);
+            copyObj->setSystemManage(); //转移所有权到col
+            this->allData.push_back(copyObj);
+        }
     }
     string ID;
     //fix:还要有触发器和约束
@@ -25,10 +29,10 @@ public:
 
     TYPE getType() { return this->type; }
 
-    vector<Basic*> getData(vector<int> filtered_index)
+    vector<Basic*> getData(vector<int> filtered_index) //把指定下标的元素get出来
     {
         vector<Basic*> result;
-        for(int index:filtered_index){
+        for(int index:filtered_index) {
             result.push_back(typeHelper::copy(allData[index]));
         }
         return result;
@@ -49,10 +53,13 @@ public:
         if(v->getType()!=this->getType())
             throw string("type mismatch");
         else
+        {
+            v->setSystemManage();
             this->allData.push_back(v);
+        }
     }
 
-    col* genNewCol(const vector<int>& subList)
+    col* genNewCol(const vector<int>& subList) //把指定下标的元素生成一张新表
     {
         col* result=new col(this->type,this->ID);
         for(int i : subList)
@@ -64,7 +71,9 @@ public:
     {
         if(v->getType()!=PLACEHOLDER && !typeHelper::isEqu(v,this->allData[opSub]))
         {
-            this->allData[opSub]=typeHelper::copy(v);
+            auto copyObj=typeHelper::copy(v);
+            copyObj->setSystemManage();
+            this->allData[opSub]=copyObj;
             return true;
         }
         return false;
@@ -72,6 +81,7 @@ public:
 
     void del(int opSub)
     {
+        delete this->allData[opSub];
         this->allData.erase(this->allData.begin()+opSub);
     }
 
