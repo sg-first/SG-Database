@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         BPlusTree.cpp \
         main.cpp \
+        manageable.cpp \
         tableIO.cpp
 
 # Default rules for deployment.
