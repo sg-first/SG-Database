@@ -2,7 +2,6 @@
 
 #ifdef autoRecovery
 
-manageContain* manageContain::contain;
 
 manageContain::~manageContain()
 {

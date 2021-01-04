@@ -98,7 +98,9 @@ public:
                 tmpProcess.setResult(varResult.toString().toStdString());
             }
         }
+        cout<<tmpProcess.getResult();
         correspondQueue.push(tmpProcess);
         tableManager::tablemanager->doManage();
+        manageContain::reset();
     }
 };

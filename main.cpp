@@ -14,6 +14,7 @@ tableManager* tableManager::tablemanager;
 table* dbProcess::countTable;
 table* tableManager::jurisdictionTable;
 aggHelper* aggHelper::helper;
+manageContain* manageContain::contain;
 #define RegisterJSType(TypeName,JSName) qRegisterMetaType<TypeName>(JSName)
 using namespace std;
 void outputVec(const vector<int> &vec)
@@ -35,11 +36,17 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    //RegisterJSType(tablePtr*,"tablePtr*");
     RegisterJSType(table*,"table*");
-    RegisterJSType(string,"string");
+    RegisterJSType(col*,"col*");
+    RegisterJSType(Basic*,"Basic*");
+    RegisterJSType(vector<int>,"vector<int>");
+    RegisterJSType(vector<Basic*>,"vector<Basic*>");
+    RegisterJSType(vector<QString>,"vector<QString>");
+    RegisterJSType(QString[],"QString[]");
 
     table::default_path="D:\\personal_file\\download_files\\test_";
+
+    manageContain::contain->init();
 
     tableManager::tablemanager=tableManager::getTableManager(1);
     aggHelper::helper=aggHelper::getHelper();
@@ -47,10 +54,6 @@ int main(int argc, char *argv[])
     dbProcess::setCount(table::loadFile("Count"));
     tableManager::setJurisdiction(table::loadFile("Jurisdiction"));
 
-    tableManager::tablemanager->loadTable("Count");
-    tableManager::tablemanager->loadTable("Jurisdiction");
-    tableManager::tablemanager->doManage();
-    tableManager* check=tableManager::tablemanager;
     TcpSocketServer *m_pTcpServer=new TcpSocketServer();
     if (!m_pTcpServer->listen(QHostAddress::Any, 8888))
     {

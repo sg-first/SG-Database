@@ -5,9 +5,10 @@
 #include "record.h"
 #include "config.h"
 
-class col : public manageable
+class col : public QObject, public manageable
 {
 private:
+    Q_OBJECT
     const TYPE type;
     vector<Basic*> allData;
 
@@ -25,11 +26,11 @@ public:
     string ID;
     //fix:还要有触发器和约束
 
-    const vector<Basic*>& getAllData() { return this->allData; }
+    Q_INVOKABLE const vector<Basic*>& getAllData() { return this->allData; }
 
     TYPE getType() { return this->type; }
 
-    vector<Basic*> getData(vector<int> filtered_index) //把指定下标的元素get出来
+    Q_INVOKABLE vector<Basic*> getData(vector<int> filtered_index) //把指定下标的元素get出来
     {
         vector<Basic*> result;
         for(int index:filtered_index) {
@@ -38,7 +39,7 @@ public:
         return result;
     }
 
-    string toStr()
+    Q_INVOKABLE string toStr()
     {
         string result="";
         result+=(this->ID+":"+to_string(int(this->type)))+"\n";
@@ -48,7 +49,7 @@ public:
         return result;
     }
 
-    void pushData(Basic* v) //必须使用这个函数添加数据
+    Q_INVOKABLE void pushData(Basic* v) //必须使用这个函数添加数据
     {
         if(v->getType()!=this->getType())
             throw string("type mismatch");
@@ -59,7 +60,7 @@ public:
         }
     }
 
-    col* genNewCol(const vector<int>& subList) //把指定下标的元素生成一张新表
+    Q_INVOKABLE col* genNewCol(const vector<int>& subList) //把指定下标的元素生成一张新表
     {
         col* result=new col(this->type,this->ID);
         for(int i : subList)
@@ -67,7 +68,7 @@ public:
         return result;
     }
 
-    bool mod(int opSub,Basic* v) //会拷贝，返回对这个值的修改是否实际进行
+    Q_INVOKABLE bool mod(int opSub,Basic* v) //会拷贝，返回对这个值的修改是否实际进行
     {
         if(v->getType()!=PLACEHOLDER && !typeHelper::isEqu(v,this->allData[opSub]))
         {
@@ -79,7 +80,7 @@ public:
         return false;
     }
 
-    void del(int opSub)
+    Q_INVOKABLE void del(int opSub)
     {
         delete this->allData[opSub];
         this->allData.erase(this->allData.begin()+opSub);

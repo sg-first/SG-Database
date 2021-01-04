@@ -1,5 +1,4 @@
 #pragma once
-#include <QObject>
 #include "col.hpp"
 #include "index.hpp"
 #include "IO.hpp"
@@ -263,7 +262,7 @@ public:
         return result;
     }
 
-    Q_INVOKABLE vector<int> find(vector<string> allExp)
+    vector<int> find(vector<string> allExp)
     {
         vector<ruleExp*> allRule;
         for(const string& str:allExp)
@@ -274,6 +273,15 @@ public:
         for(ruleExp* i : allRule)
             delete i;
         return result;
+    }
+
+    Q_INVOKABLE vector<int> find(QString QallExp[])
+    {
+        vector<string> allExp;
+        for(int i=0;i<sizeof(QallExp)/sizeof(QallExp);i++){
+            allExp.push_back(QallExp[i].toStdString());
+        }
+        return this->find(allExp);
     }
 
     Q_INVOKABLE vector<int> findCol(vector<string> colID)

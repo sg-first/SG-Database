@@ -1,6 +1,4 @@
 #pragma once
-#include <memory>
-#include <QObject>
 #include "col.hpp"
 using namespace std;
 class aggHelper:public QObject {
@@ -17,7 +15,7 @@ public:
         return helper;
     }
 
-    vector<Basic*> distinct(vector<Basic*> data_vec){
+    Q_INVOKABLE vector<Basic*> distinct(vector<Basic*> data_vec){
         vector<int> del_vec;
         vector<Basic*> result;
         for(int i=0;i<data_vec.size();++i){
@@ -36,7 +34,7 @@ public:
         return result;
     }
 
-    Basic* avg(vector<Basic*> data_vec){
+    Q_INVOKABLE Basic* avg(vector<Basic*> data_vec){
         if(data_vec.empty()){
             return nullptr;
         }
@@ -56,12 +54,12 @@ public:
         return new Float (result/num);
     }
 
-    Basic* count(vector<Basic*> data_vec){
+    Q_INVOKABLE Basic* count(vector<Basic*> data_vec){
         int num=data_vec.size();
         return new Int (num);
     }
 
-    Basic* first(vector<Basic*> data_vec){
+    Q_INVOKABLE Basic* first(vector<Basic*> data_vec){
         if(data_vec.empty()){
             return nullptr;
         }
@@ -69,7 +67,7 @@ public:
         return temp;
     }
 
-    Basic* last(vector<Basic*> data_vec){
+    Q_INVOKABLE Basic* last(vector<Basic*> data_vec){
         if(data_vec.empty()){
             return nullptr;
         }
@@ -77,7 +75,7 @@ public:
         return temp;
     }
 
-    Basic* max(vector<Basic*> data_vec){
+    Q_INVOKABLE Basic* max(vector<Basic*> data_vec){
         if(data_vec.empty()){
             return nullptr;
         }
@@ -108,7 +106,7 @@ public:
         return new Float(result);
     }
 
-    Basic* min(vector<Basic*> data_vec){
+    Q_INVOKABLE Basic* min(vector<Basic*> data_vec){
         if(data_vec.empty()){
             return nullptr;
         }
@@ -139,7 +137,7 @@ public:
         return new Float(result);
     }
 
-    Basic* sum(vector<Basic*> data_vec){
+    Q_INVOKABLE Basic* sum(vector<Basic*> data_vec){
         if(data_vec.empty()){
             return nullptr;
         }

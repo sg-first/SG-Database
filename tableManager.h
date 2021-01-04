@@ -40,9 +40,9 @@ public:
         jurisdictionTable=table;
     }
 
-    Q_INVOKABLE table* loadTable(string tName)
+    Q_INVOKABLE table* loadTable(QString tName)
     {
-        string tableName=tName;//.toStdString();
+        string tableName=tName.toStdString();
         if(jurisdictionTable->find({"(x=='"+curOperatUser+"')","(x=='"+tableName+"')"}).empty()){
             return nullptr;
         }

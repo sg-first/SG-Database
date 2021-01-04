@@ -2,6 +2,7 @@
 #include <string>
 #include <memory>
 #include "manageable.h"
+#include <QObject>
 using namespace std;
 
 enum TYPE{FLOAT,INT,STR,BOOL,_NULL,PLACEHOLDER};
