@@ -43,13 +43,17 @@ public:
     Q_INVOKABLE table* loadTable(QString tName)
     {
         string tableName=tName.toStdString();
-        if(jurisdictionTable->find({"(x=='"+curOperatUser+"')","(x=='"+tableName+"')"}).empty()){
+        if(jurisdictionTable->find({"(x=='"+curOperatUser+"')","(x=='"+tableName+"')"}).empty()) {
             return nullptr;
         }
-        if(managedTable.find(tableName)==managedTable.end()){
-            managedTable[tableName] = table::loadFile(tableName);
+        if(managedTable.find(tableName)==managedTable.end())
+        {
+            table* t=table::loadFile(tableName);
+            t->setSystemManage();
+            managedTable[tableName] = t;
         }
-        else{
+        else
+        {
             auto iter=find(managedTableName.begin(),managedTableName.end(),tableName);
             managedTableName.erase(iter);
         }
