@@ -74,7 +74,7 @@ public:
 
     Q_INVOKABLE int getColIndex(const string& colName)
     {
-        for(int i;i<allCol.size();++i) {
+        for(int i=0;i<allCol.size();++i) {
             if(allCol[i]->ID==colName) {
                 return i;
             }
