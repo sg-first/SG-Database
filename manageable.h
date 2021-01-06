@@ -17,6 +17,7 @@ public:
     static void init() { manageContain::contain=new manageContain; }
     static void reset()
     {
+        manageContain* ts=manageContain::contain;
         delete manageContain::contain;
         manageContain::init();
     }
@@ -40,6 +41,6 @@ public:
         #endif
     }
     bool getOwnership() { return this->userManage; }
-    void setSystemManage() { this->userManage=true; }
+    void setSystemManage() { this->userManage=false; }
     virtual ~manageable() {}
 };

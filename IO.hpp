@@ -53,6 +53,7 @@ public:
 
     static vector<vector<int>> read_from_len_file(const string& path)
     {
+        string ts=path_to_lenpath(path);
         fstream process(path_to_lenpath(path), ios::in);
         if (!process.is_open())
             throw string("fail to open the file(read)");

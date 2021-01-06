@@ -30,7 +30,7 @@ public:
 
     static string default_path;
 
-    Q_INVOKABLE QString toStr();
+    Q_INVOKABLE string toStr();
 
     Q_INVOKABLE table(){}
 
@@ -100,15 +100,15 @@ public:
     }
 
     Q_INVOKABLE void saveFile(){
-        this->table::saveFile(default_path+"/"+ID+".csv");
+        this->table::saveFile(default_path+"\\"+ID+".csv");
     }
 
     Q_INVOKABLE void updateFile(){
-        this->table::updateFile(default_path+"/"+ID+".csv");
+        this->table::updateFile(default_path+"\\"+ID+".csv");
     }
 
     static table* loadFile(string _ID){
-        return loadFile(default_path+"/"+_ID+".csv",0);
+        return loadFile(default_path+"\\"+_ID+".csv",0);
     }
 
     Q_INVOKABLE void rollback() {
@@ -273,15 +273,6 @@ public:
         for(ruleExp* i : allRule)
             delete i;
         return result;
-    }
-
-    Q_INVOKABLE vector<int> find(QString QallExp[])
-    {
-        vector<string> allExp;
-        for(int i=0;i<sizeof(QallExp)/sizeof(QallExp);i++){
-            allExp.push_back(QallExp[i].toStdString());
-        }
-        return this->find(allExp);
     }
 
     Q_INVOKABLE vector<int> findCol(vector<string> colID)
