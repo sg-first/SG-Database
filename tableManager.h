@@ -36,7 +36,9 @@ public:
         curOperatUser=user;
     }
 
-    static void setJurisdiction(table* table){
+    static void setJurisdiction(table* table)
+    {
+        table->setSystemManage();
         jurisdictionTable=table;
     }
 

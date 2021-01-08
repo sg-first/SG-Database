@@ -61,7 +61,9 @@ public:
 
      static queue<processObject> correspondQueue;
 
-    static void setCount(table* table){
+    static void setCount(table* table)
+    {
+        table->setSystemManage();
         countTable=table;
     }
 
