@@ -52,7 +52,7 @@ public:
     {
         for(col* c : t.allCol)
         {
-            col* rc(new col(*c));
+            col* rc=new col(*c);
             if(this->hasOwnership)
                 rc->setSystemManage();
             this->allCol.push_back(rc);
@@ -90,8 +90,7 @@ public:
             col* selectCol=allCol[i]->genNewCol(tupSubList);
             newAllCol.push_back(selectCol);
         }
-        table* result(new table(this->ID, newAllCol));
-        return result;
+        return new table(this->ID, newAllCol);
     }
 
     Q_INVOKABLE table* genNewTable(const vector<string>& colNames,const vector<int>& tupSubList)
@@ -114,7 +113,8 @@ public:
     Q_INVOKABLE void rollback() {
         this->clear();
         table* newTable=table::loadFile(this->ID);
-        newTable->hasOwnership=false; //放弃所有权，不delete里面东西了。之后必须接着转移数据，否则就内存泄漏了
+        newTable->hasOwnership=false; //放弃所有权，不delete里面东西了
+        //在这里，之后必须接着转移数据，否则就内存泄漏了（没有人指向刚读进来那些数据对象）
         this->allCol=newTable->allCol;
         this->allRecord=newTable->allRecord;
         this->allIndex=newTable->allIndex;
