@@ -21,10 +21,10 @@ public:
     index(col* c) : c(c) {}
 
     bool isSupportMod() { return this->supportMod; }
-    //都是在操作col前调用
-    virtual void add(Basic* v) { throw string("This index does not support updating"); }
+    //都是在操作col前调用，如果支持修改下面三个必须都支持
+    virtual void add(Basic* v) { throw string("This index does not support updating"); } //和col里的共用一个数据对象，无所有权
     virtual void mod(int opSub, Basic* v) { throw string("This index does not support updating"); }
-    virtual void del(int opSub) { throw string("This index does not support updating"); }
+    virtual void del(int opSub) { throw string("This index does not support updating"); } //因为无所有权，所以不删除数据对象
 
     virtual ~index() {}
 };
@@ -117,6 +117,7 @@ public:
         this->sortVec.push_back(make_pair(binarySearchIndex::getVal(v),sub));
         this->resort();
     }
+
     virtual void mod(int opSub, Basic* v) override
     {
         int sub=-1;
@@ -128,10 +129,12 @@ public:
         this->del(sub);
         this->add(v);
     }
+
     virtual void del(int opSub) override
     {
         this->sortVec.erase(this->sortVec.begin()+opSub);
     }
+
     virtual vector<int> find(ruleExp *rule) override
     {
         if(rule->operandIsBasic())
@@ -255,4 +258,3 @@ public:
 
     virtual ~BPlusTreeIndex() { delete pTree; }
 };
-

@@ -13,7 +13,7 @@ private:
     void setAddTarget(vector<Basic*> addTarget) //“增”时需要指定增进去的元组，会自动拷贝
     {
         for(Basic* v : addTarget)
-            this->targetTuple.push_back(typeHelper::copy(v));
+            this->targetTuple.push_back(typeHelper::typehelper->copy(v));
     }
 
 public:

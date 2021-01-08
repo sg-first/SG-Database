@@ -14,11 +14,14 @@ private:
 
 public:
     col(TYPE type,string ID) : type(type), ID(ID) {}
-    col(const col &c) : type(c.type), ID(c.ID)
+
+    Q_INVOKABLE col(const QString& type,const QString& ID);
+
+    Q_INVOKABLE col(const col &c) : type(c.type), ID(c.ID)
     {
         for(Basic* v : this->allData)
         {
-            auto copyObj=typeHelper::copy(v);
+            auto copyObj=typeHelper::typehelper->copy(v);
             copyObj->setSystemManage(); //转移所有权到col
             this->allData.push_back(copyObj);
         }
@@ -26,27 +29,31 @@ public:
     string ID;
     //fix:还要有触发器和约束
 
-    Q_INVOKABLE const vector<Basic*>& getAllData() { return this->allData; }
+    const vector<Basic*> getAllData() { return this->allData; }
+
+    Q_INVOKABLE const jsCollection* getallData();
 
     TYPE getType() { return this->type; }
 
-    Q_INVOKABLE vector<Basic*> getData(vector<int> filtered_index) //把指定下标的元素get出来
+    vector<Basic*> getData(const vector<int>& filtered_index) //把指定下标的元素get出来
     {
         vector<Basic*> result;
         for(int index:filtered_index) {
-            result.push_back(typeHelper::copy(allData[index]));
+            result.push_back(typeHelper::typehelper->copy(allData[index]));
         }
         return result;
     }
 
-    Q_INVOKABLE string toStr()
+    Q_INVOKABLE jsCollection* getData(jsCollection* filtered_index);
+
+    Q_INVOKABLE QString toStr()
     {
         string result="";
         result+=(this->ID+":"+to_string(int(this->type)))+"\n";
         for(int i=0;i<this->allData.size();++i){
             result+=allData[i]->toStr()+"\n";
         }
-        return result;
+        return QString::fromStdString(result);
     }
 
     Q_INVOKABLE void pushData(Basic* v) //必须使用这个函数添加数据
@@ -60,19 +67,25 @@ public:
         }
     }
 
-    Q_INVOKABLE col* genNewCol(const vector<int>& subList) //把指定下标的元素生成一张新表
+    col* genNewCol(const vector<int>& subList) //把指定下标的元素生成一张新表
     {
         col* result=new col(this->type,this->ID);
         for(int i : subList)
-            result->allData.push_back(typeHelper::copy(this->allData[i])); //会拷贝
+        {
+            auto copyObj=typeHelper::typehelper->copy(this->allData[i]);
+            copyObj->setSystemManage();
+            result->allData.push_back(copyObj); //会拷贝
+        }
         return result;
     }
 
+    Q_INVOKABLE col* genNewCol(jsCollection* subList);
+
     Q_INVOKABLE bool mod(int opSub,Basic* v) //会拷贝，返回对这个值的修改是否实际进行
     {
-        if(v->getType()!=PLACEHOLDER && !typeHelper::isEqu(v,this->allData[opSub]))
+        if(v->getType()!=PLACEHOLDER && !typeHelper::typehelper->isEqu(v,this->allData[opSub]))
         {
-            auto copyObj=typeHelper::copy(v);
+            auto copyObj=typeHelper::typehelper->copy(v);
             copyObj->setSystemManage();
             this->allData[opSub]=copyObj;
             return true;

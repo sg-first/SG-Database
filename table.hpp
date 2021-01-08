@@ -30,11 +30,11 @@ public:
 
     static string default_path;
 
-    Q_INVOKABLE string toStr();
+    Q_INVOKABLE QString toStr();
 
     Q_INVOKABLE table(){}
 
-    Q_INVOKABLE table(string ID, vector<col*>allCol, bool hasOwnership=true) : ID(ID), hasOwnership(hasOwnership)
+    table(string ID, vector<col*>allCol, bool hasOwnership=true) : ID(ID), hasOwnership(hasOwnership)
     {
         for(col* c : allCol)
         {
@@ -47,6 +47,8 @@ public:
             this->allIndex.push_back(new traversalIndex(c)); //默认都是遍历索引
         }
     }
+
+    Q_INVOKABLE table(const QString& ID,vector<col*>allCol, bool hasOwnership=true);
 
     Q_INVOKABLE table(const table& t, bool hasOwnership=true) : ID(t.ID), hasOwnership(hasOwnership)
     {
@@ -66,15 +68,15 @@ public:
         this->allIndex[sub]=ind;
     }
 
-    Q_INVOKABLE const vector<col*>& getAllCol() { return this->allCol; } //对col数据的修改必须经过table对象完成，否则无法
-
     Q_INVOKABLE col* getCol(int i) { return this->allCol[i]; }
 
-    Q_INVOKABLE col* getCol(const string& colName) { return getCol(this->findCol({colName})[0]); }
+    col* getCol(const string& colName) { return getCol(this->findCol({colName})[0]); }
 
-    Q_INVOKABLE int getColIndex(const string& colName)
+    Q_INVOKABLE col* getCol(const QString& colName);
+
+    int getColIndex(const string& colName)
     {
-        for(int i;i<allCol.size();++i) {
+        for(int i=0;i<allCol.size();++i) {
             if(allCol[i]->ID==colName) {
                 return i;
             }
@@ -82,7 +84,9 @@ public:
         throw string("Wrong column name");
     }
 
-    Q_INVOKABLE table* genNewTable(const vector<int>& colSubList,const vector<int>& tupSubList) //会拷贝
+    Q_INVOKABLE int getColIndex(const QString& colName);
+
+    table* genNewTable(const vector<int>& colSubList,const vector<int>& tupSubList) //会拷贝
     {
         vector<col*> newAllCol;
         for(int i : colSubList)
@@ -94,10 +98,12 @@ public:
         return result;
     }
 
-    Q_INVOKABLE table* genNewTable(const vector<string>& colNames,const vector<int>& tupSubList)
+    table* genNewTable(const vector<string>& colNames,const vector<int>& tupSubList)
     {
         return genNewTable(findCol(colNames),tupSubList);
     }
+
+    Q_INVOKABLE table* genNewTable(const QString& colNames,jsCollection* tupSubList);
 
     Q_INVOKABLE void saveFile(){
         this->table::saveFile(default_path+"\\"+ID+".csv");
@@ -121,7 +127,7 @@ public:
         delete newTable;
     }
 
-    Q_INVOKABLE void add(vector<Basic*> tuple)
+    void add(vector<Basic*> tuple)
     {
         if(tuple.size()!=this->allCol.size())
             throw string("Col Size mismatch");
@@ -139,7 +145,9 @@ public:
         this->allRecord.push_back(record(tuple));
     }
 
-    Q_INVOKABLE void mod(int opSub, vector<Basic*> tuple) //tuple里的东西会拷贝
+    Q_INVOKABLE void add(const QString& tuple);
+
+    void mod(int opSub, vector<Basic*> tuple) //tuple里的东西会拷贝
     {
         if(tuple.size()!=this->allCol.size())
             throw string("Col Size mismatch");
@@ -156,7 +164,7 @@ public:
             bool modResult=c->mod(opSub,tuple[i]);
             if(modResult)
             {
-                auto copyObj=typeHelper::copy(tuple[i]);
+                auto copyObj=typeHelper::typehelper->copy(tuple[i]);
                 copyObj->setSystemManage();
                 recordTuple.push_back(copyObj);
             }
@@ -174,6 +182,8 @@ public:
         this->allRecord.push_back(record(opSub,recordTuple));
     }
 
+    Q_INVOKABLE void mod(int opSub,const QString& tuple);
+
     Q_INVOKABLE void del(int opSub)
     {
         for(int i=0;i<this->allCol.size();i++)
@@ -187,7 +197,7 @@ public:
         this->allRecord.push_back(record(opSub));
     }
 
-    Q_INVOKABLE void del(vector<int> allOpSub) //对选择出来的一系列下标一起进行删除，要求有序
+    void del(vector<int> allOpSub) //对选择出来的一系列下标一起进行删除，要求有序
     {
         int opFinishedNum=0;
         for(int i : allOpSub)
@@ -197,15 +207,17 @@ public:
         }
     }
 
-    Q_INVOKABLE vector<int> find_in(const string& colName,vector<Basic*> target_vec)
+    Q_INVOKABLE void del(jsCollection* allOpSub);
+
+    vector<int> find_in(const string& colName,vector<Basic*> target_vec)
     {
         vector<int> result_index_vec;
         int index=getColIndex(colName);
         for(int i=0;i<target_vec.size();++i)
         {
             vector<ruleExp*> rule_vec(this->allCol.size(),nullptr);
-            rule_vec[index]=new ruleExp (EQU,typeHelper::copy(target_vec[i]));
-            vector<int> temp_result=this->find(rule_vec,true);
+            rule_vec[index]=new ruleExp (EQU,typeHelper::typehelper->copy(target_vec[i]));
+            vector<int> temp_result=this->doFind(rule_vec);
             result_index_vec.insert(result_index_vec.end(),temp_result.begin(),temp_result.end());
         }
         set<int>s(result_index_vec.begin(), result_index_vec.end());
@@ -214,7 +226,9 @@ public:
         return result_index_vec;
     }
 
-    Q_INVOKABLE vector<int> find_not_in(const string& colName,vector<Basic*> target_vec)
+    Q_INVOKABLE jsCollection* find_in(const QString& colName,jsCollection* target_vec);
+
+    vector<int> find_not_in(const string& colName,vector<Basic*> target_vec)
     {
         vector<int> notResult;
         vector<int> inResult=find_in(colName,target_vec);
@@ -232,7 +246,9 @@ public:
         return notResult;
     }
 
-    Q_INVOKABLE vector<int> find(vector<ruleExp*> allExp,bool flag)
+    Q_INVOKABLE jsCollection* find_not_in(const QString& colName,jsCollection* target_vec);
+
+    vector<int> doFind(vector<ruleExp*> allExp)
     {
         //先生成一个完整的范围，用于作为nullptr（无条件）的结果
         vector<int> completeResult;
@@ -268,14 +284,16 @@ public:
         for(const string& str:allExp)
             allRule.push_back(expParse::total_strrule_parse(str));
 
-        auto result=find(allRule,true);
+        auto result=doFind(allRule);
 
         for(ruleExp* i : allRule)
             delete i;
         return result;
     }
 
-    Q_INVOKABLE vector<int> findCol(vector<string> colID)
+    Q_INVOKABLE jsCollection* find(const QString& allExp);
+
+    vector<int> findCol(vector<string> colID)
     {
         vector<int> result;
         for(int i=0;i<this->allCol.size();i++)
@@ -295,5 +313,9 @@ public:
             this->clear();
     }
 };
+
+
+
+
 
 

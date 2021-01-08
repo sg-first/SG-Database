@@ -35,7 +35,7 @@ public:
         if(op==EQU)
         {
             if(operandIsBasic()) //basic之间运算
-                return typeHelper::isEqu(operand1B,operand2B);
+                return typeHelper::typehelper->isEqu(operand1B,operand2B);
             else
             {
                 if(operand1B->getType()==BOOL)

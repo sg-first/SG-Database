@@ -4,10 +4,23 @@
 #include <set>
 #include<algorithm>
 
-class typeHelper
+class typeHelper:public QObject
 {
+    Q_OBJECT
+
+    typeHelper(){}
 public:
-    static Basic* copy(Basic* v)
+
+    static typeHelper* typehelper;
+
+    static typeHelper* getTypeHelper(){
+        if(typehelper==nullptr){
+            typehelper=new typeHelper () ;
+        }
+        return typehelper;
+    }
+
+    Q_INVOKABLE Basic* copy(Basic* v)
     {
         //调用前应该对参数类型进行检查
         if(v->getType()==INT)
@@ -31,7 +44,7 @@ public:
         return nv1->val==nv2->val;\
     }
 
-    static bool isEqu(Basic* v1, Basic* v2)
+    Q_INVOKABLE bool isEqu(Basic* v1, Basic* v2)
     {
         if(v1->getType()!=v2->getType())
             return false;
@@ -44,7 +57,7 @@ public:
         }
     }
 
-    static TYPE judgeType(string& val){
+    TYPE judgeType(string& val){
         if(val=="placeholder"){
             return PLACEHOLDER;
         }
@@ -63,12 +76,14 @@ public:
         return INT;
     }
 
-    static Basic* strToBasic(string val){
+    Basic* strToBasic(string val){
         TYPE tp=judgeType(val);
         return strToBasic(val,tp);
     }
 
-    static Basic* strToBasic(string val, TYPE type) //val需要与Basic.toStr结果对应
+    Q_INVOKABLE Basic* strToBasic(const QString& val);
+
+    Basic* strToBasic(const string& val, TYPE type) //val需要与Basic.toStr结果对应
     {
         if(type==_NULL)
             return new Basic();

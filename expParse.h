@@ -146,10 +146,10 @@ public:
     static ruleExp* single_strrule_parse(const string& strrule){
         string val=strrule.substr(1);
         if(strrule[0]=='<'){
-            return new numExp(SMAL,typeHelper::strToBasic(val));
+            return new numExp(SMAL,typeHelper::typehelper->strToBasic(val));
         }
         else if(strrule[0]=='>'){
-            return new numExp(GRAT,typeHelper::strToBasic(val));
+            return new numExp(GRAT,typeHelper::typehelper->strToBasic(val));
         }
         else{
             throw string("Wrong expression");
@@ -159,15 +159,15 @@ public:
     static ruleExp* binary_strrule_parse(const string& strrule){
         string val=strrule.substr(2);
         if(strrule[0]=='='){
-            return new ruleExp(EQU,typeHelper::strToBasic(val));
+            return new ruleExp(EQU,typeHelper::typehelper->strToBasic(val));
         }
         else if(strrule[0]=='>')
-            return new logExp(OR,new ruleExp(EQU,typeHelper::strToBasic(val)),new numExp(GRAT,typeHelper::strToBasic(val)));
+            return new logExp(OR,new ruleExp(EQU,typeHelper::typehelper->strToBasic(val)),new numExp(GRAT,typeHelper::typehelper->strToBasic(val)));
         else if (strrule[0]=='<') {
-            return new logExp(OR,new ruleExp(EQU,typeHelper::strToBasic(val)),new numExp(SMAL,typeHelper::strToBasic(val)));
+            return new logExp(OR,new ruleExp(EQU,typeHelper::typehelper->strToBasic(val)),new numExp(SMAL,typeHelper::typehelper->strToBasic(val)));
         }
         else if(strrule[0]=='!'){
-            return new logExp(NOT,nullptr,new ruleExp(EQU,typeHelper::strToBasic(val)));
+            return new logExp(NOT,nullptr,new ruleExp(EQU,typeHelper::typehelper->strToBasic(val)));
         }
         else{
             throw string("Wrong expression");

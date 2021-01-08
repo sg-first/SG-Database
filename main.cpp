@@ -6,6 +6,7 @@
 #include "tableManager.h"
 #include "dbProcess.h"
 #include "view.h"
+#include "jsCall.cpp"
 string table::default_path;
 string tableManager::curOperatUser;
 queue<processObject> dbProcess::processQueue;
@@ -13,8 +14,10 @@ queue<processObject> dbProcess::correspondQueue;
 tableManager* tableManager::tablemanager;
 table* dbProcess::countTable;
 table* tableManager::jurisdictionTable;
-aggHelper* aggHelper::helper;
+aggHelper* aggHelper::agghelper;
 manageContain* manageContain::contain;
+jsCollecManage* jsCollecManage::delCollec;
+typeHelper* typeHelper::typehelper;
 #define RegisterJSType(TypeName,JSName) qRegisterMetaType<TypeName>(JSName)
 using namespace std;
 void outputVec(const vector<int> &vec)
@@ -39,26 +42,31 @@ int main(int argc, char *argv[])
     RegisterJSType(table*,"table*");
     RegisterJSType(col*,"col*");
     RegisterJSType(Basic*,"Basic*");
+    RegisterJSType(jsCollection*,"jsCollection*");
 
     table::default_path="D:\\personal_file\\download_files\\test_";
 
     manageContain::contain->init();
-
+    jsCollecManage::delCollec=jsCollecManage::getjsCollecManage();
+    typeHelper::typehelper=typeHelper::getTypeHelper();
     tableManager::tablemanager=tableManager::getTableManager(10);
-    aggHelper::helper=aggHelper::getHelper();
+    aggHelper::agghelper=aggHelper::getHelper();
+
+    //vector<string> str=strToVec("'(x==5)','',''");
+    //vector<string> str=strToVec("\"ID\"");
 
     dbProcess::setCount(table::loadFile("Count"));
     tableManager::setJurisdiction(table::loadFile("Jurisdiction"));
-/*
+
     TcpSocketServer *m_pTcpServer=new TcpSocketServer();
     if (!m_pTcpServer->listen(QHostAddress::Any, 8888))
     {
         qDebug() << "m_pTcpServer->listen() error";
     }
     dbRun* dbrun=new dbRun();
-    dbrun->start();*/
+    dbrun->start();
 
-
+/*
     //创建表 增加数据
     col* NAME=new col(STR,"NAME");
     col* SCORE=new col (INT,"SCORE");
@@ -70,7 +78,6 @@ int main(int argc, char *argv[])
     student->add({typeHelper::strToBasic("'xr'"),typeHelper::strToBasic(("89")),typeHelper::strToBasic("'gjb'")});
     student->add({typeHelper::strToBasic("'wx'"),typeHelper::strToBasic(("63")),typeHelper::strToBasic("'jp'")});
     student->add({typeHelper::strToBasic("'ww'"),typeHelper::strToBasic(("78")),typeHelper::strToBasic("'gb'")});
-
     student->saveFile();
 
     col* tName=new col(STR,"TEACHER");
@@ -123,7 +130,7 @@ int main(int argc, char *argv[])
     stu_1->rollback();
     cout<<stu_1->toStr()<<endl;
 
-    manageContain::contain->reset();
+    manageContain::contain->reset();*/
 
 
     return a.exec();

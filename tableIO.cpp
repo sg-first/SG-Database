@@ -1,6 +1,6 @@
 #include "table.hpp"
 
-string table::toStr()
+QString table::toStr()
 {
     int m=(this->allCol[0]->getAllData()).size()+1;
     int n=this->allCol.size();
@@ -30,7 +30,7 @@ string table::toStr()
             }
         }
     }
-    return data;
+    return QString::fromStdString(data);;
 }
 
 
@@ -50,7 +50,7 @@ void table::update_len(vector<vector<int> > & len_data,const string& data){
 
 void table:: saveFile(string path) //将整个表的内容按约定格式写入空文件
 {
-    string data=this->toStr();
+    string data=this->toStr().toStdString();
     vector<vector<int>> len_data;
     this->update_len(len_data,data);
     IO::write_to_file(path,data);
@@ -125,7 +125,7 @@ table* table::loadFile(string path,int mark) //按约定格式从文件中读取
         }
         col* column = new col(type, ID);
         for (int j = 1; j < frame.size(); j++) {
-            column->pushData(typeHelper::strToBasic(frame[j][i],type));
+            column->pushData(typeHelper::typehelper->strToBasic(frame[j][i],type));
         }
         cols.push_back(column);
     }

@@ -16,6 +16,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         BPlusTree.cpp \
+        jsCall.cpp \
         main.cpp \
         manageable.cpp \
         tableIO.cpp

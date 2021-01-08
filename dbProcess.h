@@ -102,5 +102,6 @@ public:
         correspondQueue.push(tmpProcess);
         tableManager::tablemanager->doManage();
         manageContain::reset();
+        jsCollecManage::delCollec->domanage();
     }
 };
