@@ -2,6 +2,8 @@
 
 #ifdef autoRecovery
 
+manageContain* manageContain::contain;
+
 void managePair::del()
 {
     if(*(this->isDelete)==false)

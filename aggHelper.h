@@ -1,6 +1,8 @@
 #pragma once
 #include "col.hpp"
+#include "jsCollection.h"
 using namespace std;
+
 class aggHelper:public QObject {
 private:
     Q_OBJECT

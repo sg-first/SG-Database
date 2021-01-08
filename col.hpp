@@ -5,6 +5,8 @@
 #include "record.h"
 #include "config.h"
 
+class jsCollection;
+
 class col : public QObject, public manageable
 {
 private:

@@ -3,6 +3,7 @@
 #include "index.hpp"
 #include "IO.hpp"
 #include "expParse.h"
+#include "jsCollection.h"
 
 class table : public QObject, public manageable
 {
