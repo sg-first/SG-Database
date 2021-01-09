@@ -109,8 +109,5 @@ public:
         #ifdef autoRecovery
         manageContain::reset();
         #endif
-        #ifdef JsInBasicClass
-        jsCollecManage::delCollec->domanage();
-        #endif
     }
 };
