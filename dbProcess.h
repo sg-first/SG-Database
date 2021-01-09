@@ -7,7 +7,9 @@
 #include "js.h"
 #include "aggHelper.h"
 using namespace std;
-class processObject{
+
+class processObject
+{
     string user;
     string passWord;
     string JS;
@@ -54,14 +56,17 @@ public:
     }
 };
 
-class dbProcess{
+class dbProcess
+{
      static table* countTable;
 public:
      static queue<processObject> processQueue;
 
      static queue<processObject> correspondQueue;
 
-    static void setCount(table* table){
+    static void setCount(table* table)
+    {
+        table->setSystemManage();
         countTable=table;
     }
 
@@ -101,7 +106,11 @@ public:
         cout<<tmpProcess.getResult();
         correspondQueue.push(tmpProcess);
         tableManager::tablemanager->doManage();
+        #ifdef autoRecovery
         manageContain::reset();
+        #endif
+        #ifdef JsInBasicClass
         jsCollecManage::delCollec->domanage();
+        #endif
     }
 };

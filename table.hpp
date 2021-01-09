@@ -3,6 +3,9 @@
 #include "index.hpp"
 #include "IO.hpp"
 #include "expParse.h"
+#ifdef JsInBasicClass
+#include "jsCollection.h"
+#endif
 
 class table : public QObject, public manageable
 {
@@ -100,7 +103,9 @@ public:
         return genNewTable(findCol(colNames),tupSubList);
     }
 
+    #ifdef JsInBasicClass
     Q_INVOKABLE table* genNewTable(const QString& colNames,jsCollection* tupSubList);
+    #endif
 
     Q_INVOKABLE void saveFile(){
         this->table::saveFile(default_path+"\\"+ID+".csv");
@@ -205,7 +210,9 @@ public:
         }
     }
 
+    #ifdef JsInBasicClass
     Q_INVOKABLE void del(jsCollection* allOpSub);
+    #endif
 
     vector<int> find_in(const string& colName,vector<Basic*> target_vec)
     {
@@ -224,7 +231,9 @@ public:
         return result_index_vec;
     }
 
+    #ifdef JsInBasicClass
     Q_INVOKABLE jsCollection* find_in(const QString& colName,jsCollection* target_vec);
+    #endif
 
     vector<int> find_not_in(const string& colName,vector<Basic*> target_vec)
     {
@@ -244,7 +253,9 @@ public:
         return notResult;
     }
 
+    #ifdef JsInBasicClass
     Q_INVOKABLE jsCollection* find_not_in(const QString& colName,jsCollection* target_vec);
+    #endif
 
     vector<int> doFind(vector<ruleExp*> allExp)
     {
@@ -289,7 +300,9 @@ public:
         return result;
     }
 
+    #ifdef JsInBasicClass
     Q_INVOKABLE jsCollection* find(const QString& allExp);
+    #endif
 
     vector<int> findCol(vector<string> colID)
     {

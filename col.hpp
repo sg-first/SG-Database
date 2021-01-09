@@ -5,6 +5,10 @@
 #include "record.h"
 #include "config.h"
 
+#ifdef JsInBasicClass
+class jsCollection;
+#endif
+
 class col : public QObject, public manageable
 {
 private:
@@ -31,7 +35,9 @@ public:
 
     const vector<Basic*> getAllData() { return this->allData; }
 
+    #ifdef JsInBasicClass
     Q_INVOKABLE const jsCollection* getallData();
+    #endif
 
     TYPE getType() { return this->type; }
 
@@ -44,7 +50,9 @@ public:
         return result;
     }
 
+    #ifdef JsInBasicClass
     Q_INVOKABLE jsCollection* getData(jsCollection* filtered_index);
+    #endif
 
     Q_INVOKABLE QString toStr()
     {
@@ -79,7 +87,9 @@ public:
         return result;
     }
 
+    #ifdef JsInBasicClass
     Q_INVOKABLE col* genNewCol(jsCollection* subList);
+    #endif
 
     Q_INVOKABLE bool mod(int opSub,Basic* v) //会拷贝，返回对这个值的修改是否实际进行
     {

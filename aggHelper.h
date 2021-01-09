@@ -1,10 +1,14 @@
 #pragma once
 #include "col.hpp"
+#ifdef JsInBasicClass
+#include "jsCollection.h"
+#endif
 using namespace std;
-class aggHelper:public QObject {
+
+class aggHelper : public QObject
+{
 private:
     Q_OBJECT
-
     aggHelper(){}
 
 public:
@@ -36,7 +40,9 @@ public:
         return result;
     }
 
+    #ifdef JsInBasicClass
     Q_INVOKABLE jsCollection* distinct(jsCollection* data_vec);
+    #endif
 
     Basic* avg(vector<Basic*> data_vec){
         if(data_vec.empty()){
@@ -58,14 +64,18 @@ public:
         return new Float (result/num);
     }
 
+    #ifdef JsInBasicClass
     Q_INVOKABLE Basic* avg(jsCollection* data_vec);
+    #endif
 
     Basic* count(vector<Basic*> data_vec){
         int num=data_vec.size();
         return new Int (num);
     }
 
+    #ifdef JsInBasicClass
     Q_INVOKABLE Basic* count(jsCollection* data_vec);
+    #endif
 
     Basic* first(vector<Basic*> data_vec){
         if(data_vec.empty()){
@@ -75,7 +85,9 @@ public:
         return temp;
     }
 
+    #ifdef JsInBasicClass
     Q_INVOKABLE Basic* first(jsCollection* data_vec);
+    #endif
 
     Basic* last(vector<Basic*> data_vec){
         if(data_vec.empty()){
@@ -85,7 +97,9 @@ public:
         return temp;
     }
 
+    #ifdef JsInBasicClass
     Q_INVOKABLE Basic* last(jsCollection* data_vec);
+    #endif
 
     Basic* max(vector<Basic*> data_vec){
         if(data_vec.empty()){
@@ -118,7 +132,9 @@ public:
         return new Float(result);
     }
 
+    #ifdef JsInBasicClass
     Q_INVOKABLE Basic* max(jsCollection* data_vec);
+    #endif
 
     Basic* min(vector<Basic*> data_vec){
         if(data_vec.empty()){
@@ -151,7 +167,9 @@ public:
         return new Float(result);
     }
 
+    #ifdef JsInBasicClass
     Q_INVOKABLE Basic* min(jsCollection* data_vec);
+    #endif
 
     Basic* sum(vector<Basic*> data_vec){
         if(data_vec.empty()){
@@ -172,7 +190,9 @@ public:
         return new Float (result);
     }
 
+    #ifdef JsInBasicClass
     Q_INVOKABLE Basic* sum(jsCollection* data_vec);
+    #endif
 
 };
 

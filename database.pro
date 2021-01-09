@@ -38,6 +38,7 @@ HEADERS += \
     expParse.h \
     index.hpp \
     js.h \
+    jsCollection.h \
     manageable.h \
     record.h \
     rule.hpp \
