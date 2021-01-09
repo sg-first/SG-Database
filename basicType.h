@@ -3,6 +3,7 @@
 #include <memory>
 #include "manageable.h"
 #include <QObject>
+#include <QtScript/QScriptValue>
 using namespace std;
 
 enum TYPE{FLOAT,INT,STR,BOOL,_NULL,PLACEHOLDER};

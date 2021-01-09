@@ -104,7 +104,7 @@ public:
     }
 
     #ifdef JsInBasicClass
-    Q_INVOKABLE table* genNewTable(const QString& colNames,jsCollection* tupSubList);
+    Q_INVOKABLE table* genNewTable(const QScriptValue& colNames,jsCollection* tupSubList);
     #endif
 
     Q_INVOKABLE void saveFile(){
@@ -148,7 +148,7 @@ public:
         this->allRecord.push_back(record(tuple));
     }
 
-    Q_INVOKABLE void add(const QString& tuple);
+    Q_INVOKABLE void add(const QScriptValue& tuple);
 
     void mod(int opSub, vector<Basic*> tuple) //tuple里的东西会拷贝
     {
@@ -185,7 +185,7 @@ public:
         this->allRecord.push_back(record(opSub,recordTuple));
     }
 
-    Q_INVOKABLE void mod(int opSub,const QString& tuple);
+    Q_INVOKABLE void mod(int opSub,const QScriptValue& tuple);
 
     Q_INVOKABLE void del(int opSub)
     {
@@ -301,7 +301,7 @@ public:
     }
 
     #ifdef JsInBasicClass
-    Q_INVOKABLE jsCollection* find(const QString& allExp);
+    Q_INVOKABLE jsCollection* find(const QScriptValue& allExp);
     #endif
 
     vector<int> findCol(vector<string> colID)

@@ -15,7 +15,6 @@ tableManager* tableManager::tablemanager;
 table* dbProcess::countTable;
 table* tableManager::jurisdictionTable;
 aggHelper* aggHelper::agghelper;
-manageContain* manageContain::contain;
 jsCollecManage* jsCollecManage::delCollec;
 typeHelper* typeHelper::typehelper;
 #define RegisterJSType(TypeName,JSName) qRegisterMetaType<TypeName>(JSName)
@@ -52,16 +51,11 @@ int main(int argc, char *argv[])
     tableManager::tablemanager=tableManager::getTableManager(10);
     aggHelper::agghelper=aggHelper::getHelper();
 
-    vector<string> str=strToVec("'(x=='5')','',''");
+    //vector<string> str=strToVec("'(x=='5')','',''");
     //vector<string> str=strToVec("\"ID\"");
 
-    //dbProcess::setCount(table::loadFile("Count"));
-    //tableManager::setJurisdiction(table::loadFile("Jurisdiction"));
-
-    table* stu_1=tableManager::tablemanager->loadTable("student");
-    stu_1->add({typeHelper::typehelper->strToBasic("zt",STR),typeHelper::typehelper->strToBasic("57",INT),typeHelper::typehelper->strToBasic("jp",STR)});
-    tableManager::tablemanager->doManage();
-    manageContain::reset();
+    dbProcess::setCount(table::loadFile("Count"));
+    tableManager::setJurisdiction(table::loadFile("Jurisdiction"));
 
     TcpSocketServer *m_pTcpServer=new TcpSocketServer();
     if (!m_pTcpServer->listen(QHostAddress::Any, 8888))

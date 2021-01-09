@@ -20,6 +20,7 @@ JSVM* AddJSVM()
     VM->globalObject().setProperty("agghelper",agghelper);
     QScriptValue typehelper=VM->newQObject(typeHelper::typehelper);
     VM->globalObject().setProperty("typehelper",typehelper);
+    qScriptRegisterSequenceMetaType<QVector<QString> >(VM);
     return VM;
 }
 

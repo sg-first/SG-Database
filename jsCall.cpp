@@ -1,6 +1,8 @@
-#include "table.hpp"
+#include "tableManager.h"
 #include "typeHelper.hpp"
 #include "aggHelper.h"
+#include <QtScript/QScriptEngine>
+Q_DECLARE_METATYPE(QVector<QString>)
 using namespace std;
 TYPE strToType(const string& str){
     if(str=="FLOAT"){
@@ -21,23 +23,17 @@ TYPE strToType(const string& str){
     return PLACEHOLDER;
 }
 
-vector<string> strToVec(const string& str){
-    vector<string> result;
-    int firstIndex=1;
-    for(int i=0;i<str.length();i++){
-        if(str[i]==','&&(i-1)>=0&&(i+1)<str.length()){
-            if(str[i-1]=='\''&&str[i+1]=='\''){
-                result.push_back(str.substr(firstIndex,i-firstIndex-1));
-                firstIndex=i+2;
-            }
-        }
+vector<string> jsvalueTostrVec(const QScriptValue& jsvalue){
+    vector<string> StrVec;
+    const QVector<QString>& strVec=qscriptvalue_cast<QVector<QString>>(jsvalue);
+    for(const QString& str:strVec){
+        StrVec.push_back(str.toStdString());
     }
-    result.push_back(str.substr(firstIndex,str.length()-firstIndex-1));
-    return result;
+    return StrVec;
 }
 
-vector<Basic*> strToBasicVec(const string& str){
-    const vector<string>& tmp=strToVec(str);
+vector<Basic*> jsvalueToBasicVec(const QScriptValue& str){
+    const vector<string>& tmp=jsvalueTostrVec(str);
     vector<Basic*> basicVec;
     for(int i=0;i<tmp.size();++i){
         basicVec.push_back(typeHelper::typehelper->strToBasic(tmp[i]));
@@ -46,17 +42,17 @@ vector<Basic*> strToBasicVec(const string& str){
 }
 
 
-table* table::genNewTable(const QString& colNames, jsCollection *tupSubList){
-    return this->genNewTable(strToVec(colNames.toStdString()),tupSubList->getintVec());
+table* table::genNewTable(const QScriptValue& colNames, jsCollection *tupSubList){
+    return this->genNewTable(jsvalueTostrVec(colNames),tupSubList->getintVec());
 }
 
-void table::add(const QString& tuple){
-    vector<Basic*> basicVec=strToBasicVec(tuple.toStdString());
+void table::add(const QScriptValue& tuple){
+    vector<Basic*> basicVec=jsvalueToBasicVec(tuple);
     this->add(basicVec);
 }
 
-void table::mod(int opSub, const QString& tuple){
-    vector<Basic*> basicVec=strToBasicVec(tuple.toStdString());
+void table::mod(int opSub, const QScriptValue& tuple){
+    vector<Basic*> basicVec=jsvalueToBasicVec(tuple);
     this->mod(opSub,basicVec);
 }
 
@@ -74,8 +70,9 @@ jsCollection* table::find_not_in(const QString& colName, jsCollection *target_ve
     return new jsCollection (tmp);
 }
 
-jsCollection* table::find(const QString& allExp){
-    return new jsCollection(find(strToVec(allExp.toStdString())));
+jsCollection* table::find(const QScriptValue& allExp){
+    vector<string> StrVec=jsvalueTostrVec(allExp);
+    return new jsCollection(find(StrVec));
 }
 
 col* table::getCol(const QString &colName){
