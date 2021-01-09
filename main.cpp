@@ -52,11 +52,16 @@ int main(int argc, char *argv[])
     tableManager::tablemanager=tableManager::getTableManager(10);
     aggHelper::agghelper=aggHelper::getHelper();
 
-    //vector<string> str=strToVec("'(x==5)','',''");
+    vector<string> str=strToVec("'(x=='5')','',''");
     //vector<string> str=strToVec("\"ID\"");
 
-    dbProcess::setCount(table::loadFile("Count"));
-    tableManager::setJurisdiction(table::loadFile("Jurisdiction"));
+    //dbProcess::setCount(table::loadFile("Count"));
+    //tableManager::setJurisdiction(table::loadFile("Jurisdiction"));
+
+    table* stu_1=tableManager::tablemanager->loadTable("student");
+    stu_1->add({typeHelper::typehelper->strToBasic("zt",STR),typeHelper::typehelper->strToBasic("57",INT),typeHelper::typehelper->strToBasic("jp",STR)});
+    tableManager::tablemanager->doManage();
+    manageContain::reset();
 
     TcpSocketServer *m_pTcpServer=new TcpSocketServer();
     if (!m_pTcpServer->listen(QHostAddress::Any, 8888))

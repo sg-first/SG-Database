@@ -45,9 +45,6 @@ vector<Basic*> strToBasicVec(const string& str){
     return basicVec;
 }
 
-table::table(const QString& ID,vector<col*>allCol, bool hasOwnership){
-    table(ID.toStdString(),allCol,hasOwnership);
-}
 
 table* table::genNewTable(const QString& colNames, jsCollection *tupSubList){
     return this->genNewTable(strToVec(colNames.toStdString()),tupSubList->getintVec());

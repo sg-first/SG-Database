@@ -48,8 +48,6 @@ public:
         }
     }
 
-    Q_INVOKABLE table(const QString& ID,vector<col*>allCol, bool hasOwnership=true);
-
     Q_INVOKABLE table(const table& t, bool hasOwnership=true) : ID(t.ID), hasOwnership(hasOwnership)
     {
         for(col* c : t.allCol)
