@@ -2,7 +2,7 @@
 #include "basicType.h"
 #include <vector>
 #include <set>
-#include<algorithm>
+#include <algorithm>
 
 class typeHelper:public QObject
 {

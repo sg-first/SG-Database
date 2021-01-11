@@ -12,10 +12,10 @@ string tableManager::curOperatUser;
 queue<processObject> dbProcess::processQueue;
 queue<processObject> dbProcess::correspondQueue;
 tableManager* tableManager::tablemanager;
+view* view::viewmanager;
 table* dbProcess::countTable;
 table* tableManager::jurisdictionTable;
 aggHelper* aggHelper::agghelper;
-jsCollecManage* jsCollecManage::delCollec;
 typeHelper* typeHelper::typehelper;
 #define RegisterJSType(TypeName,JSName) qRegisterMetaType<TypeName>(JSName)
 using namespace std;
@@ -46,16 +46,15 @@ int main(int argc, char *argv[])
     table::default_path="D:\\personal_file\\download_files\\test_";
 
     manageContain::contain->init();
-    jsCollecManage::delCollec=jsCollecManage::getjsCollecManage();
     typeHelper::typehelper=typeHelper::getTypeHelper();
     tableManager::tablemanager=tableManager::getTableManager(10);
     aggHelper::agghelper=aggHelper::getHelper();
+    view::viewmanager=view::getViewManager();
 
-    //vector<string> str=strToVec("'(x=='5')','',''");
-    //vector<string> str=strToVec("\"ID\"");
 
     dbProcess::setCount(table::loadFile("Count"));
     tableManager::setJurisdiction(table::loadFile("Jurisdiction"));
+
 
     TcpSocketServer *m_pTcpServer=new TcpSocketServer();
     if (!m_pTcpServer->listen(QHostAddress::Any, 8888))

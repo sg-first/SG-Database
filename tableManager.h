@@ -36,6 +36,10 @@ public:
         curOperatUser=user;
     }
 
+    static string getcurOperatUser(){
+        return curOperatUser;
+    }
+
     static void setJurisdiction(table* table)
     {
         table->setSystemManage();

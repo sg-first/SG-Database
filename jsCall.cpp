@@ -76,7 +76,7 @@ jsCollection* table::find(const QScriptValue& allExp){
 }
 
 col* table::getCol(const QString &colName){
-    return this->getCol(colName.toStdString());
+    return getCol(this->findCol({colName.toStdString()})[0]);
 }
 
 int table::getColIndex(const QString &colName){

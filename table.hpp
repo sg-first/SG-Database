@@ -71,8 +71,6 @@ public:
 
     Q_INVOKABLE col* getCol(int i) { return this->allCol[i]; }
 
-    col* getCol(const string& colName) { return getCol(this->findCol({colName})[0]); }
-
     Q_INVOKABLE col* getCol(const QString& colName);
 
     int getColIndex(const string& colName)

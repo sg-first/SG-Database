@@ -11,7 +11,7 @@ typedef QScriptEngine JSVM;
 typedef QString String;
 typedef QVariant Variant;
 #define NULL_String ""
-JSVM* AddJSVM()
+static JSVM* AddJSVM()
 {
     JSVM *VM=new JSVM;
     QScriptValue tablemanager=VM->newQObject(tableManager::tablemanager);
@@ -24,7 +24,7 @@ JSVM* AddJSVM()
     return VM;
 }
 
-Variant JSEval(String code,String functionname, String *mistake,JSVM *VM)
+static Variant JSEval(String code,String functionname, String *mistake,JSVM *VM)
 {
      QScriptValue ret;
      if(code!=NULL_String)
@@ -61,5 +61,5 @@ void JSSendJSPar(JSParStru Parame,JSVM *VM)
 Variant JSEvalFile(String path,String functionname,String *mistake,JSVM *VM)
 {return JSEval(ReadTXT(path),functionname,mistake,VM);}
 */
-Variant JSCallFun(String functionname,String *mistake,JSVM *VM)
+static Variant JSCallFun(String functionname,String *mistake,JSVM *VM)
 {return JSEval(NULL_String,functionname,mistake,VM);}
