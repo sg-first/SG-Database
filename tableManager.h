@@ -78,10 +78,10 @@ public:
 
     Q_INVOKABLE table* loadTable(QString tName)
     {
-        string tableName=tName.toStdString();
+        string tableName=tName.toStdString();/*
         if(jurisdictionTable->find({"(x=='"+curOperatUser+"')","(x=='"+tableName+"')"}).empty()) {
             return nullptr;
-        }
+        }*/
         if(managedTable.find(tableName)==managedTable.end())
         {
             table* t=table::loadFile(tableName);

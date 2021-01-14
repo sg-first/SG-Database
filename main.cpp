@@ -38,7 +38,6 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    RegisterJSType(table,"table");
     RegisterJSType(table*,"table*");
     RegisterJSType(col*,"col*");
     RegisterJSType(Basic*,"Basic*");
@@ -46,15 +45,56 @@ int main(int argc, char *argv[])
 
     table::default_path="D:\\personal_file\\download_files\\test_";
 
-    manageContain::contain->init();
     typeHelper::typehelper=typeHelper::getTypeHelper();
+    manageContain::contain->init();
     tableManager::tablemanager=tableManager::getTableManager(10);
     aggHelper::agghelper=aggHelper::getHelper();
+    //view::viewmanager=view::getViewManager();
+
+    col* NAME=new col(STR,"NAME");
+    col* SCORE=new col (INT,"SCORE");
+    col* TEACHER=new col (STR,"TEACHER");
+    table* student=new table ("student",{NAME,SCORE,TEACHER});
+    student->add({typeHelper::typehelper->strToBasic("'zt'"),typeHelper::typehelper->strToBasic(("57")),typeHelper::typehelper->strToBasic("'jp'")});
+    student->add({typeHelper::typehelper->strToBasic("'gj'"),typeHelper::typehelper->strToBasic(("71")),typeHelper::typehelper->strToBasic("'gb'")});
+    student->add({typeHelper::typehelper->strToBasic("'yf'"),typeHelper::typehelper->strToBasic(("78")),typeHelper::typehelper->strToBasic("'gjb'")});
+    student->add({typeHelper::typehelper->strToBasic("'xr'"),typeHelper::typehelper->strToBasic(("89")),typeHelper::typehelper->strToBasic("'gjb'")});
+    student->add({typeHelper::typehelper->strToBasic("'wx'"),typeHelper::typehelper->strToBasic(("63")),typeHelper::typehelper->strToBasic("'jp'")});
+    student->add({typeHelper::typehelper->strToBasic("'ww'"),typeHelper::typehelper->strToBasic(("78")),typeHelper::typehelper->strToBasic("'gb'")});
+    student->saveFile();
+
+    col* tName=new col(STR,"TEACHER");
+    col* loc=new col (STR,"LOC");
+    table* teacher=new table ("teacher",{tName,loc});
+    teacher->add({typeHelper::typehelper->strToBasic("'jp'"),typeHelper::typehelper->strToBasic(("'HangZhou'"))});
+    teacher->add({typeHelper::typehelper->strToBasic("'gb'"),typeHelper::typehelper->strToBasic(("'BeiJing'"))});
+    teacher->add({typeHelper::typehelper->strToBasic("'gjb'"),typeHelper::typehelper->strToBasic(("'ShangHai'"))});
+    teacher->saveFile();
+
+    col* USERNAME=new col(STR,"USERNAME");
+    col* PASSWORD=new col (STR,"PASSWORD");
+    table* Count=new table ("Count",{USERNAME,PASSWORD});
+    Count->add({typeHelper::typehelper->strToBasic("'ZT'"),typeHelper::typehelper->strToBasic(("'zt'"))});
+    Count->saveFile();
+
+    col* USER=new col(STR,"USERNAME");
+    col* TABLE=new col (STR,"TABLE");
+    table* Jurisdiction=new table ("Jurisdiction",{USER,TABLE});
+    Jurisdiction->add({typeHelper::typehelper->strToBasic("'ZT'"),typeHelper::typehelper->strToBasic(("'student'"))});
+    Jurisdiction->add({typeHelper::typehelper->strToBasic("'ZT'"),typeHelper::typehelper->strToBasic(("'teacher'"))});
+    Jurisdiction->saveFile();
+
+    col* viewName=new col(STR,"viewName");
+    col* viewCode=new col (STR,"viewCode");
+    table* views=new table ("views",{viewName,viewCode});
+    views->saveFile();
+
     view::viewmanager=view::getViewManager();
 
 
     dbProcess::setCount(table::loadFile("Count"));
     tableManager::setJurisdiction(table::loadFile("Jurisdiction"));
+
 
     TcpSocketServer *m_pTcpServer=new TcpSocketServer();
     if (!m_pTcpServer->listen(QHostAddress::Any, 8888))
@@ -70,20 +110,20 @@ int main(int argc, char *argv[])
     col* SCORE=new col (INT,"SCORE");
     col* TEACHER=new col (STR,"TEACHER");
     table* student=new table ("student",{NAME,SCORE,TEACHER});
-    student->add({typeHelper::strToBasic("'zt'"),typeHelper::strToBasic(("57")),typeHelper::strToBasic("'jp'")});
-    student->add({typeHelper::strToBasic("'gj'"),typeHelper::strToBasic(("71")),typeHelper::strToBasic("'gb'")});
-    student->add({typeHelper::strToBasic("'yf'"),typeHelper::strToBasic(("78")),typeHelper::strToBasic("'gjb'")});
-    student->add({typeHelper::strToBasic("'xr'"),typeHelper::strToBasic(("89")),typeHelper::strToBasic("'gjb'")});
-    student->add({typeHelper::strToBasic("'wx'"),typeHelper::strToBasic(("63")),typeHelper::strToBasic("'jp'")});
-    student->add({typeHelper::strToBasic("'ww'"),typeHelper::strToBasic(("78")),typeHelper::strToBasic("'gb'")});
+    student->add({typeHelper::typehelper->strToBasic("'zt'"),typeHelper::typehelper->strToBasic(("57")),typeHelper::typehelper->strToBasic("'jp'")});
+    student->add({typeHelper::typehelper->strToBasic("'gj'"),typeHelper::typehelper->strToBasic(("71")),typeHelper::typehelper->strToBasic("'gb'")});
+    student->add({typeHelper::typehelper->strToBasic("'yf'"),typeHelper::typehelper->strToBasic(("78")),typeHelper::typehelper->strToBasic("'gjb'")});
+    student->add({typeHelper::typehelper->strToBasic("'xr'"),typeHelper::typehelper->strToBasic(("89")),typeHelper::typehelper->strToBasic("'gjb'")});
+    student->add({typeHelper::typehelper->strToBasic("'wx'"),typeHelper::typehelper->strToBasic(("63")),typeHelper::typehelper->strToBasic("'jp'")});
+    student->add({typeHelper::typehelper->strToBasic("'ww'"),typeHelper::typehelper->strToBasic(("78")),typeHelper::typehelper->strToBasic("'gb'")});
     student->saveFile();
 
     col* tName=new col(STR,"TEACHER");
     col* loc=new col (STR,"LOC");
     table* teacher=new table ("teacher",{tName,loc});
-    teacher->add({typeHelper::strToBasic("'jp'"),typeHelper::strToBasic(("'HangZhou'"))});
-    teacher->add({typeHelper::strToBasic("'gb'"),typeHelper::strToBasic(("'BeiJing'"))});
-    teacher->add({typeHelper::strToBasic("'gjb'"),typeHelper::strToBasic(("'ShangHai'"))});
+    teacher->add({typeHelper::typehelper->strToBasic("'jp'"),typeHelper::typehelper->strToBasic(("'HangZhou'"))});
+    teacher->add({typeHelper::typehelper->strToBasic("'gb'"),typeHelper::typehelper->strToBasic(("'BeiJing'"))});
+    teacher->add({typeHelper::typehelper->strToBasic("'gjb'"),typeHelper::typehelper->strToBasic(("'ShangHai'"))});
     teacher->saveFile();
 
     //对表查询
@@ -123,12 +163,11 @@ int main(int argc, char *argv[])
     //事务功能
     cout<<stu_1->toStr()<<endl;
     stu_1->updateFile();
-    stu_1->add({typeHelper::strToBasic("'lz'"),typeHelper::strToBasic(("54")),typeHelper::strToBasic("'cnnndsb'")});
+    stu_1->add({typeHelper::typehelper->strToBasic("'lz'"),typeHelper::typehelper->strToBasic(("54")),typeHelper::typehelper->strToBasic("'cnnndsb'")});
     cout<<stu_1->toStr()<<endl;
     stu_1->rollback();
     cout<<stu_1->toStr()<<endl;
 
-    manageContain::contain->reset();
 
     col* USERNAME=new col(STR,"USERNAME");
     col* PASSWORD=new col (STR,"PASSWORD");
