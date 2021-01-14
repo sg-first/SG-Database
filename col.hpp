@@ -19,7 +19,7 @@ private:
 public:
     col(TYPE type,string ID) : type(type), ID(ID) {}
 
-    Q_INVOKABLE col(const QString& type,const QString& ID);
+    col(const string& type,const string& ID);
 
     Q_INVOKABLE col(const col &c) : type(c.type), ID(c.ID)
     {
@@ -80,7 +80,8 @@ public:
         col* result=new col(this->type,this->ID);
         for(int i : subList)
         {
-            auto copyObj=typeHelper::typehelper->copy(this->allData[i]);
+            Basic* copyObj;
+            copyObj=typeHelper::typehelper->copy(this->allData[i]);
             copyObj->setSystemManage();
             result->allData.push_back(copyObj); //会拷贝
         }

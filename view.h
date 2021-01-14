@@ -14,7 +14,8 @@ public:
 
     static view* getViewManager(){
         if(viewmanager==nullptr){
-            viewmanager=new view (table::loadFile("Views"));
+            viewmanager=new view (table::loadFile("views"));
+            viewmanager->viewTable->setSystemManage();
         }
         return viewmanager;
     }
@@ -81,7 +82,7 @@ public:
     Q_INVOKABLE void addView(const QString& viewName,const QString& viewCode){
         Basic* ts_1=typeHelper::typehelper->strToBasic(viewNameToUserViewName(viewName.toStdString()),STR);
         Basic* ts_2=typeHelper::typehelper->strToBasic(viewCode.toStdString(),STR);
-        this->viewTable->add({typeHelper::typehelper->strToBasic(viewNameToUserViewName(viewName.toStdString()),STR),typeHelper::typehelper->strToBasic(viewCode.toStdString(),STR)});
+        this->viewTable->add({ts_1,ts_2});
     }
 
     Q_INVOKABLE bool delView(const QString& viewName){

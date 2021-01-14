@@ -1,5 +1,5 @@
 #pragma once
-#include "basicType.h"
+#include "col.hpp"
 
 class jsCollection : public QObject, public manageable
 {

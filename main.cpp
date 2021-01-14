@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
+    RegisterJSType(table,"table");
     RegisterJSType(table*,"table*");
     RegisterJSType(col*,"col*");
     RegisterJSType(Basic*,"Basic*");
@@ -54,7 +55,6 @@ int main(int argc, char *argv[])
 
     dbProcess::setCount(table::loadFile("Count"));
     tableManager::setJurisdiction(table::loadFile("Jurisdiction"));
-
 
     TcpSocketServer *m_pTcpServer=new TcpSocketServer();
     if (!m_pTcpServer->listen(QHostAddress::Any, 8888))
@@ -128,7 +128,29 @@ int main(int argc, char *argv[])
     stu_1->rollback();
     cout<<stu_1->toStr()<<endl;
 
-    manageContain::contain->reset();*/
+    manageContain::contain->reset();
+
+    col* USERNAME=new col(STR,"USERNAME");
+    col* PASSWORD=new col (STR,"PASSWORD");
+    table* Count=new table ("Count",{USERNAME,PASSWORD});
+    Count->add({typeHelper::typehelper->strToBasic("'ZT'"),typeHelper::typehelper->strToBasic(("'zt'"))});
+    Count->saveFile();
+
+    col* USER=new col(STR,"USERNAME");
+    col* TABLE=new col (STR,"TABLE");
+    table* Jurisdiction=new table ("Jurisdiction",{USER,TABLE});
+    Jurisdiction->add({typeHelper::typehelper->strToBasic("'ZT'"),typeHelper::typehelper->strToBasic(("'student'"))});
+    Jurisdiction->add({typeHelper::typehelper->strToBasic("'ZT'"),typeHelper::typehelper->strToBasic(("'teacher'"))});
+    Jurisdiction->saveFile();
+
+    col* viewName=new col(STR,"viewName");
+    col* viewCode=new col (STR,"viewCode");
+    table* views=new table ("views",{viewName,viewCode});
+    views->saveFile();
+
+*/
+
+
 
 
     return a.exec();

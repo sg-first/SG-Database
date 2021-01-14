@@ -37,7 +37,7 @@ public:
 
     Q_INVOKABLE table(){}
 
-    table(string ID, vector<col*>allCol, bool hasOwnership=true) : ID(ID), hasOwnership(hasOwnership)
+    table(string ID, vector<col*> allCol, bool hasOwnership=true) : ID(ID), hasOwnership(hasOwnership)
     {
         for(col* c : allCol)
         {
@@ -63,11 +63,17 @@ public:
         }
     }
 
+    void abandonOwnShip(){
+        this->hasOwnership=false;
+    }
+
     Q_INVOKABLE void changeIndex(int sub, index* ind)
     {
         delete this->allIndex[sub];
         this->allIndex[sub]=ind;
     }
+
+    vector<col*> getAllCol(){return this->allCol;}
 
     Q_INVOKABLE col* getCol(int i) { return this->allCol[i]; }
 
@@ -314,6 +320,23 @@ public:
                 result.push_back(i);
         }
         return result;
+    }
+
+    static table* doJoin(const string& newID,table* lTable,table* rTable){
+        if(lTable->allCol.empty()||rTable->allCol.empty()){
+            throw string("Empty table");
+        }
+        if(lTable->allCol[0]->getAllData().size()!=rTable->allCol[0]->getAllData().size()){
+            throw string("Tables of different lengths");
+        }
+        vector<col*> joinCols;
+        for(int i=0;i<lTable->allCol.size();++i){
+            joinCols.push_back(lTable->allCol[i]);
+        }
+        for(int i=0;i<rTable->allCol.size();++i){
+            joinCols.push_back(rTable->allCol[i]);
+        }
+        return new table (newID,joinCols);
     }
 
     virtual ~table()

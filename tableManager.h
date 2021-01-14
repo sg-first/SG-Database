@@ -2,7 +2,37 @@
 #include <string>
 #include <map>
 #include "table.hpp"
+#include <QtScript/QScriptEngine>
 using namespace std;
+
+static vector<ruleExp*> constructQuery(const int& size,const int& loc,Basic* tmpCopy){
+    vector<ruleExp*> queryVec(size,nullptr);
+    queryVec[loc]=new ruleExp(EQU,tmpCopy);
+    return queryVec;
+}
+
+static tuple<vector<int>,vector<int>> inner(table* lTable,table* rTable,const QString& lKey,const QString& rKey){
+    col* lCol=lTable->getCol(lKey);
+    col* rCol=rTable->getCol(rKey);
+    if(lCol->getType()!=rCol->getType()){
+        throw string("Wrong data type");
+    }
+    vector<int> lIndex;
+    vector<int> rIndex;
+    for(int i=0;i<lCol->getAllData().size();++i){
+        Basic* tmpCopy=typeHelper::typehelper->copy(lCol->getAllData()[i]);
+        int size=rTable->getAllCol().size();
+        int loc=rTable->findCol({rKey.toStdString()})[0];
+        vector<int> tmpVec=rTable->doFind(constructQuery(size,loc,tmpCopy));
+        if(tmpVec.empty()==true){
+            continue;
+        }
+        rIndex.insert(rIndex.end(),tmpVec.begin(),tmpVec.end());
+        lIndex.insert(lIndex.end(),tmpVec.size(),i);
+    }
+    return make_tuple(lIndex,rIndex);
+}
+
 
 class tableManager: public QObject
 {
@@ -48,10 +78,10 @@ public:
 
     Q_INVOKABLE table* loadTable(QString tName)
     {
-        string tableName=tName.toStdString();/*
+        string tableName=tName.toStdString();
         if(jurisdictionTable->find({"(x=='"+curOperatUser+"')","(x=='"+tableName+"')"}).empty()) {
             return nullptr;
-        }*/
+        }
         if(managedTable.find(tableName)==managedTable.end())
         {
             table* t=table::loadFile(tableName);
@@ -79,4 +109,37 @@ public:
             managedTable.erase(delTableName);
         }
     }
+
+    Q_INVOKABLE table* createTable(const QString& ID,const QScriptValue& strVec);
+
+    table* tableJoin(const QString &newTableID, const QString &lTableName,const vector<string>& lColName,const QString &rTableName,const vector<string>& rColName,const QString &lKey, const QString &rKey, const QString &joinWay){
+        table* lTable=tableManager::tablemanager->loadTable(lTableName);
+        table* rTable=tableManager::tablemanager->loadTable(rTableName);
+        tuple<vector<int>,vector<int>> resultIndex;
+        if(joinWay=="innerjoin"){
+            resultIndex=inner(lTable,rTable,lKey,rKey);
+        }
+        else if(joinWay=="leftjoin"){
+
+        }
+        else if(joinWay=="rightjoin"){
+
+        }
+        else if(joinWay=="outerjoin"){
+
+        }
+        else{
+            throw string("The wrong way to join");
+        }
+        table* lNewTable=lTable->genNewTable(lColName,get<0>(resultIndex));
+        table* rNewTable=rTable->genNewTable(rColName,get<1>(resultIndex));
+        table* result=table::doJoin(newTableID.toStdString(),lNewTable,rNewTable);
+        lNewTable->abandonOwnShip();
+        rNewTable->abandonOwnShip();
+        delete lNewTable;
+        delete rNewTable;
+        return result;
+    }
+
+    Q_INVOKABLE table* tableJoin(const QString &newTableID, const QString &lTableName,const QScriptValue& lColName,const QString &rTableName,const QScriptValue& rColName,const QString &lKey, const QString &rKey, const QString &joinWay="innerjoin");
 };

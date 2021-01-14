@@ -76,11 +76,6 @@ public:
         return INT;
     }
 
-    Basic* strToBasic(string val){
-        TYPE tp=judgeType(val);
-        return strToBasic(val,tp);
-    }
-
     Q_INVOKABLE Basic* strToBasic(const QString& val);
 
     Basic* strToBasic(const string& val, TYPE type) //val需要与Basic.toStr结果对应

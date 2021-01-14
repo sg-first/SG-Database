@@ -4,6 +4,7 @@
 #include <QtScript/QScriptEngine>
 Q_DECLARE_METATYPE(QVector<QString>)
 using namespace std;
+
 TYPE strToType(const string& str){
     if(str=="FLOAT"){
         return FLOAT;
@@ -32,13 +33,30 @@ vector<string> jsvalueTostrVec(const QScriptValue& jsvalue){
     return StrVec;
 }
 
+vector<col*> strVecToColVec(const vector<string>& colStrVec){
+    vector<col*> colVec;
+    for(const string& str:colStrVec){
+        for(int i=0;i<str.length();++i){
+            if(str[i]==':'){
+                colVec.push_back(new col (str.substr(i+1),str.substr(0,i)));
+                break;
+            }
+        }
+    }
+    return colVec;
+}
+
 vector<Basic*> jsvalueToBasicVec(const QScriptValue& str){
     const vector<string>& tmp=jsvalueTostrVec(str);
     vector<Basic*> basicVec;
     for(int i=0;i<tmp.size();++i){
-        basicVec.push_back(typeHelper::typehelper->strToBasic(tmp[i]));
+        basicVec.push_back(typeHelper::typehelper->strToBasic(QString::fromStdString(tmp[i])));
     }
     return basicVec;
+}
+
+table* tableManager::tableJoin(const QString &newTableID, const QString &lTableName, const QScriptValue &lColName, const QString &rTableName, const QScriptValue &rColName, const QString &lKey, const QString &rKey, const QString &joinWay){
+    return tableJoin(newTableID,lTableName,jsvalueTostrVec(lColName),rTableName,jsvalueTostrVec(rColName),lKey,rKey,joinWay);
 }
 
 
@@ -83,7 +101,13 @@ int table::getColIndex(const QString &colName){
     return this->getColIndex(colName.toStdString());
 }
 
-col::col(const QString& type,const QString& ID):type(strToType(type.toStdString())),ID(ID.toStdString()){}
+table* tableManager::createTable(const QString& ID,const QScriptValue& strVec){
+    vector<string> colStrVec=jsvalueTostrVec(strVec);
+    vector<col*> allCols=strVecToColVec(colStrVec);
+    return new table(ID.toStdString(),allCols);
+}
+
+col::col(const string& type,const string& ID):type(strToType(type)),ID(ID){}
 
 jsCollection* col::getData(jsCollection *filtered_index){
     return new jsCollection(this->getData(filtered_index->getintVec()));
@@ -98,7 +122,9 @@ const jsCollection* col::getallData(){
 }
 
 Basic* typeHelper::strToBasic(const QString &val){
-    return this->strToBasic(val.toStdString());
+    string tmp=val.toStdString();
+    TYPE tp=judgeType(tmp);
+    return strToBasic(tmp,tp);
 }
 
 jsCollection* aggHelper::distinct(jsCollection *data_vec){
