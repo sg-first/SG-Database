@@ -80,10 +80,8 @@ public:
         col* result=new col(this->type,this->ID);
         for(int i : subList)
         {
-            Basic* copyObj;
-            copyObj=typeHelper::typehelper->copy(this->allData[i]);
-            copyObj->setSystemManage();
-            result->allData.push_back(copyObj); //会拷贝
+            Basic* copyObj=typeHelper::typehelper->copy(this->allData[i]); //会拷贝
+            result->pushData(copyObj);
         }
         return result;
     }
