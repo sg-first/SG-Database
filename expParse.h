@@ -161,8 +161,9 @@ public:
         if(strrule[0]=='='){
             return new ruleExp(EQU,typeHelper::typehelper->strToBasic(QString::fromStdString(val)));
         }
-        else if(strrule[0]=='>')
+        else if(strrule[0]=='>'){
             return new logExp(OR,new ruleExp(EQU,typeHelper::typehelper->strToBasic(QString::fromStdString(val))),new numExp(GRAT,typeHelper::typehelper->strToBasic(QString::fromStdString(val))));
+        }
         else if (strrule[0]=='<') {
             return new logExp(OR,new ruleExp(EQU,typeHelper::typehelper->strToBasic(QString::fromStdString(val))),new numExp(SMAL,typeHelper::typehelper->strToBasic(QString::fromStdString(val))));
         }

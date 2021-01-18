@@ -8,6 +8,11 @@ using namespace std;
 
 enum TYPE{FLOAT,INT,STR,BOOL,_NULL,PLACEHOLDER};
 
+static long long getCurrentTime()
+{
+    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+}
+
 class Basic : public manageable
 {
 public:

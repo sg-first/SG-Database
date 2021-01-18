@@ -61,24 +61,9 @@ void table:: saveFile(string path) //将整个表的内容按约定格式写入�
 table* table::loadFile(string path,int mark) //按约定格式从文件中读取表
 {
     string to_do=IO::read_from_file(path);
-    vector<vector<int>> len_data;
-    bool rewriteFlag=false;
     if(!IO::if_file_exist(IO::path_to_lenpath(path))){
-        rewriteFlag=true;
-        int beg_get_len=0;
-        int row_get_len=0;
-        for(int i=0;i<to_do.length();i++){
-            if(to_do[i]=='\n'){
-                 len_data.push_back(vector<int>(2,0));
-                 len_data[row_get_len][0]=(i-beg_get_len+1);
-                 len_data[row_get_len][1]=0;
-                 beg_get_len=i+1;
-                 row_get_len++;
-            }
-        }
-    }
-    else{
-        len_data=IO::read_from_len_file(path);
+        const vector<vector<int>>& len_data=IO::strdata_to_lendata(to_do);
+        IO::write_to_len_file(path,len_data);
     }
     to_do = to_do + "\n";
     vector<vector<string>> frame;
@@ -101,15 +86,10 @@ table* table::loadFile(string path,int mark) //按约定格式从文件中读取
         }
     }
     for(int i=0;i<frame.size();i++){
-       if('#'==frame[i][0][0]){
-           rewriteFlag=true;
-           frame.erase(frame.begin()+i);
-           len_data.erase(len_data.begin()+i);
-           i--;
-       }
-    }
-    if(rewriteFlag==true){
-        IO::write_to_len_file(path,len_data);
+        if('#'==frame[i][0][0]){
+            frame.erase(frame.begin()+i);
+            i--;
+        }
     }
     frame.pop_back();
     vector<col*> cols;
@@ -134,27 +114,32 @@ table* table::loadFile(string path,int mark) //按约定格式从文件中读取
 
 void table::updateFile(string path) //根据table.allRecord更新文件内容
 {
-    if(allRecord.empty()){
+    if(this->allRecord.empty()){
         return;
+    }
+    fstream write(path);
+    if (!write.is_open()){
+        throw string("fail to open the file(write)");
     }
     vector<vector<int>> len_data=IO::read_from_len_file(path);
     for(record rcd:this->allRecord){
         switch (rcd.type) {
         case ADD:{
-            IO::do_add(rcd.targetTuple,path,len_data);
+            IO::do_add(rcd.targetTuple,len_data,write);
             break;
         }
         case DEL:{
-            IO::do_del(rcd.opSub,path,len_data);
+            IO::do_del(rcd.opSub,len_data,write);
             break;
         }
         case MOD:{
-            IO::do_del(rcd.opSub,path,len_data);
-            IO::do_add(rcd.targetTuple,path,len_data);
+            IO::do_del(rcd.opSub,len_data,write);
+            IO::do_add(rcd.targetTuple,len_data,write);
             break;
         }
         }
     }
+    write.close();
     IO::write_to_len_file(path,len_data);
     //全部写入后清除record记录
     this->allRecord.clear();

@@ -110,6 +110,12 @@ public:
         }
     }
 
+    void saveAllTable(){
+        for(auto iter=managedTable.begin();iter!=managedTable.end();iter++){
+            iter->second->saveFile();
+        }
+    }
+
     Q_INVOKABLE table* createTable(const QString& ID,const QScriptValue& strVec);
 
     table* tableJoin(const QString &newTableID, const QString &lTableName,const vector<string>& lColName,const QString &rTableName,const vector<string>& rColName,const QString &lKey, const QString &rKey, const QString &joinWay){

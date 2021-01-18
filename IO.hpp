@@ -97,7 +97,23 @@ public:
         write.close();
     }
 
-    static void do_add(vector<Basic*> turple,const string& path,vector<vector<int>>& len_data)
+    static vector<vector<int>> strdata_to_lendata(const string& to_do){
+        vector<vector<int>> len_data;
+        int beg_get_len=0;
+        int row_get_len=0;
+        for(int i=0;i<to_do.length();i++){
+            if(to_do[i]=='\n'){
+                 len_data.push_back(vector<int>(2,0));
+                 len_data[row_get_len][0]=(i-beg_get_len+1);
+                 len_data[row_get_len][1]=0;
+                 beg_get_len=i+1;
+                 row_get_len++;
+            }
+        }
+        return len_data;
+    }
+
+    static void do_add(vector<Basic*> turple,vector<vector<int>>& len_data,fstream& write)
     {
         string new_data="";
         for (int i=0;i<turple.size();i++){
@@ -108,30 +124,23 @@ public:
                 new_data=new_data+(turple[i]->toStr())+"\n";
             }
         }
-        fstream write(path,ios::app);
-        if (!write.is_open())
-            throw string("fail to open the file(write)");
+        write.seekp(0,ios::end);
         write << new_data;
-        write.close();
         vector<int> item;
         item.push_back(new_data.length());
         item.push_back(len_data[len_data.size()-1][1]);
         len_data.push_back(item);
     }
 
-    static void do_del(int opSub,const string& path,vector<vector<int>>& len_data)
+    static void do_del(int opSub,vector<vector<int>>& len_data,fstream& write)
     {
         int opRow=opSub+len_data[opSub+1][1];
-        int loc=0;
+        long loc=0;
         for(int i=0;i<(opRow+1);i++){
             loc+=len_data[i][0];
         }
-        fstream write(path);
-        if (!write.is_open())
-            throw string("fail to open the file(write)");
         write.seekp(loc+opRow+1,ios::beg);
         write << "#";
-        write.close();
         for(int i=opSub+1;i<len_data.size();i++){
             len_data[i][1]=len_data[i][1]+1;
         }
