@@ -16,6 +16,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         BPlusTree.cpp \
+        TcpSocketServer.cpp \
         jsCall.cpp \
         main.cpp \
         manageable.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     BPlusTree.h \
     IO.hpp \
     TcpSocketServer.h \
+    Tcp_tools.h \
     aggHelper.h \
     basicType.h \
     col.hpp \
