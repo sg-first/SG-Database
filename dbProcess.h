@@ -16,6 +16,7 @@ class processObject
     string result;
 public:
     processObject(string user,string passWord,string JS){
+        qRegisterMetaType<processObject>("processObject");//注册processObject类型
         this->user=user;
         this->passWord=passWord;
         this->JS=JS;

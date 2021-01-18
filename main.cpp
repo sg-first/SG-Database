@@ -1,3 +1,4 @@
+#include <QtCore/QCoreApplication>
 #include <QCoreApplication>
 #include <queue>
 #include <thread>
@@ -7,6 +8,7 @@
 #include "dbProcess.h"
 #include "view.h"
 #include "jsCall.cpp"
+#include <QObject>
 string table::default_path;
 string tableManager::curOperatUser;
 queue<processObject> dbProcess::processQueue;
@@ -43,7 +45,7 @@ int main(int argc, char *argv[])
     RegisterJSType(Basic*,"Basic*");
     RegisterJSType(jsCollection*,"jsCollection*");
 
-    table::default_path="D:\\personal_file\\download_files\\test_";
+    table::default_path="F:\\project\\SG-DATABASE-DATA\\test_";
 
     typeHelper::typehelper=typeHelper::getTypeHelper();
     manageContain::contain->init();
@@ -103,6 +105,14 @@ int main(int argc, char *argv[])
     }
     dbRun* dbrun=new dbRun();
     dbrun->start();
+    ServerResponseThread RT;
+    QObject::connect(&RT, SIGNAL(db_response_signal(processObject)), m_pTcpServer, SLOT(response_handle(processObject)));
+    RT.start();
+
+
+//    //开启C++11数据库响应监听线程函数
+//    std::thread t1(db_listener_thread_function);
+//    //t1.join();
 
 /*
     //创建表 增加数据
