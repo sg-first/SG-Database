@@ -8,7 +8,6 @@
 #include "dbProcess.h"
 #include "view.h"
 #include "jsCall.cpp"
-#include <QObject>
 string table::default_path;
 string tableManager::curOperatUser;
 queue<processObject> dbProcess::processQueue;
@@ -59,19 +58,6 @@ int main(int argc, char *argv[])
     dbProcess::setCount(table::loadFile("Count"));
     tableManager::setJurisdiction(table::loadFile("Jurisdiction"));
 
-    table* student=tableManager::tablemanager->loadTable("student");
-    student->add({typeHelper::typehelper->strToBasic("'wuwei'"),typeHelper::typehelper->strToBasic(("63")),typeHelper::typehelper->strToBasic("'sbjp'")});
-    student->add({typeHelper::typehelper->strToBasic("'wuweibb'"),typeHelper::typehelper->strToBasic(("63")),typeHelper::typehelper->strToBasic("'sbjp'")});
-
-    table* teacher=tableManager::tablemanager->loadTable("teacher");
-    teacher->add({typeHelper::typehelper->strToBasic("'jpsb'"),typeHelper::typehelper->strToBasic("'YANGZHOU'")});
-
-    vector<string> stuVec={"NAME","SCORE","TEACHER"};
-    vector<string> teaVec={"TEACHER","LOC"};
-
-    cout<<tableManager::tablemanager->tableJoin("tsleft","student",stuVec,"teacher",teaVec,"TEACHER","TEACHER","leftjoin")->toStr().toStdString();
-    cout<<tableManager::tablemanager->tableJoin("tsouter","teacher",teaVec,"student",stuVec,"TEACHER","TEACHER","outerjoin")->toStr().toStdString();
-
 
     TcpSocketServer *m_pTcpServer=new TcpSocketServer();
     if (!m_pTcpServer->listen(QHostAddress::Any, 8888))
@@ -85,7 +71,19 @@ int main(int argc, char *argv[])
     RT.start();
 
 
+/*
+    table* student=tableManager::tablemanager->loadTable("student");
+    student->add({typeHelper::typehelper->strToBasic("'wuwei'"),typeHelper::typehelper->strToBasic(("63")),typeHelper::typehelper->strToBasic("'sbjp'")});
+    student->add({typeHelper::typehelper->strToBasic("'wuweibb'"),typeHelper::typehelper->strToBasic(("63")),typeHelper::typehelper->strToBasic("'sbjp'")});
 
+    table* teacher=tableManager::tablemanager->loadTable("teacher");
+    teacher->add({typeHelper::typehelper->strToBasic("'jpsb'"),typeHelper::typehelper->strToBasic("'YANGZHOU'")});
+
+    vector<string> stuVec={"NAME","SCORE","TEACHER"};
+    vector<string> teaVec={"TEACHER","LOC"};
+
+    cout<<tableManager::tablemanager->tableJoin("tsleft","student",stuVec,"teacher",teaVec,"TEACHER","TEACHER","leftjoin")->toStr().toStdString();
+    cout<<tableManager::tablemanager->tableJoin("tsouter","teacher",teaVec,"student",stuVec,"TEACHER","TEACHER","outerjoin")->toStr().toStdString();*/
 
 
     /*long long startTime=getCurrentTime();

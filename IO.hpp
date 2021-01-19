@@ -105,7 +105,6 @@ public:
             if(to_do[i]=='\n'){
                  len_data.push_back(vector<int>(2,0));
                  len_data[row_get_len][0]=(i-beg_get_len+1);
-                 len_data[row_get_len][1]=0;
                  beg_get_len=i+1;
                  row_get_len++;
             }
