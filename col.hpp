@@ -66,7 +66,8 @@ public:
 
     Q_INVOKABLE void pushData(Basic* v) //必须使用这个函数添加数据
     {
-        if(v->getType()!=this->getType())
+        TYPE dataType=v->getType();
+        if(dataType!=this->getType()&&dataType!=_NULL)
             throw string("type mismatch");
         else
         {
@@ -80,7 +81,13 @@ public:
         col* result=new col(this->type,this->ID);
         for(int i : subList)
         {
-            Basic* copyObj=typeHelper::typehelper->copy(this->allData[i]); //会拷贝
+            Basic* copyObj;
+            if(i==-1){
+                copyObj=new Basic();
+            }
+            else{
+                copyObj=typeHelper::typehelper->copy(this->allData[i]); //会拷贝
+            }
             result->pushData(copyObj);
         }
         return result;

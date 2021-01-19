@@ -8,7 +8,8 @@ void TcpSocketServer::response_handle(processObject p)
     QString userid;
     QString content;
     response=p;
-    dbProcess::correspondQueue.pop();
+    cout<<"correspondQueue.size()="<<dbProcess::correspondQueue.size()<<endl;
+    //dbProcess::correspondQueue.pop();
     userid=QString::fromStdString(response.getUser());
     content=QString::fromStdString(response.getResult());
     //在map中查找对应的socket
@@ -26,6 +27,7 @@ void TcpSocketServer::response_handle(processObject p)
     {
         qDebug()<<"tcp map中不含这个键值对";
     }
+    close();
 
 }
 //线程函数
@@ -130,6 +132,7 @@ void TcpSocketServer::incomingConnection(qintptr handle)
     QString userid=QString::fromStdString(sReadData_Object.getUser());
 
     dbProcess::processQueue.push(sReadData_Object);//把封装的Object加入队列
+    cout<<"processQueue.size()"<<dbProcess::processQueue.size()<<endl;
 
     //添加该socket到map
     tcp->insert(userid,oTcpSocket);

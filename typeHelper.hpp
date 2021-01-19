@@ -58,7 +58,10 @@ public:
     }
 
     TYPE judgeType(string& val){
-        if(val=="placeholder"){
+        if(val=="NULL"){
+            return _NULL;
+        }
+        else if(val=="placeholder"){
             return PLACEHOLDER;
         }
         else if(val=="true"||val=="false"){
