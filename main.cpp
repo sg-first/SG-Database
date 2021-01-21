@@ -59,6 +59,61 @@ int main(int argc, char *argv[])
     tableManager::setJurisdiction(table::loadFile("Jurisdiction"));
 
 
+
+
+
+    long long startTime=getCurrentTime();
+    table* student=tableManager::tablemanager->loadTable("student");
+    cout<<getCurrentTime()-startTime<<endl;
+
+    startTime=getCurrentTime();
+    for(int i=0;i<10000;++i){
+        student->add({typeHelper::typehelper->strToBasic("'xr'"),typeHelper::typehelper->strToBasic((QString::fromStdString(to_string(i)))),typeHelper::typehelper->strToBasic("'jp'")});
+    }
+    cout<<getCurrentTime()-startTime<<endl;
+
+    startTime=getCurrentTime();
+    vector<int> resVec=student->find({"(x=='xr')","",""});
+    cout<<getCurrentTime()-startTime<<endl;
+
+    startTime=getCurrentTime();
+    resVec=student->find({"(x=='xr')","",""});
+    cout<<getCurrentTime()-startTime<<endl;
+
+    startTime=getCurrentTime();
+    student->del(resVec);
+    cout<<getCurrentTime()-startTime<<endl;
+
+    startTime=getCurrentTime();
+    student->updateFile();
+    cout<<getCurrentTime()-startTime<<endl;
+
+
+
+
+
+    startTime=getCurrentTime();
+    student=tableManager::tablemanager->loadTable("student");
+    cout<<getCurrentTime()-startTime<<endl;
+
+    startTime=getCurrentTime();
+    for(int i=0;i<10000;++i){
+        student->add({typeHelper::typehelper->strToBasic("'xr'"),typeHelper::typehelper->strToBasic((QString::fromStdString(to_string(i)))),typeHelper::typehelper->strToBasic("'jp'")});
+    }
+    cout<<getCurrentTime()-startTime<<endl;
+
+    startTime=getCurrentTime();
+    resVec=student->find({"(x=='zt')","",""});
+    cout<<getCurrentTime()-startTime<<endl;
+
+    startTime=getCurrentTime();
+    student->del(resVec);
+    cout<<getCurrentTime()-startTime<<endl;
+
+    startTime=getCurrentTime();
+    student->updateFile();
+    cout<<getCurrentTime()-startTime<<endl;
+
     TcpSocketServer *m_pTcpServer=new TcpSocketServer();
     if (!m_pTcpServer->listen(QHostAddress::Any, 8888))
     {

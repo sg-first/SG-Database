@@ -7,6 +7,7 @@
 #include "jsCollection.h"
 #endif
 
+
 class table : public QObject, public manageable
 {
     Q_OBJECT
@@ -15,11 +16,15 @@ protected:
     vector<index*> allIndex;
     list<record> allRecord;
     bool hasOwnership;
-
+    map<vector<string>,vector<int>> memSearchSet;
     void update_len(vector<vector<int> > & len_data,const string& data);
+
     static table* loadFile(string path,int mark);
+
     void saveFile(string path);
+
     void updateFile(string path);
+
     void clear()
     {
         for(col* c : allCol)
@@ -61,6 +66,7 @@ public:
             this->allCol.push_back(rc);
             this->allIndex.push_back(new traversalIndex(rc)); //索引不拷贝，重建
         }
+        this->memSearchSet=t.memSearchSet;
     }
 
     void abandonOwnShip(){
@@ -150,6 +156,7 @@ public:
         }
         //写入记录
         this->allRecord.push_back(record(tuple));
+        memSearchSet.clear();
     }
 
     Q_INVOKABLE void add(const QScriptValue& tuple);
@@ -187,6 +194,7 @@ public:
 
         //写入记录
         this->allRecord.push_back(record(opSub,recordTuple));
+        memSearchSet.clear();
     }
 
     Q_INVOKABLE void mod(int opSub,const QScriptValue& tuple);
@@ -202,6 +210,7 @@ public:
         }
         //写入记录
         this->allRecord.push_back(record(opSub));
+        memSearchSet.clear();
     }
 
     void del(vector<int> allOpSub) //对选择出来的一系列下标一起进行删除，要求有序
@@ -291,16 +300,25 @@ public:
         return result;
     }
 
-    vector<int> find(vector<string> allExp)
+    vector<int> find(const vector<string>& allExp)
     {
-        vector<ruleExp*> allRule;
-        for(const string& str:allExp)
-            allRule.push_back(expParse::total_strrule_parse(str));
+        auto res=memSearchSet.find(allExp);
+        if(res!=memSearchSet.end()){
+            return res->second;
+        }
 
+        vector<ruleExp*> allRule;
+        for(const string& str:allExp){
+            allRule.push_back(expParse::total_strrule_parse(str));
+        }
         auto result=doFind(allRule);
 
-        for(ruleExp* i : allRule)
+        memSearchSet[allExp]=result;
+
+        for(ruleExp* i : allRule){
             delete i;
+        }
+
         return result;
     }
 
