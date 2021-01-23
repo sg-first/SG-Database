@@ -153,7 +153,7 @@ public:
             if(ind->isSupportMod())
                 ind->add(tuple[i]);
 
-            c->pushData(tuple[i]);
+            c->add(tuple[i]);
         }
         //写入记录
         this->allRecord.push_back(record(tuple));
@@ -162,10 +162,12 @@ public:
 
     Q_INVOKABLE void add(const QScriptValue& tuple);
 
-    void mod(int opSub, vector<Basic*> tuple) //tuple里的东西会拷贝
+    int mod(int opSub, vector<Basic*> tuple) //tuple里的东西会拷贝
     {
         if(tuple.size()!=this->allCol.size())
             throw string("Col Size mismatch");
+
+        int resultSub=opSub; //记录结果
 
         vector<Basic*> recordTuple;
         for(int i=0;i<this->allCol.size();i++)
@@ -174,14 +176,15 @@ public:
 
             index* ind=this->allIndex[i];
             if(ind->isSupportMod())
-                ind->mod(opSub,tuple[i]);
+                ind->mod(opSub,tuple[i]); //fix:下标变了索引咋整啊
 
-            bool modResult=c->mod(opSub,tuple[i]);
-            if(modResult)
+            int modResult=c->mod(opSub,tuple[i]);
+            if(modResult!=opSub)
             {
                 auto copyObj=typeHelper::typehelper->copy(tuple[i]);
                 copyObj->setSystemManage();
                 recordTuple.push_back(copyObj);
+                resultSub=opSub;
             }
             else
             {
@@ -196,6 +199,7 @@ public:
         //写入记录
         this->allRecord.push_back(record(opSub,recordTuple));
         memSearchSet.clear();
+        return resultSub; //返回
     }
 
     Q_INVOKABLE void mod(int opSub,const QScriptValue& tuple);

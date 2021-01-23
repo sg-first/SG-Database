@@ -64,7 +64,7 @@ public:
         return QString::fromStdString(result);
     }
 
-    Q_INVOKABLE void pushData(Basic* v) //必须使用这个函数添加数据
+    Q_INVOKABLE int add(Basic* v) //必须使用这个函数添加数据
     {
         TYPE dataType=v->getType();
         if(dataType!=this->getType()&&dataType!=_NULL)
@@ -73,6 +73,7 @@ public:
         {
             v->setSystemManage();
             this->allData.push_back(v);
+            return this->allData.size();
         }
     }
 
@@ -88,7 +89,7 @@ public:
             else{
                 copyObj=typeHelper::typehelper->copy(this->allData[i]); //会拷贝
             }
-            result->pushData(copyObj);
+            result->add(copyObj);
         }
         return result;
     }
@@ -97,16 +98,16 @@ public:
     Q_INVOKABLE col* genNewCol(jsCollection* subList);
     #endif
 
-    Q_INVOKABLE bool mod(int opSub,Basic* v) //会拷贝，返回对这个值的修改是否实际进行
+    Q_INVOKABLE int mod(int opSub,Basic* v) //会拷贝，返回对这个值的修改是否实际进行
     {
         if(v->getType()!=PLACEHOLDER && !typeHelper::typehelper->isEqu(v,this->allData[opSub]))
         {
             auto copyObj=typeHelper::typehelper->copy(v);
             copyObj->setSystemManage();
-            this->allData[opSub]=copyObj;
-            return true;
+            this->del(opSub);
+            return this->add(copyObj);
         }
-        return false;
+        return opSub;
     }
 
     Q_INVOKABLE void del(int opSub)

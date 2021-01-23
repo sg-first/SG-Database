@@ -70,7 +70,7 @@ public:
             col* column = cols[i];
             TYPE type=column->getType();
             for (int j = 1; j < frame.size(); j++) {
-                column->pushData(typeHelper::typehelper->strToBasic(frame[j][i],type));
+                column->add(typeHelper::typehelper->strToBasic(frame[j][i],type));
             }
         }
         return rowCount;

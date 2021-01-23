@@ -51,7 +51,7 @@ public:
 class binarySearchIndex : public index
 {
 private:
-    vector<pair<float,int>> sortVec;
+    vector<pair<float,int>> sortVec; //key是值，val是下标
 
     void colToVec()
     {
@@ -121,13 +121,13 @@ public:
     virtual void mod(int opSub, Basic* v) override
     {
         int sub=-1;
-        for(auto i : this->sortVec)
+        for(auto i : this->sortVec) //找现在的下标
         {
             if(i.second==opSub)
                 sub=i.second;
         }
         this->del(sub);
-        this->add(v);
+        this->add(v); //这里面就会把下标作为最后一个
     }
 
     virtual void del(int opSub) override

@@ -72,7 +72,7 @@ public:
             }
             col* column = new col(type, ID);
             for (int j = 1; j < frame.size(); j++) {
-                column->pushData(typeHelper::typehelper->strToBasic(frame[j][i],type));
+                column->add(typeHelper::typehelper->strToBasic(frame[j][i],type));
             }
             cols.push_back(column);
         }
