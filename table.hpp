@@ -1,5 +1,4 @@
 #pragma once
-#include "col.hpp"
 #include "index.hpp"
 #include "IO.hpp"
 #include "expParse.h"
@@ -15,9 +14,9 @@ protected:
     vector<col*> allCol; //如果hasOwnership=true，push进来的由table对象持有所有权
     vector<index*> allIndex;
     list<record> allRecord;
+    vector<int> allBlocksLen;
     bool hasOwnership;
     map<vector<string>,vector<int>> memSearchSet;
-    void update_len(vector<vector<int> > & len_data,const string& data);
 
     static table* loadFile(string path,int mark);
 
@@ -40,9 +39,9 @@ public:
 
     Q_INVOKABLE QString toStr();
 
-    Q_INVOKABLE table(){}
+    vector<string> toStr(const int& fileLen);
 
-    table(string ID, vector<col*> allCol, bool hasOwnership=true) : ID(ID), hasOwnership(hasOwnership)
+    table(string ID, vector<col*> allCol,const vector<int>& blocksLen={}, bool hasOwnership=true) : ID(ID), hasOwnership(hasOwnership)
     {
         for(col* c : allCol)
         {
@@ -54,6 +53,7 @@ public:
             this->allCol.push_back(c);
             this->allIndex.push_back(new traversalIndex(c)); //默认都是遍历索引
         }
+        this->allBlocksLen=blocksLen;
     }
 
     Q_INVOKABLE table(const table& t, bool hasOwnership=true) : ID(t.ID), hasOwnership(hasOwnership)
@@ -67,6 +67,7 @@ public:
             this->allIndex.push_back(new traversalIndex(rc)); //索引不拷贝，重建
         }
         this->memSearchSet=t.memSearchSet;
+        this->allBlocksLen=t.allBlocksLen;
     }
 
     void abandonOwnShip(){

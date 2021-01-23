@@ -67,7 +67,7 @@ public:
         else if(val=="true"||val=="false"){
             return BOOL;
         }
-        else if(val[0]=='\''){
+        else if(val[0]=='\''&&val[val.size()-1]=='\''){
             val=val.substr(1,val.size()-2);
             return STR;
         }
