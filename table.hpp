@@ -3,6 +3,8 @@
 #include "IO.hpp"
 #include "expParse.h"
 #include <QThread>
+#include <QRunnable>
+#include <QThreadPool>
 #ifdef JsInBasicClass
 #include "jsCollection.h"
 #endif

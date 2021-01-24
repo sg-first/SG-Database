@@ -1,6 +1,5 @@
 #include "tableManager.h"
-#include <QRunnable>
-#include <QThreadPool>
+#include <memory>
 class multiSave :public QRunnable{
     const string tmp;
     const string data;
@@ -80,7 +79,6 @@ vector<string> table::toStr(const int& fileLen){
 void table:: saveFile(const string& path) //将整个表的内容按约定格式写入空文件
 {
     tableManager::tablemanager->deliManage(this);
-    QThreadPool::globalInstance()->setMaxThreadCount(10);
     const vector<string>& allData=this->toStr(IO::singleFileLen);
     int num=1;
     for(const string& data:allData){

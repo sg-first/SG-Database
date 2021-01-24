@@ -40,13 +40,14 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    IO::singleFileLen=1000;
 
     RegisterJSType(table*,"table*");
     RegisterJSType(col*,"col*");
     RegisterJSType(Basic*,"Basic*");
     RegisterJSType(jsCollection*,"jsCollection*");
     RegisterJSType(processObject,"processObject");
+
+    IO::singleFileLen=1000;
 
     table::default_path="D:\\personal_file\\download_files\\test_";
 
@@ -76,6 +77,14 @@ int main(int argc, char *argv[])
         student->add({typeHelper::typehelper->strToBasic("'xr'"),typeHelper::typehelper->strToBasic((QString::fromStdString(to_string(i)))),typeHelper::typehelper->strToBasic("'jp'")});
     }
     long long startTime=getCurrentTime();
+    student->saveFile();
+    cout<<getCurrentTime()-startTime<<endl;
+
+    startTime=getCurrentTime();
+    student->saveFile();
+    cout<<getCurrentTime()-startTime<<endl;
+
+    startTime=getCurrentTime();
     student->saveFile();
     cout<<getCurrentTime()-startTime<<endl;
 
