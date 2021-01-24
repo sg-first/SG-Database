@@ -63,44 +63,19 @@ int main(int argc, char *argv[])
 
 
 
-    col* USERNAME=new col(STR,"USERNAME");
-    col* PASSWORD=new col (STR,"PASSWORD");
-    table* Count=new table ("Count",{USERNAME,PASSWORD});
-    Count->add({typeHelper::typehelper->strToBasic("'ZT'"),typeHelper::typehelper->strToBasic(("'zt'"))});
-    Count->saveFile();
+    table* student=tableManager::tablemanager->loadTable("student");
+    student->add({typeHelper::typehelper->strToBasic("'wuwei'"),typeHelper::typehelper->strToBasic(("63")),typeHelper::typehelper->strToBasic("'sbjp'")});
+    student->add({typeHelper::typehelper->strToBasic("'wuweibb'"),typeHelper::typehelper->strToBasic(("63")),typeHelper::typehelper->strToBasic("'sbjp'")});
 
-    col* USER=new col(STR,"USERNAME");
-    col* TABLE=new col (STR,"TABLE");
-    table* Jurisdiction=new table ("Jurisdiction",{USER,TABLE});
-    Jurisdiction->add({typeHelper::typehelper->strToBasic("'ZT'"),typeHelper::typehelper->strToBasic(("'student'"))});
-    Jurisdiction->add({typeHelper::typehelper->strToBasic("'ZT'"),typeHelper::typehelper->strToBasic(("'teacher'"))});
-    Jurisdiction->saveFile();
+    table* teacher=tableManager::tablemanager->loadTable("teacher");
+    teacher->add({typeHelper::typehelper->strToBasic("'jpsb'"),typeHelper::typehelper->strToBasic("'YANGZHOU'")});
 
-    col* viewName=new col(STR,"viewName");
-    col* viewCode=new col (STR,"viewCode");
-    table* views=new table ("views",{viewName,viewCode});
-    views->saveFile();
+    vector<string> stuVec={"NAME","SCORE","TEACHER"};
+    vector<string> teaVec={"TEACHER","LOC"};
 
+    cout<<tableManager::tablemanager->tableJoin("tsleft","student",stuVec,"teacher",teaVec,"TEACHER","TEACHER","leftjoin")->toStr().toStdString();
+    cout<<tableManager::tablemanager->tableJoin("tsouter","student",stuVec,"teacher",teaVec,"TEACHER","TEACHER","outerjoin")->toStr().toStdString();
 
-    col* NAME=new col(STR,"NAME");
-    col* SCORE=new col (INT,"SCORE");
-    col* TEACHER=new col (STR,"TEACHER");
-    table* student=new table ("student",{NAME,SCORE,TEACHER});
-    student->add({typeHelper::typehelper->strToBasic("'zt'"),typeHelper::typehelper->strToBasic(("57")),typeHelper::typehelper->strToBasic("'jp'")});
-    student->add({typeHelper::typehelper->strToBasic("'gj'"),typeHelper::typehelper->strToBasic(("71")),typeHelper::typehelper->strToBasic("'gb'")});
-    student->add({typeHelper::typehelper->strToBasic("'yf'"),typeHelper::typehelper->strToBasic(("78")),typeHelper::typehelper->strToBasic("'gjb'")});
-    student->add({typeHelper::typehelper->strToBasic("'xr'"),typeHelper::typehelper->strToBasic(("89")),typeHelper::typehelper->strToBasic("'gjb'")});
-    student->add({typeHelper::typehelper->strToBasic("'wx'"),typeHelper::typehelper->strToBasic(("63")),typeHelper::typehelper->strToBasic("'jp'")});
-    student->add({typeHelper::typehelper->strToBasic("'ww'"),typeHelper::typehelper->strToBasic(("78")),typeHelper::typehelper->strToBasic("'gb'")});
-    student->saveFile();
-
-    col* tName=new col(STR,"TEACHER");
-    col* loc=new col (STR,"LOC");
-    table* teacher=new table ("teacher",{tName,loc});
-    teacher->add({typeHelper::typehelper->strToBasic("'jp'"),typeHelper::typehelper->strToBasic(("'HangZhou'"))});
-    teacher->add({typeHelper::typehelper->strToBasic("'gb'"),typeHelper::typehelper->strToBasic(("'BeiJing'"))});
-    teacher->add({typeHelper::typehelper->strToBasic("'gjb'"),typeHelper::typehelper->strToBasic(("'ShangHai'"))});
-    teacher->saveFile();
 
 
 

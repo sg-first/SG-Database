@@ -66,6 +66,7 @@ static tuple<vector<int>,vector<int>> outer(table* lTable,table* rTable,const QS
     }
     vector<int> lIndex;
     vector<int> rIndex;
+    vector<bool> mark(rCol->getAllData().size(),true);
     for(int i=0;i<lCol->getAllData().size();++i){
         Basic* tmpCopy=typeHelper::typehelper->copy(lCol->getAllData()[i]);
         int size=rTable->getAllCol().size();
@@ -79,13 +80,12 @@ static tuple<vector<int>,vector<int>> outer(table* lTable,table* rTable,const QS
             lIndex.insert(lIndex.end(),tmpVec.size(),i);
             rIndex.insert(rIndex.end(),tmpVec.begin(),tmpVec.end());
         }
+        for(int j=0;j<tmpVec.size();++j){
+            mark[tmpVec[j]]=false;
+        }
     }
-    for(int i=0;i<rCol->getAllData().size();++i){
-        Basic* tmpCopy=typeHelper::typehelper->copy(rCol->getAllData()[i]);
-        int size=lTable->getAllCol().size();
-        int loc=lTable->findCol({lKey.toStdString()})[0];
-        vector<int> tmpVec=lTable->doFind(constructQuery(size,loc,tmpCopy));
-        if(tmpVec.empty()==true){
+    for(int i=0;i<mark.size();++i){
+        if(mark[i]){
             rIndex.insert(rIndex.end(),i);
             lIndex.insert(lIndex.end(),-1);
         }

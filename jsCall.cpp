@@ -89,7 +89,7 @@ jsCollection* table::find_not_in(const QString& colName, jsCollection *target_ve
 }
 
 jsCollection* table::find(const QScriptValue& allExp){
-    vector<string> StrVec=jsvalueTostrVec(allExp);
+    const vector<string>& StrVec=jsvalueTostrVec(allExp);
     return new jsCollection(find(StrVec));
 }
 
@@ -102,7 +102,7 @@ int table::getColIndex(const QString &colName){
 }
 
 table* tableManager::createTable(const QString& ID,const QScriptValue& strVec){
-    vector<string> colStrVec=jsvalueTostrVec(strVec);
+    const vector<string>& colStrVec=jsvalueTostrVec(strVec);
     vector<col*> allCols=strVecToColVec(colStrVec);
     return new table(ID.toStdString(),allCols);
 }
