@@ -1,4 +1,17 @@
-#include "table.hpp"
+#include "tableManager.h"
+#include <QRunnable>
+#include <QThreadPool>
+class multiSave :public QRunnable{
+    const string tmp;
+    const string data;
+    const vector<vector<int>> len_data;
+public:
+    multiSave(const string& tmp,const string& data,const vector<vector<int>>& len_data):tmp(tmp),data(data),len_data(len_data){}
+    virtual void run(){
+        IO::write_to_file(tmp,data);
+        IO::write_to_len_file(tmp,len_data);
+    }
+};
 
 QString table::toStr()
 {
@@ -66,13 +79,16 @@ vector<string> table::toStr(const int& fileLen){
 
 void table:: saveFile(const string& path) //将整个表的内容按约定格式写入空文件
 {
+    tableManager::tablemanager->deliManage(this);
+    QThreadPool::globalInstance()->setMaxThreadCount(10);
     const vector<string>& allData=this->toStr(IO::singleFileLen);
     int num=1;
     for(const string& data:allData){
         const string& tmp=IO::path_to_splitpath(path,num);
         const vector<vector<int>>& len_data=IO::strdata_to_lendata(data);
-        IO::write_to_file(tmp,data);
-        IO::write_to_len_file(tmp,len_data);
+        multiSave* ms= new multiSave(tmp,data,len_data);
+        ms->setAutoDelete(true);
+        QThreadPool::globalInstance()->start(ms);
         ++num;
     }
     while(IO::if_file_exist(IO::path_to_splitpath(path,num))){

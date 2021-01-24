@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-#include <memory>
 #include "manageable.h"
 #include <QObject>
 #include <QtScript/QScriptValue>

@@ -3,8 +3,6 @@
 #define TEST_H
 #include <QTcpServer>
 #include <QObject>
-#include <QThread>
-#include <thread>
 #include <QDebug>
 #include <QTcpSocket>
 #include <QMap>

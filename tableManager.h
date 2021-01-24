@@ -157,6 +157,14 @@ public:
         return managedTable[tableName];
     }
 
+    void deliManage(table* newTable){
+        string tableName=newTable->ID;
+        if(managedTable.find(tableName)==managedTable.end()){
+            managedTable[tableName]=newTable;
+            managedTableName.insert(managedTableName.begin(),tableName);
+        }
+    }
+
     void doManage()
     {
         for(auto iter=managedTable.begin();iter!=managedTable.end();iter++){

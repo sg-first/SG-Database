@@ -1,7 +1,6 @@
 #include <QtCore/QCoreApplication>
 #include <QCoreApplication>
 #include <queue>
-#include <thread>
 #include "aggHelper.h"
 #include "TcpSocketServer.h"
 #include "tableManager.h"
@@ -63,33 +62,29 @@ int main(int argc, char *argv[])
 
 
 
-    table* student=tableManager::tablemanager->loadTable("student");
-    student->add({typeHelper::typehelper->strToBasic("'wuwei'"),typeHelper::typehelper->strToBasic(("63")),typeHelper::typehelper->strToBasic("'sbjp'")});
-    student->add({typeHelper::typehelper->strToBasic("'wuweibb'"),typeHelper::typehelper->strToBasic(("63")),typeHelper::typehelper->strToBasic("'sbjp'")});
+    col* NAME=new col(STR,"NAME");
+    col* SCORE=new col (INT,"SCORE");
+    col* TEACHER=new col (STR,"TEACHER");
+    table* student=new table ("student",{NAME,SCORE,TEACHER});
+    student->add({typeHelper::typehelper->strToBasic("'zt'"),typeHelper::typehelper->strToBasic(("57")),typeHelper::typehelper->strToBasic("'jp'")});
+    student->add({typeHelper::typehelper->strToBasic("'gj'"),typeHelper::typehelper->strToBasic(("71")),typeHelper::typehelper->strToBasic("'gb'")});
+    student->add({typeHelper::typehelper->strToBasic("'yf'"),typeHelper::typehelper->strToBasic(("78")),typeHelper::typehelper->strToBasic("'gjb'")});
+    student->add({typeHelper::typehelper->strToBasic("'xr'"),typeHelper::typehelper->strToBasic(("89")),typeHelper::typehelper->strToBasic("'gjb'")});
+    student->add({typeHelper::typehelper->strToBasic("'wx'"),typeHelper::typehelper->strToBasic(("63")),typeHelper::typehelper->strToBasic("'jp'")});
+    student->add({typeHelper::typehelper->strToBasic("'ww'"),typeHelper::typehelper->strToBasic(("78")),typeHelper::typehelper->strToBasic("'gb'")});
+    for(int i=0;i<10000;++i){
+        student->add({typeHelper::typehelper->strToBasic("'xr'"),typeHelper::typehelper->strToBasic((QString::fromStdString(to_string(i)))),typeHelper::typehelper->strToBasic("'jp'")});
+    }
+    long long startTime=getCurrentTime();
+    student->saveFile();
+    cout<<getCurrentTime()-startTime<<endl;
 
-    table* teacher=tableManager::tablemanager->loadTable("teacher");
-    teacher->add({typeHelper::typehelper->strToBasic("'jpsb'"),typeHelper::typehelper->strToBasic("'YANGZHOU'")});
-
-    vector<string> stuVec={"NAME","SCORE","TEACHER"};
-    vector<string> teaVec={"TEACHER","LOC"};
-
-    cout<<tableManager::tablemanager->tableJoin("tsleft","student",stuVec,"teacher",teaVec,"TEACHER","TEACHER","leftjoin")->toStr().toStdString();
-    cout<<tableManager::tablemanager->tableJoin("tsouter","student",stuVec,"teacher",teaVec,"TEACHER","TEACHER","outerjoin")->toStr().toStdString();
-
-
-
-
-
-
-
-
-
-
-
-
+    startTime=getCurrentTime();
+    student=tableManager::tablemanager->loadTable("student");
+    cout<<getCurrentTime()-startTime<<endl;
 /*
     long long startTime=getCurrentTime();
-    student=tableManager::tablemanager->loadTable("student");
+    table* student=tableManager::tablemanager->loadTable("student");
     cout<<getCurrentTime()-startTime<<endl;
 
     startTime=getCurrentTime();

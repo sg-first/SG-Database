@@ -2,6 +2,7 @@
 #include "index.hpp"
 #include "IO.hpp"
 #include "expParse.h"
+#include <QThread>
 #ifdef JsInBasicClass
 #include "jsCollection.h"
 #endif
