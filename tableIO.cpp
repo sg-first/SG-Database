@@ -58,12 +58,15 @@ vector<string> table::toStr(const int& fileLen){
     if((rowNum-1)%IO::singleFileLen!=0){
         result.push_back(title+allData.substr(start));
     }
+    if(result.empty()==true){
+        result.push_back(title);
+    }
     return result;
 }
 
-void table:: saveFile(string path) //将整个表的内容按约定格式写入空文件
+void table:: saveFile(const string& path) //将整个表的内容按约定格式写入空文件
 {
-    vector<string> allData=this->toStr(IO::singleFileLen);
+    const vector<string>& allData=this->toStr(IO::singleFileLen);
     int num=1;
     for(const string& data:allData){
         const string& tmp=IO::path_to_splitpath(path,num);
@@ -80,7 +83,7 @@ void table:: saveFile(string path) //将整个表的内容按约定格式写入�
     this->allRecord.clear();
 }
 
-table* table::loadFile(string path,int mark) //按约定格式从文件中读取表
+table* table::loadFile(const string& path,int mark) //按约定格式从文件中读取表
 {
     vector<col*> cols;
     vector<int> blocksLen;
@@ -93,10 +96,13 @@ table* table::loadFile(string path,int mark) //按约定格式从文件中读取
         blocksLen.push_back(tmpBlockLen);
         ++num;
     }
+    if(num==1){
+        throw string("No corresponding table was found");
+    }
     return new table(IO::path_to_name(path),cols,blocksLen);
 }
 
-void table::updateFile(string path) //根据table.allRecord更新文件内容
+void table::updateFile(const string& path) //根据table.allRecord更新文件内容
 {
     if(this->allRecord.empty()){
         return;

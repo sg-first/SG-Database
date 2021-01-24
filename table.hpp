@@ -18,11 +18,11 @@ protected:
     bool hasOwnership;
     map<vector<string>,vector<int>> memSearchSet;
 
-    static table* loadFile(string path,int mark);
+    static table* loadFile(const string& path,int mark);
 
-    void saveFile(string path);
+    void saveFile(const string& path);
 
-    void updateFile(string path);
+    void updateFile(const string& path);
 
     void clear()
     {

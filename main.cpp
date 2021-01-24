@@ -63,59 +63,49 @@ int main(int argc, char *argv[])
 
 
 
+    col* USERNAME=new col(STR,"USERNAME");
+    col* PASSWORD=new col (STR,"PASSWORD");
+    table* Count=new table ("Count",{USERNAME,PASSWORD});
+    Count->add({typeHelper::typehelper->strToBasic("'ZT'"),typeHelper::typehelper->strToBasic(("'zt'"))});
+    Count->saveFile();
+
+    col* USER=new col(STR,"USERNAME");
+    col* TABLE=new col (STR,"TABLE");
+    table* Jurisdiction=new table ("Jurisdiction",{USER,TABLE});
+    Jurisdiction->add({typeHelper::typehelper->strToBasic("'ZT'"),typeHelper::typehelper->strToBasic(("'student'"))});
+    Jurisdiction->add({typeHelper::typehelper->strToBasic("'ZT'"),typeHelper::typehelper->strToBasic(("'teacher'"))});
+    Jurisdiction->saveFile();
+
+    col* viewName=new col(STR,"viewName");
+    col* viewCode=new col (STR,"viewCode");
+    table* views=new table ("views",{viewName,viewCode});
+    views->saveFile();
 
 
-    long long startTime=getCurrentTime();
-    table* student=tableManager::tablemanager->loadTable("student");
-    cout<<getCurrentTime()-startTime<<endl;
-
-
-    startTime=getCurrentTime();
+    col* NAME=new col(STR,"NAME");
+    col* SCORE=new col (INT,"SCORE");
+    col* TEACHER=new col (STR,"TEACHER");
+    table* student=new table ("student",{NAME,SCORE,TEACHER});
+    student->add({typeHelper::typehelper->strToBasic("'zt'"),typeHelper::typehelper->strToBasic(("57")),typeHelper::typehelper->strToBasic("'jp'")});
+    student->add({typeHelper::typehelper->strToBasic("'gj'"),typeHelper::typehelper->strToBasic(("71")),typeHelper::typehelper->strToBasic("'gb'")});
+    student->add({typeHelper::typehelper->strToBasic("'yf'"),typeHelper::typehelper->strToBasic(("78")),typeHelper::typehelper->strToBasic("'gjb'")});
+    student->add({typeHelper::typehelper->strToBasic("'xr'"),typeHelper::typehelper->strToBasic(("89")),typeHelper::typehelper->strToBasic("'gjb'")});
+    student->add({typeHelper::typehelper->strToBasic("'wx'"),typeHelper::typehelper->strToBasic(("63")),typeHelper::typehelper->strToBasic("'jp'")});
+    student->add({typeHelper::typehelper->strToBasic("'ww'"),typeHelper::typehelper->strToBasic(("78")),typeHelper::typehelper->strToBasic("'gb'")});
     student->saveFile();
-    cout<<getCurrentTime()-startTime<<endl;
+
+    col* tName=new col(STR,"TEACHER");
+    col* loc=new col (STR,"LOC");
+    table* teacher=new table ("teacher",{tName,loc});
+    teacher->add({typeHelper::typehelper->strToBasic("'jp'"),typeHelper::typehelper->strToBasic(("'HangZhou'"))});
+    teacher->add({typeHelper::typehelper->strToBasic("'gb'"),typeHelper::typehelper->strToBasic(("'BeiJing'"))});
+    teacher->add({typeHelper::typehelper->strToBasic("'gjb'"),typeHelper::typehelper->strToBasic(("'ShangHai'"))});
+    teacher->saveFile();
 
 
 
-    startTime=getCurrentTime();
-    for(int i=0;i<100;++i){
-        student->add({typeHelper::typehelper->strToBasic("'xr'"),typeHelper::typehelper->strToBasic((QString::fromStdString(to_string(i)))),typeHelper::typehelper->strToBasic("'jp'")});
-    }
-    cout<<getCurrentTime()-startTime<<endl;
 
 
-
-    student=tableManager::tablemanager->loadTable("student");
-    for(int i=0;i<10000;++i){
-        student->add({typeHelper::typehelper->strToBasic("'xr'"),typeHelper::typehelper->strToBasic((QString::fromStdString(to_string(i)))),typeHelper::typehelper->strToBasic("'jp'")});
-    }
-
-    startTime=getCurrentTime();
-    student->updateFile();
-    cout<<getCurrentTime()-startTime<<endl;
-
-    vector<int> res=student->find({"","(x==12)",""});
-    student->del(res);
-
-
-    startTime=getCurrentTime();
-    student->updateFile();
-    cout<<getCurrentTime()-startTime<<endl;
-    /*startTime=getCurrentTime();
-    vector<int> resVec=student->find({"(x=='ww')","",""});
-    cout<<getCurrentTime()-startTime<<endl;
-
-    startTime=getCurrentTime();
-    resVec=student->find({"(x=='ww')","",""});
-    cout<<getCurrentTime()-startTime<<endl;
-
-    startTime=getCurrentTime();
-    student->del(resVec);
-    cout<<getCurrentTime()-startTime<<endl;*/
-
-    startTime=getCurrentTime();
-    //student->updateFile();
-    student->saveFile();
-    cout<<getCurrentTime()-startTime<<endl;
 
 
 
@@ -123,7 +113,7 @@ int main(int argc, char *argv[])
 
 
 /*
-    startTime=getCurrentTime();
+    long long startTime=getCurrentTime();
     student=tableManager::tablemanager->loadTable("student");
     cout<<getCurrentTime()-startTime<<endl;
 
@@ -158,6 +148,7 @@ int main(int argc, char *argv[])
 
 
 /*
+    多表连接
     table* student=tableManager::tablemanager->loadTable("student");
     student->add({typeHelper::typehelper->strToBasic("'wuwei'"),typeHelper::typehelper->strToBasic(("63")),typeHelper::typehelper->strToBasic("'sbjp'")});
     student->add({typeHelper::typehelper->strToBasic("'wuweibb'"),typeHelper::typehelper->strToBasic(("63")),typeHelper::typehelper->strToBasic("'sbjp'")});
@@ -172,27 +163,24 @@ int main(int argc, char *argv[])
     cout<<tableManager::tablemanager->tableJoin("tsouter","teacher",teaVec,"student",stuVec,"TEACHER","TEACHER","outerjoin")->toStr().toStdString();*/
 
 
-    /*long long startTime=getCurrentTime();
-    table* student=tableManager::tablemanager->loadTable("student");
-    cout<<getCurrentTime()-startTime<<endl;
+    /*
+    col* USERNAME=new col(STR,"USERNAME");
+    col* PASSWORD=new col (STR,"PASSWORD");
+    table* Count=new table ("Count",{USERNAME,PASSWORD});
+    Count->add({typeHelper::typehelper->strToBasic("'ZT'"),typeHelper::typehelper->strToBasic(("'zt'"))});
+    Count->saveFile();
 
-    startTime=getCurrentTime();
-    for(int i=0;i<100;++i){
-        student->add({typeHelper::typehelper->strToBasic("'xr'"),typeHelper::typehelper->strToBasic((QString::fromStdString(to_string(i)))),typeHelper::typehelper->strToBasic("'jp'")});
-    }
-    cout<<getCurrentTime()-startTime<<endl;
+    col* USER=new col(STR,"USERNAME");
+    col* TABLE=new col (STR,"TABLE");
+    table* Jurisdiction=new table ("Jurisdiction",{USER,TABLE});
+    Jurisdiction->add({typeHelper::typehelper->strToBasic("'ZT'"),typeHelper::typehelper->strToBasic(("'student'"))});
+    Jurisdiction->add({typeHelper::typehelper->strToBasic("'ZT'"),typeHelper::typehelper->strToBasic(("'teacher'"))});
+    Jurisdiction->saveFile();
 
-    startTime=getCurrentTime();
-    vector<int> resVec=student->find({"((x=='xr')||(x=='wx'))","",""});
-    cout<<getCurrentTime()-startTime<<endl;
-
-    startTime=getCurrentTime();
-    student->del(resVec);
-    cout<<getCurrentTime()-startTime<<endl;
-
-    startTime=getCurrentTime();
-    student->updateFile();
-    cout<<getCurrentTime()-startTime<<endl;*/
+    col* viewName=new col(STR,"viewName");
+    col* viewCode=new col (STR,"viewCode");
+    table* views=new table ("views",{viewName,viewCode});
+    views->saveFile();*/
 
 
 
