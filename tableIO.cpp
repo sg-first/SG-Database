@@ -1,16 +1,5 @@
 #include "tableManager.h"
 #include <memory>
-class multiSave :public QRunnable{
-    const string tmp;
-    const string data;
-    const vector<vector<int>> len_data;
-public:
-    multiSave(const string& tmp,const string& data,const vector<vector<int>>& len_data):tmp(tmp),data(data),len_data(len_data){}
-    virtual void run(){
-        IO::write_to_file(tmp,data);
-        IO::write_to_len_file(tmp,len_data);
-    }
-};
 
 QString table::toStr()
 {
@@ -78,7 +67,6 @@ vector<string> table::toStr(const int& fileLen){
 
 void table:: saveFile(const string& path) //将整个表的内容按约定格式写入空文件
 {
-    tableManager::tablemanager->deliManage(this);
     const vector<string>& allData=this->toStr(IO::singleFileLen);
     int num=1;
     for(const string& data:allData){
@@ -103,16 +91,31 @@ table* table::loadFile(const string& path,int mark) //按约定格式从文件�
     vector<int> blocksLen;
     int num=1;
     while (IO::if_file_exist(IO::path_to_splitpath(path,num))) {
-        if(num==1){
-            cols=IO::get_empty_table_cols(IO::path_to_splitpath(path,num));
-        }
-        const int& tmpBlockLen=IO::read_single_diskblock(IO::path_to_splitpath(path,num),cols);
-        blocksLen.push_back(tmpBlockLen);
         ++num;
     }
     if(num==1){
         throw string("No corresponding table was found");
     }
+    multiRead::isOp=false;
+    for(int i=1;i<num;++i){
+        multiRead* mr=new multiRead (IO::path_to_splitpath(path,i),i);
+        mr->setAutoDelete(true);
+        QThreadPool::globalInstance()->start(mr);
+    }
+    while (true) {
+        if(multiRead::allData.size()==num-1){
+            break;
+        }
+    }
+    sort(multiRead::allData.begin(),multiRead::allData.end());
+    for(const blockData& tmpData:multiRead::allData){
+        if(tmpData.num==1){
+            cols=IO::get_empty_table_cols(tmpData.data);
+        }
+        const int& dataLen=IO::put_single_block_data(cols,tmpData.data);
+        blocksLen.push_back(dataLen);
+    }
+    multiRead::allData.clear();
     return new table(IO::path_to_name(path),cols,blocksLen);
 }
 

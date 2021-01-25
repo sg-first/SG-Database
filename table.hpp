@@ -9,6 +9,53 @@
 #include "jsCollection.h"
 #endif
 
+class blockData{
+public:
+    int num;
+    string data;
+    blockData(const int& num,const string& data):num(num),data(data){}
+    bool operator< (const blockData& a){
+        return this->num<a.num;
+    }
+};
+
+
+
+class multiSave :public QRunnable{
+    const string tmp;
+    const string data;
+    const vector<vector<int>> len_data;
+public:
+    multiSave(const string& tmp,const string& data,const vector<vector<int>>& len_data):tmp(tmp),data(data),len_data(len_data){}
+
+    virtual void run(){
+        IO::write_to_file(tmp,data);
+        IO::write_to_len_file(tmp,len_data);
+    }
+};
+
+
+
+class multiRead:public QRunnable{
+    const string path;
+    const int num;
+public:
+    static vector<blockData> allData;
+    static bool isOp;
+    multiRead(const string& path,const int& num):path(path),num(num){}
+    virtual void run(){
+        blockData bd(num,IO::read_single_diskblock(path));
+        while (true) {
+            if(isOp==false){
+                isOp=true;
+                allData.push_back(bd);
+                isOp=false;
+                break;
+            }
+        }
+    }
+};
+
 
 class table : public QObject, public manageable
 {

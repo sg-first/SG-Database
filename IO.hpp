@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <iostream>
 #include "col.hpp"
 using namespace std;
 
@@ -37,12 +38,16 @@ public:
         return split_path;
     }
 
-    static int read_single_diskblock(const string& path,vector<col*>& cols){
+    static string read_single_diskblock(const string& path){
         const string& to_do=IO::read_from_file(path);
         if(!IO::if_file_exist(IO::path_to_lenpath(path))){
             const vector<vector<int>>& len_data=IO::strdata_to_lendata(to_do);
             IO::write_to_len_file(path,len_data);
         }
+        return to_do;
+    }
+
+    static int put_single_block_data(vector<col*> cols,const string& to_do){
         vector<vector<string>> frame;
         int beg = 0;
         int rowCount=-1;
@@ -159,12 +164,11 @@ public:
         return len_data;
     }
 
-    static vector<col*> get_empty_table_cols(const string& path){
+    static vector<col*> get_empty_table_cols(const string& tmpData){
         vector<col*> cols;
         string ID;
         TYPE type;
         int start=0;
-        const string& tmpData = IO::read_from_file(path);
         for(int i=0;i<tmpData.size();++i){
             char tmpChar=tmpData[i];
             if(tmpChar==':'){

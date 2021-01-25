@@ -18,6 +18,8 @@ table* tableManager::jurisdictionTable;
 aggHelper* aggHelper::agghelper;
 typeHelper* typeHelper::typehelper;
 int IO::singleFileLen;
+vector<blockData> multiRead::allData;
+bool multiRead::isOp;
 #define RegisterJSType(TypeName,JSName) qRegisterMetaType<TypeName>(JSName)
 using namespace std;
 
@@ -47,7 +49,7 @@ int main(int argc, char *argv[])
     RegisterJSType(jsCollection*,"jsCollection*");
     RegisterJSType(processObject,"processObject");
 
-    IO::singleFileLen=1000;
+    IO::singleFileLen=100;
 
     table::default_path="D:\\personal_file\\download_files\\test_";
 
@@ -63,7 +65,7 @@ int main(int argc, char *argv[])
 
 
 
-    col* NAME=new col(STR,"NAME");
+    /*col* NAME=new col(STR,"NAME");
     col* SCORE=new col (INT,"SCORE");
     col* TEACHER=new col (STR,"TEACHER");
     table* student=new table ("student",{NAME,SCORE,TEACHER});
@@ -73,23 +75,35 @@ int main(int argc, char *argv[])
     student->add({typeHelper::typehelper->strToBasic("'xr'"),typeHelper::typehelper->strToBasic(("89")),typeHelper::typehelper->strToBasic("'gjb'")});
     student->add({typeHelper::typehelper->strToBasic("'wx'"),typeHelper::typehelper->strToBasic(("63")),typeHelper::typehelper->strToBasic("'jp'")});
     student->add({typeHelper::typehelper->strToBasic("'ww'"),typeHelper::typehelper->strToBasic(("78")),typeHelper::typehelper->strToBasic("'gb'")});
+
+
+    long long startTime=getCurrentTime();
     for(int i=0;i<10000;++i){
         student->add({typeHelper::typehelper->strToBasic("'xr'"),typeHelper::typehelper->strToBasic((QString::fromStdString(to_string(i)))),typeHelper::typehelper->strToBasic("'jp'")});
     }
+    cout<<getCurrentTime()-startTime<<endl;
+
+
+    startTime=getCurrentTime();
+    student->saveFile();
+    cout<<getCurrentTime()-startTime<<endl;*/
+
+
     long long startTime=getCurrentTime();
-    student->saveFile();
+    table* student=tableManager::tablemanager->loadTable("student");
+    cout<<getCurrentTime()-startTime<<endl;
+
+
+    startTime=getCurrentTime();
+    vector<int> resVec=student->find({"","(x==19)",""});
     cout<<getCurrentTime()-startTime<<endl;
 
     startTime=getCurrentTime();
-    student->saveFile();
+    student->del(resVec);
     cout<<getCurrentTime()-startTime<<endl;
 
     startTime=getCurrentTime();
-    student->saveFile();
-    cout<<getCurrentTime()-startTime<<endl;
-
-    startTime=getCurrentTime();
-    student=tableManager::tablemanager->loadTable("student");
+    student->updateFile();
     cout<<getCurrentTime()-startTime<<endl;
 /*
     long long startTime=getCurrentTime();
@@ -114,7 +128,7 @@ int main(int argc, char *argv[])
     student->updateFile();
     cout<<getCurrentTime()-startTime<<endl;*/
 
-    TcpSocketServer *m_pTcpServer=new TcpSocketServer();
+    /*TcpSocketServer *m_pTcpServer=new TcpSocketServer();
     if (!m_pTcpServer->listen(QHostAddress::Any, 8888))
     {
         qDebug() << "m_pTcpServer->listen() error";
@@ -123,7 +137,7 @@ int main(int argc, char *argv[])
     dbrun->start();
     ServerResponseThread RT;
     QObject::connect(&RT, SIGNAL(db_response_signal(processObject)), m_pTcpServer, SLOT(response_handle(processObject)));
-    RT.start();
+    RT.start();*/
 
 
 /*
