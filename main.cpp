@@ -52,7 +52,6 @@ int main(int argc, char *argv[])
     table::default_path="C:\\QMDownload";
 
 
-
     typeHelper::typehelper=typeHelper::getTypeHelper();
     manageContain::contain->init();
     tableManager::tablemanager=tableManager::getTableManager(10);
@@ -65,6 +64,18 @@ int main(int argc, char *argv[])
 
 
 
+    TcpSocketServer *m_pTcpServer=new TcpSocketServer();
+    if (!m_pTcpServer->listen(QHostAddress::Any, 8888))
+    {
+        qDebug() << "m_pTcpServer->listen() error";
+    }
+    dbRun* dbrun=new dbRun();
+    dbrun->start();
+    ServerResponseThread RT;
+    QObject::connect(&RT, SIGNAL(db_response_signal(processObject)), m_pTcpServer, SLOT(response_handle(processObject)));
+    RT.start();
+
+/*读写速度测试
     col* NAME=new col(STR,"NAME");
     col* SCORE=new col (INT,"SCORE");
     col* TEACHER=new col (STR,"TEACHER");
@@ -88,32 +99,12 @@ int main(int argc, char *argv[])
     student->saveFile();
     cout<<getCurrentTime()-startTime<<endl;
 
-
-    //table* student;
     startTime=getCurrentTime();
-    for(int i=0;i<1;i++){
-        student=table::loadFile("student");
-        student->saveFile();
-
-        delete student;
-
-        cout<<i<<endl;
-    }
-    cout<<getCurrentTime()-startTime<<endl;
-
-/*
-    long long startTime=getCurrentTime();
-    table* student=tableManager::tablemanager->loadTable("student");
+    student=tableManager::tablemanager->loadTable("student");
     cout<<getCurrentTime()-startTime<<endl;
 
     startTime=getCurrentTime();
-    for(int i=0;i<10000;++i){
-        student->add({typeHelper::typehelper->strToBasic("'xr'"),typeHelper::typehelper->strToBasic((QString::fromStdString(to_string(i)))),typeHelper::typehelper->strToBasic("'jp'")});
-    }
-    cout<<getCurrentTime()-startTime<<endl;
-
-    startTime=getCurrentTime();
-    resVec=student->find({"(x=='zt')","",""});
+    vector<int> resVec=student->find({"","(x==34)",""});
     cout<<getCurrentTime()-startTime<<endl;
 
     startTime=getCurrentTime();
@@ -122,19 +113,31 @@ int main(int argc, char *argv[])
 
     startTime=getCurrentTime();
     student->updateFile();
+    cout<<getCurrentTime()-startTime<<endl;
+
+    startTime=getCurrentTime();
+    for(int i=0;i<100;++i){
+        student->add({typeHelper::typehelper->strToBasic("'xr'"),typeHelper::typehelper->strToBasic((QString::fromStdString(to_string(i)))),typeHelper::typehelper->strToBasic("'jp'")});
+    }
+    cout<<getCurrentTime()-startTime<<endl;
+
+    startTime=getCurrentTime();
+    student->updateFile();
     cout<<getCurrentTime()-startTime<<endl;*/
 
-    /*TcpSocketServer *m_pTcpServer=new TcpSocketServer();
-    if (!m_pTcpServer->listen(QHostAddress::Any, 8888))
-    {
-        qDebug() << "m_pTcpServer->listen() error";
-    }
-    dbRun* dbrun=new dbRun();
-    dbrun->start();
-    ServerResponseThread RT;
-    QObject::connect(&RT, SIGNAL(db_response_signal(processObject)), m_pTcpServer, SLOT(response_handle(processObject)));
-    RT.start();*/
 
+
+    /*读写压力测试
+     * startTime=getCurrentTime();
+    for(int i=0;i<1;i++){
+        student=table::loadFile("student");
+        student->saveFile();
+
+        delete student;
+
+        cout<<i<<endl;
+    }
+    cout<<getCurrentTime()-startTime<<endl;*/
 
 /*
     多表连接
@@ -172,12 +175,6 @@ int main(int argc, char *argv[])
     views->saveFile();*/
 
 
-
-
-
-
-//    //开启C++11数据库响应监听线程函数
-//    std::thread t1(db_listener_thread_function);
 
 
 /*
