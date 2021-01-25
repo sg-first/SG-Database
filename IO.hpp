@@ -18,6 +18,14 @@ public:
         return f.good();
     }
 
+    static int table_blocks_num(const string& path){
+        int num=0;
+        while (IO::if_file_exist(IO::path_to_splitpath(path,num+1))) {
+            ++num;
+        }
+        return num;
+    }
+
     static string path_to_name(const string& path)
     {
         int beg = path.find_last_of('\\');
@@ -100,7 +108,7 @@ public:
             throw string("fail to open the file(write)");
         write.seekp(0, ios::beg);
         write << data;
-        write.close();
+        write.flush();
     }
 
     static vector<vector<int>> read_from_len_file(const string& path)
@@ -146,7 +154,7 @@ public:
             throw string("fail to open the file(write)");
         write.seekp(0, ios::beg);
         write << len_string;
-        write.close();
+        write.flush();
     }
 
     static vector<vector<int>> strdata_to_lendata(const string& to_do){

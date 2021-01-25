@@ -18,8 +18,6 @@ table* tableManager::jurisdictionTable;
 aggHelper* aggHelper::agghelper;
 typeHelper* typeHelper::typehelper;
 int IO::singleFileLen;
-vector<blockData> multiRead::allData;
-bool multiRead::isOp;
 #define RegisterJSType(TypeName,JSName) qRegisterMetaType<TypeName>(JSName)
 using namespace std;
 
@@ -49,9 +47,11 @@ int main(int argc, char *argv[])
     RegisterJSType(jsCollection*,"jsCollection*");
     RegisterJSType(processObject,"processObject");
 
-    IO::singleFileLen=100;
+    IO::singleFileLen=1000;
 
-    table::default_path="D:\\personal_file\\download_files\\test_";
+    table::default_path="C:\\QMDownload";
+
+
 
     typeHelper::typehelper=typeHelper::getTypeHelper();
     manageContain::contain->init();
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 
 
 
-    /*col* NAME=new col(STR,"NAME");
+    col* NAME=new col(STR,"NAME");
     col* SCORE=new col (INT,"SCORE");
     col* TEACHER=new col (STR,"TEACHER");
     table* student=new table ("student",{NAME,SCORE,TEACHER});
@@ -86,25 +86,21 @@ int main(int argc, char *argv[])
 
     startTime=getCurrentTime();
     student->saveFile();
-    cout<<getCurrentTime()-startTime<<endl;*/
-
-
-    long long startTime=getCurrentTime();
-    table* student=tableManager::tablemanager->loadTable("student");
     cout<<getCurrentTime()-startTime<<endl;
 
 
+    //table* student;
     startTime=getCurrentTime();
-    vector<int> resVec=student->find({"","(x==19)",""});
+    for(int i=0;i<1;i++){
+        student=table::loadFile("student");
+        student->saveFile();
+
+        delete student;
+
+        cout<<i<<endl;
+    }
     cout<<getCurrentTime()-startTime<<endl;
 
-    startTime=getCurrentTime();
-    student->del(resVec);
-    cout<<getCurrentTime()-startTime<<endl;
-
-    startTime=getCurrentTime();
-    student->updateFile();
-    cout<<getCurrentTime()-startTime<<endl;
 /*
     long long startTime=getCurrentTime();
     table* student=tableManager::tablemanager->loadTable("student");

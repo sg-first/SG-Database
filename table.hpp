@@ -5,6 +5,7 @@
 #include <QThread>
 #include <QRunnable>
 #include <QThreadPool>
+#include <QMutex>
 #ifdef JsInBasicClass
 #include "jsCollection.h"
 #endif
@@ -13,6 +14,8 @@ class blockData{
 public:
     int num;
     string data;
+    static vector<blockData> allData;
+    static QMutex mutex;
     blockData(const int& num,const string& data):num(num),data(data){}
     bool operator< (const blockData& a){
         return this->num<a.num;
@@ -40,22 +43,14 @@ class multiRead:public QRunnable{
     const string path;
     const int num;
 public:
-    static vector<blockData> allData;
-    static bool isOp;
     multiRead(const string& path,const int& num):path(path),num(num){}
     virtual void run(){
         blockData bd(num,IO::read_single_diskblock(path));
-        while (true) {
-            if(isOp==false){
-                isOp=true;
-                allData.push_back(bd);
-                isOp=false;
-                break;
-            }
-        }
+        blockData::mutex.lock();
+        blockData::allData.push_back(bd);
+        blockData::mutex.unlock();
     }
 };
-
 
 class table : public QObject, public manageable
 {

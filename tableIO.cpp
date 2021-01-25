@@ -1,5 +1,7 @@
 #include "tableManager.h"
 #include <memory>
+vector<blockData> blockData::allData;
+QMutex blockData::mutex;
 
 QString table::toStr()
 {
@@ -89,33 +91,29 @@ table* table::loadFile(const string& path,int mark) //按约定格式从文件�
 {
     vector<col*> cols;
     vector<int> blocksLen;
-    int num=1;
-    while (IO::if_file_exist(IO::path_to_splitpath(path,num))) {
-        ++num;
-    }
-    if(num==1){
+    const int& num=IO::table_blocks_num(path);
+    if(num==0){
         throw string("No corresponding table was found");
     }
-    multiRead::isOp=false;
-    for(int i=1;i<num;++i){
+    for(int i=1;i<=num;++i){
         multiRead* mr=new multiRead (IO::path_to_splitpath(path,i),i);
         mr->setAutoDelete(true);
         QThreadPool::globalInstance()->start(mr);
     }
     while (true) {
-        if(multiRead::allData.size()==num-1){
+        if(blockData::allData.size()==num){
             break;
         }
     }
-    sort(multiRead::allData.begin(),multiRead::allData.end());
-    for(const blockData& tmpData:multiRead::allData){
+    sort(blockData::allData.begin(),blockData::allData.end());
+    for(const blockData& tmpData:blockData::allData){
         if(tmpData.num==1){
             cols=IO::get_empty_table_cols(tmpData.data);
         }
         const int& dataLen=IO::put_single_block_data(cols,tmpData.data);
         blocksLen.push_back(dataLen);
     }
-    multiRead::allData.clear();
+    blockData::allData=vector<blockData>();
     return new table(IO::path_to_name(path),cols,blocksLen);
 }
 
@@ -144,7 +142,7 @@ void table::updateFile(const string& path) //根据table.allRecord更新文件�
         }
     }
     for(auto iter=fileStore.begin();iter!=fileStore.end();iter++){
-        iter->second.close();
+        iter->second.flush();
     }
     for(auto iter=lenStore.begin();iter!=lenStore.end();iter++){
         IO::write_to_len_file(IO::path_to_splitpath(path,iter->first),iter->second);
