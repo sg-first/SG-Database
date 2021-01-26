@@ -3,8 +3,7 @@
 vector<blockData> blockData::allData;
 QMutex blockData::mutex;
 
-QString table::toStr()
-{
+vector<vector<string>> table::toStrVec(){
     int m=(this->allCol[0]->getAllData()).size()+1;
     int n=this->allCol.size();
     vector<vector<string>> tableframe(m,vector<string>(n,""));
@@ -22,7 +21,15 @@ QString table::toStr()
         }
         i++;
     }
+    return tableframe;
+}
+
+QString table::toStr()
+{
+    const vector<vector<string>>& tableframe=this->toStrVec();
     string data;
+    int m=tableframe.size();
+    int n=tableframe[0].size();
     for(int i=0;i<m;i++){
         for(int j=0;j<n;j++){
             if(j==n-1){
@@ -38,31 +45,36 @@ QString table::toStr()
 
 
 vector<string> table::toStr(const int& fileLen){
-    vector<string> result;
-    const string& allData=toStr().toStdString();
-    int count=1;
-    long rowNum=0;
-    long start=0;
-    string title;
-    for(long i=0;i<allData.size();++i){
-        if(allData[i]=='\n'){
-            if(rowNum==0){
-                title=allData.substr(start,i-start+1);
-                start=i+1;
-            }
-            else if(rowNum==count*fileLen){
-                result.push_back(title+allData.substr(start,i-start+1));
-                ++count;
-                start=i+1;
-            }
-            ++rowNum;
+    const vector<vector<string>>& tableframe=this->toStrVec();
+    int m=tableframe.size();
+    int n=tableframe[0].size();
+    string title="";
+    for(int i=0;i<n;++i){
+        if(i==n-1){
+            title.append(tableframe[0][i]+"\n");
+            continue;
         }
+        title.append(tableframe[0][i]+",");
     }
-    if((rowNum-1)%IO::singleFileLen!=0){
-        result.push_back(title+allData.substr(start));
+    int totalNum=(m-1)/fileLen+((m-1)%fileLen==0? 0:1);
+    if(totalNum==0){
+        return {title};
     }
-    if(result.empty()==true){
-        result.push_back(title);
+    vector<string> result(totalNum,"");
+    for(int i=1;i<m;i++){
+        int tmpNum=(i-1)/fileLen;
+        string& data=result[tmpNum];
+        if((i-1)%fileLen==0){
+            data.append(title);
+        }
+        for(int j=0;j<n;j++){
+            if(j==n-1){
+                data.append(tableframe[i][j]+"\n");
+            }
+            else{
+                data.append(tableframe[i][j]+",");
+            }
+        }
     }
     return result;
 }

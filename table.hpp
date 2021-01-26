@@ -82,6 +82,8 @@ public:
 
     static string default_path;
 
+    vector<vector<string>> toStrVec();
+
     Q_INVOKABLE QString toStr();
 
     vector<string> toStr(const int& fileLen);

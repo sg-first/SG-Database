@@ -132,8 +132,9 @@ int main(int argc, char *argv[])
     cout<<getCurrentTime()-startTime<<endl;
 
     startTime=getCurrentTime();
-    tableManager::tablemanager->removeTable("student");
+    //tableManager::tablemanager->removeTable("student");
     cout<<getCurrentTime()-startTime<<endl;
+
 
     /*
 
