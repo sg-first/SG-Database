@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
 
 
     long long startTime=getCurrentTime();
-    for(int i=0;i<1000000;++i){
+    for(int i=0;i<10000;++i){
         student->add({typeHelper::typehelper->strToBasic("'xr'"),typeHelper::typehelper->strToBasic((QString::fromStdString(to_string(i)))),typeHelper::typehelper->strToBasic("'jp'")});
     }
     cout<<getCurrentTime()-startTime<<endl;
@@ -111,11 +111,11 @@ int main(int argc, char *argv[])
     cout<<getCurrentTime()-startTime<<endl;
 
     startTime=getCurrentTime();
-    //vector<int> resVec=student->find({"","(x==34)",""});
+    vector<int> resVec=student->find({"","(x==34)",""});
     cout<<getCurrentTime()-startTime<<endl;
 
-    //student->del(resVec);
-    student->del({34,45});
+    student->del(resVec);
+    //student->del({34,45});
 
     startTime=getCurrentTime();
     student->updateFile();
@@ -129,10 +129,6 @@ int main(int argc, char *argv[])
 
     startTime=getCurrentTime();
     student->updateFile();
-    cout<<getCurrentTime()-startTime<<endl;
-
-    startTime=getCurrentTime();
-    //tableManager::tablemanager->removeTable("student");
     cout<<getCurrentTime()-startTime<<endl;
 
 

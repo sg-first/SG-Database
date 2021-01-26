@@ -65,34 +65,31 @@ public:
     }
 
     static int put_single_block_data(vector<col*> cols,const string& to_do){
-        vector<vector<string>> frame;
         int beg = 0;
         int rowCount=-1;
-        for (int i = 0; i < to_do.length(); i++) {
+        for(long long i=0;i<to_do.size();++i){
             if (to_do[i] == '\n') {
                 const string& row = to_do.substr(beg, i - beg)+',';
                 beg = i + 1;
-                if(row[0]=='#'){
+                if(row[0]=='#'||rowCount==-1){
+                    if(rowCount==-1){
+                        ++rowCount;
+                    }
                     continue;
                 }
-                vector<string> row_vec;
                 int row_beg = 0;
+                int tmpColNum=0;
                 for (int j = 0; j < row.length(); j++) {
                     if (row[j] == ',') {
-                        string item = row.substr(row_beg, j - row_beg);
-                        row_vec.push_back(item);
+                        const string& item = row.substr(row_beg, j - row_beg);
+                        col* tmpCol=cols[tmpColNum];
+                        TYPE tmpType=tmpCol->getType();
+                        tmpCol->add(typeHelper::typehelper->strToBasic(item,tmpType));
                         row_beg = j + 1;
+                        ++tmpColNum;
                     }
                 }
-                frame.push_back(row_vec);
                 ++rowCount;
-            }
-        }
-        for (int i = 0; i < frame[0].size(); i++) {
-            col* column = cols[i];
-            TYPE type=column->getType();
-            for (int j = 1; j < frame.size(); j++) {
-                column->add(typeHelper::typehelper->strToBasic(frame[j][i],type));
             }
         }
         return rowCount;
