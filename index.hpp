@@ -107,6 +107,7 @@ public:
 
     binarySearchIndex(col* _c) : index(_c)
     {
+        supportMod=true;
         this->colToVec();
         this->resort();
     }
