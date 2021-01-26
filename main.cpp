@@ -51,14 +51,35 @@ int main(int argc, char *argv[])
 
     table::default_path="C:\\database_test";
 
+    manageContain::contain->init();
 
+//创建所需表
+    col* USERNAME=new col(STR,"USERNAME");
+    col* PASSWORD=new col (STR,"PASSWORD");
+    table* Count=new table ("Count",{USERNAME,PASSWORD});
+    Count->add({typeHelper::typehelper->strToBasic("'ZT'"),typeHelper::typehelper->strToBasic(("'zt'"))});
+    Count->saveFile();
+
+    col* USER=new col(STR,"USERNAME");
+    col* TABLE=new col (STR,"TABLE");
+    table* Jurisdiction=new table ("Jurisdiction",{USER,TABLE});
+    Jurisdiction->add({typeHelper::typehelper->strToBasic("'ZT'"),typeHelper::typehelper->strToBasic(("'student'"))});
+    Jurisdiction->add({typeHelper::typehelper->strToBasic("'ZT'"),typeHelper::typehelper->strToBasic(("'teacher'"))});
+    Jurisdiction->saveFile();
+
+    col* viewName=new col(STR,"viewName");
+    col* viewCode=new col (STR,"viewCode");
+    table* views=new table ("views",{viewName,viewCode});
+    views->saveFile();
+
+//静态工具初始化
     typeHelper::typehelper=typeHelper::getTypeHelper();
     manageContain::contain->init();
     tableManager::tablemanager=tableManager::getTableManager(10);
     aggHelper::agghelper=aggHelper::getHelper();
     view::viewmanager=view::getViewManager();
 
-
+//读取账户表 权限表
     dbProcess::setCount(table::loadFile("Count"));
     tableManager::setJurisdiction(table::loadFile("Jurisdiction"));
 
@@ -110,36 +131,11 @@ int main(int argc, char *argv[])
     student->updateFile();
     cout<<getCurrentTime()-startTime<<endl;
 
-    /*startTime=getCurrentTime();
-    student=tableManager::tablemanager->loadTable("student");
-    cout<<getCurrentTime()-startTime<<endl;
-
-    startTime=getCurrentTime();
-    vector<int> resVec=student->find({"","(x==34)",""});
-    cout<<getCurrentTime()-startTime<<endl;
-
-    startTime=getCurrentTime();
-    student->del(resVec);
-    cout<<getCurrentTime()-startTime<<endl;
-
-    startTime=getCurrentTime();
-    student->updateFile();
-    cout<<getCurrentTime()-startTime<<endl;
-
-    startTime=getCurrentTime();
-    for(int i=0;i<100;++i){
-        student->add({typeHelper::typehelper->strToBasic("'xr'"),typeHelper::typehelper->strToBasic((QString::fromStdString(to_string(i)))),typeHelper::typehelper->strToBasic("'jp'")});
-    }
-    cout<<getCurrentTime()-startTime<<endl;
-
-    startTime=getCurrentTime();
-    student->updateFile();
-    cout<<getCurrentTime()-startTime<<endl;
-
-
     startTime=getCurrentTime();
     tableManager::tablemanager->removeTable("student");
     cout<<getCurrentTime()-startTime<<endl;
+
+    /*
 
 
     TcpSocketServer *m_pTcpServer=new TcpSocketServer();
@@ -151,7 +147,7 @@ int main(int argc, char *argv[])
     dbrun->start();
     ServerResponseThread RT;
     QObject::connect(&RT, SIGNAL(db_response_signal(processObject)), m_pTcpServer, SLOT(response_handle(processObject)));
-    RT.start();
+    RT.start();*/
 
 /*读写速度测试
     col* NAME=new col(STR,"NAME");

@@ -29,8 +29,9 @@ public:
     static void del_table_blocks(const string& path,const int& start=1){
         const int& num=table_blocks_num(path);
         for(int i=start;i<=num;++i){
-            remove(IO::path_to_splitpath(path,i).c_str());
-            remove(IO::path_to_lenpath(IO::path_to_splitpath(path,i)).c_str());
+            const string& splitPath=IO::path_to_splitpath(path,i);
+            remove(splitPath.c_str());
+            remove(IO::path_to_lenpath(splitPath).c_str());
         }
     }
 
