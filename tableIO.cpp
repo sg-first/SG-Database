@@ -6,34 +6,34 @@ QMutex blockData::mutex;
 QString table::toStr()
 {
     int m=(this->allCol[0]->getAllData()).size()+1;
-        int n=this->allCol.size();
-        vector<vector<string>> tableframe(m,vector<string>(n,""));
-        for(int i=0;i<n;i++){
-            int sort=this->allCol[i]->getType();
-            tableframe[0][i]=(this->allCol[i]->ID)+":"+to_string(sort);
+    int n=this->allCol.size();
+    vector<vector<string>> tableframe(m,vector<string>(n,""));
+    for(int i=0;i<n;i++){
+        int sort=this->allCol[i]->getType();
+        tableframe[0][i]=(this->allCol[i]->ID)+":"+to_string(sort);
+    }
+    int i=0;
+    for (col* c : this->allCol)
+    {   int j=1;
+        for (Basic* b : c->getAllData())
+        {
+            tableframe[j][i]=b->toStr();
+            j++;
         }
-        int i=0;
-        for (col* c : this->allCol)
-        {   int j=1;
-            for (Basic* b : c->getAllData())
-            {
-                tableframe[j][i]=b->toStr();
-                j++;
+        i++;
+    }
+    string data;
+    for(int i=0;i<m;i++){
+        for(int j=0;j<n;j++){
+            if(j==n-1){
+                data.append(tableframe[i][j]+"\n");
             }
-            i++;
-        }
-        string data;
-        for(int i=0;i<m;i++){
-            for(int j=0;j<n;j++){
-                if(j==n-1){
-                    data=data+tableframe[i][j]+"\n";
-                }
-                else{
-                    data=data+tableframe[i][j]+",";
-                }
+            else{
+                data.append(tableframe[i][j]+",");
             }
         }
-        return QString::fromStdString(data);
+    }
+    return QString::fromStdString(data);
 }
 
 
@@ -79,11 +79,7 @@ void table:: saveFile(const string& path) //将整个表的内容按约定格式
         QThreadPool::globalInstance()->start(ms);
         ++num;
     }
-    while(IO::if_file_exist(IO::path_to_splitpath(path,num))){
-        remove(IO::path_to_splitpath(path,num).c_str());
-        remove(IO::path_to_lenpath(IO::path_to_splitpath(path,num)).c_str());
-        ++num;
-    }
+    IO::del_table_blocks(path,num);
     this->allRecord.clear();
 }
 

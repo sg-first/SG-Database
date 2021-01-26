@@ -167,7 +167,7 @@ public:
         this->table::saveFile(default_path+"\\"+ID+".csv");
     }
 
-    Q_INVOKABLE void updateFile(){
+    void updateFile(){
         this->table::updateFile(default_path+"\\"+ID+".csv");
     }
 

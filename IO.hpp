@@ -26,6 +26,14 @@ public:
         return num;
     }
 
+    static void del_table_blocks(const string& path,const int& start=1){
+        const int& num=table_blocks_num(path);
+        for(int i=start;i<=num;++i){
+            remove(IO::path_to_splitpath(path,i).c_str());
+            remove(IO::path_to_lenpath(IO::path_to_splitpath(path,i)).c_str());
+        }
+    }
+
     static string path_to_name(const string& path)
     {
         int beg = path.find_last_of('\\');

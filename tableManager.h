@@ -157,14 +157,6 @@ public:
         return managedTable[tableName];
     }
 
-    void deliManage(table* newTable){
-        string tableName=newTable->ID;
-        if(managedTable.find(tableName)==managedTable.end()){
-            managedTable[tableName]=newTable;
-            managedTableName.insert(managedTableName.begin(),tableName);
-        }
-    }
-
     void doManage()
     {
         for(auto iter=managedTable.begin();iter!=managedTable.end();iter++){
@@ -178,6 +170,14 @@ public:
         }
     }
 
+    void deliManage(table* newTable){
+        string tableName=newTable->ID;
+        if(managedTable.find(tableName)==managedTable.end()){
+            managedTable[tableName]=newTable;
+            managedTableName.insert(managedTableName.begin(),tableName);
+        }
+    }
+
     void saveAllTable(){
         for(auto iter=managedTable.begin();iter!=managedTable.end();iter++){
             iter->second->saveFile();
@@ -185,6 +185,8 @@ public:
     }
 
     Q_INVOKABLE table* createTable(const QString& ID,const QScriptValue& strVec);
+
+    Q_INVOKABLE void removeTable(const QString& ID);
 
     table* tableJoin(const QString &newTableID, const QString &lTableName,const vector<string>& lColName,const QString &rTableName,const vector<string>& rColName,const QString &lKey, const QString &rKey, const QString &joinWay="innerjoin"){
         table* lTable=tableManager::tablemanager->loadTable(lTableName);
@@ -216,4 +218,5 @@ public:
     }
 
     Q_INVOKABLE table* tableJoin(const QString &newTableID, const QString &lTableName,const QScriptValue& lColName,const QString &rTableName,const QScriptValue& rColName,const QString &lKey, const QString &rKey, const QString &joinWay="innerjoin");
+
 };

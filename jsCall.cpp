@@ -107,6 +107,19 @@ table* tableManager::createTable(const QString& ID,const QScriptValue& strVec){
     return new table(ID.toStdString(),allCols);
 }
 
+void tableManager::removeTable(const QString& ID){
+    const string& tableName=ID.toStdString();
+    auto iter=managedTable.find(tableName);
+    if(iter!=managedTable.end()){
+        delete managedTable[tableName];
+        managedTable.erase(tableName);
+        auto it=find(managedTableName.begin(),managedTableName.end(),tableName);
+        managedTableName.erase(it);
+    }
+    const string& path=table::default_path+"\\"+tableName+".csv";
+    IO::del_table_blocks(path);
+}
+
 col::col(const string& type,const string& ID):type(strToType(type)),ID(ID){}
 
 jsCollection* col::getData(jsCollection *filtered_index){
